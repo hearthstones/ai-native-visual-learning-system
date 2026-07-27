@@ -1,0 +1,3415 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习计划 · 革新学习方法 — 对话式共创</title>
+    <style id="theme-vars">
+/**
+ * Trae design library tokens
+ * Dark-only colors and typography tokens.
+ * Source references:
+ * - /workspace/.uploads/c7804cd9-3301-4b42-8895-bb409861b29a_trae.md
+ * - /workspace/.uploads/3164f329-b5a1-42ba-9dcb-5f1b36b48506_trae.css
+ *
+ * Notes:
+ * - Token values are preserved from the source files.
+ * - Grouping is preserved.
+ * - No alias layer is included.
+ * - Invalid source token names that contained spaces were normalized to kebab-case.
+ *   The original source names are kept in comments.
+ */
+
+/* @dark-only */
+/* @group-priority: brand-green, status, brand-blue, brand-purple, brand-yellow */
+
+:root {
+  /* radius */
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-10: 10px;
+  --radius-full: 9999px;
+
+  /* spacers */
+  --spacer-0: 0px;
+  --spacer-4: 4px;
+  --spacer-6: 6px;
+  --spacer-8: 8px;
+  --spacer-12: 12px;
+  --spacer-16: 16px;
+  --spacer-24: 24px;
+  --spacer-32: 32px;
+  --spacer-40: 40px;
+
+  /* font */
+  --font-family-default: SF Pro Text;
+  --font-family-heading: SF Pro;
+  --font-family-mono: JetBrains Mono;
+  --font-weight-default: 400;
+  --font-weight-code: 450;
+  --font-weight-medium: 500;
+  --font-weight-strong: 600;
+  --font-family-base: var(--font-family-default);
+  --font-family-heading-alias: var(--font-family-heading);
+  --font-family-mono-alias: var(--font-family-mono);
+
+  /* body */
+  --body-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-xs-font-size: 10px;
+  --body-xs-font-weight: 400;
+  --body-xs-line-height: 14px;
+  --body-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-sm-font-size: 11px;
+  --body-sm-font-weight: 400;
+  --body-sm-line-height: 16px;
+  --body-sm-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-sm-strong-font-size: 11px;
+  --body-sm-strong-font-weight: 500;
+  --body-sm-strong-line-height: 16px;
+  --body-md-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-md-font-size: 12px;
+  --body-md-font-weight: 400;
+  --body-md-line-height: 18px;
+  --body-md-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-md-strong-font-size: 12px;
+  --body-md-strong-font-weight: 500;
+  --body-md-strong-line-height: 18px;
+  --body-base-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-base-font-size: 13px;
+  --body-base-font-weight: 400;
+  --body-base-line-height: 20px;
+  --body-base-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-base-strong-font-size: 13px;
+  --body-base-strong-font-weight: 500;
+  --body-base-strong-line-height: 20px;
+
+  /* heading */
+  --heading-3xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-3xs-font-size: 11px;
+  --heading-3xs-font-weight: 600;
+  --heading-3xs-line-height: 16px;
+  --heading-2xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-2xs-font-size: 12px;
+  --heading-2xs-font-weight: 600;
+  --heading-2xs-line-height: 18px;
+  --heading-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-xs-font-size: 13px;
+  --heading-xs-font-weight: 600;
+  --heading-xs-line-height: 20px;
+  --heading-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-sm-font-size: 16px;
+  --heading-sm-font-weight: 600;
+  --heading-sm-line-height: 24px;
+  --heading-md-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-md-font-size: 20px;
+  --heading-md-font-weight: 600;
+  --heading-md-line-height: 28px;
+  --heading-lg-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-lg-font-size: 22px;
+  --heading-lg-font-weight: 600;
+  --heading-lg-line-height: 30px;
+  --heading-xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-xl-font-size: 24px;
+  --heading-xl-font-weight: 600;
+  --heading-xl-line-height: 32px;
+  --heading-2xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-2xl-font-size: 28px;
+  --heading-2xl-font-weight: 600;
+  --heading-2xl-line-height: 36px;
+  --heading-3xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-3xl-font-size: 32px;
+  --heading-3xl-font-weight: 600;
+  --heading-3xl-line-height: 40px;
+
+  /* code */
+  --code-editor-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif;
+  --code-editor-font-size: 13px;
+  --code-editor-font-weight: 450;
+  --code-editor-line-height: 20px;
+  --code-terminal-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif;
+  --code-terminal-font-size: 12px;
+  --code-terminal-font-weight: 450;
+  --code-terminal-line-height: 18px;
+  --code-text: #E0E3EE;
+  --code-doc: #7F838C;
+  --code-link: #3C7EFF;
+  --code-number: #F48CCA;
+  --code-action: #B38CFF;
+  --code-instruction: #F0D8FF;
+  --code-function: #F29D79;
+  --code-constant: #80BBFF;
+  --code-parameter: #82D99F;
+  --code-attribute: #DED47E;
+  --code-tag: #F2858C;
+
+  /* bg */
+  --bg-base-default: #1A1B1D;
+  --bg-base-secondary: #222427;
+  --bg-base-tertiary: #2A2D31;
+  --bg-overlay-l1: rgba(224, 226, 242, 0.04);
+  --bg-overlay-l2: rgba(224, 226, 242, 0.06);
+  --bg-overlay-l3: rgba(224, 226, 242, 0.08);
+  --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+  --bg-menu: #202123;
+  --bg-tooltip: #1A1B1D;
+  --bg-invert: #DADDE5;
+  --bg-invert-hover: #EDEFF2;
+  --bg-invert-active: #979AA4;
+  --bg-invert-disabled: rgba(224, 226, 242, 0.12);
+  --color-background: var(--bg-base-default);
+  --color-surface: var(--bg-base-secondary);
+  --color-surface-variant: var(--bg-base-tertiary);
+  --color-overlay-1: var(--bg-overlay-l1);
+  --color-overlay-2: var(--bg-overlay-l2);
+  --color-overlay-3: var(--bg-overlay-l3);
+  --color-overlay-4: var(--bg-overlay-l4);
+  --color-card: var(--bg-base-secondary);
+  --color-tooltip: var(--bg-tooltip);
+  --color-menu: var(--bg-menu);
+
+  /* bg-brand */
+  --bg-brand: #32F08C;
+  --bg-brand-hover: #0FDC78;
+  --bg-brand-disabled: rgba(50, 240, 140, 0.2);
+  --bg-brand-popup: rgba(50, 240, 140, 0.12);
+  --color-primary: var(--bg-brand);
+  --color-primary-hover: var(--bg-brand-hover);
+  --color-primary-disabled: var(--bg-brand-disabled);
+  --color-primary-soft: var(--bg-brand-popup);
+  --color-accent: var(--bg-brand);
+
+  /* text */
+  --text-default: #D1D3DB;
+  --text-default-hover: #F5F9FE;
+  --text-default-active: #F5F9FE;
+  --text-secondary: #9599A6;
+  --text-secondary-hover: #D1D3DB;
+  --text-secondary-active: #D1D3DB;
+  --text-tertiary: #666B75;
+  --text-disabled: #666B75;
+  --text-onbrand: #0C0C0D;
+  --text-onaccent: #0C0C0D;
+  --color-foreground: var(--text-default);
+  --color-foreground-hover: var(--text-default-hover);
+  --color-on-surface: var(--text-default);
+  --color-on-surface-variant: var(--text-secondary);
+  --color-muted-foreground: var(--text-secondary);
+  --color-disabled-foreground: var(--text-disabled);
+  --color-on-primary: var(--text-onbrand);
+
+  /* text-brand */
+  --text-brand: #32F08C;
+  --text-brand-hover: #0FDC78;
+
+  /* icon */
+  --icon-default: #D1D3DB;
+  --icon-default-hover: #F5F9FE;
+  --icon-default-active: #F5F9FE;
+  --icon-secondary: #9599A6;
+  --icon-secondary-hover: #D1D3DB;
+  --icon-secondary-active: #D1D3DB;
+  --icon-tertiary: #666B75;
+  --icon-disabled: #666B75;
+  --icon-onbrand: #0C0C0D;
+  --icon-onaccent: #0C0C0D;
+
+  /* icon-brand */
+  --icon-brand: #32F08C;
+  --icon-brand-hover: #0FDC78;
+
+  /* border */
+  --border-neutral-l1: rgba(224, 226, 242, 0.1);
+  --border-neutral-l2: rgba(224, 226, 242, 0.16);
+  --border-neutral-l3: rgba(224, 226, 242, 0.2);
+  --border-contrast: #FFFFFF;
+  --border-brand: #32F08C;
+  --color-border: var(--border-neutral-l1);
+  --color-border-strong: var(--border-neutral-l2);
+  --color-border-stronger: var(--border-neutral-l3);
+  --color-border-contrast: var(--border-contrast);
+  --color-outline: var(--border-neutral-l1);
+
+  /* accent */
+  --accent-teal: #2DD288;
+  --accent-coral: #FF9392;
+  --accent-amber: #DCB364;
+  --accent-lime: #8ACB3A;
+  --accent-cyan: #04CBE5;
+  --accent-blue: #7BB8FF;
+  --accent-magenta: #EC93FF;
+  --accent-violet: #BFA5FF;
+  --accent-slate: #AFB9CF;
+
+  /* status */
+  --status-primary-default: #387BFF;
+  --status-primary-hover: #4C88FF;
+  --status-primary-active: #1759DD;
+  --status-primary-surface-l1: rgba(53, 121, 255, 0.18);
+  --status-primary-surface-l2: rgba(53, 121, 255, 0.28);
+  --status-primary-surface-l3: rgba(53, 121, 255, 0.36);
+  --status-success-default: #33C192;
+  --status-success-hover: #5ED4AD;
+  --status-success-active: #27B082;
+  --status-success-surface-l1: rgba(0, 165, 110, 0.18);
+  --status-success-surface-l2: rgba(0, 165, 110, 0.28);
+  --status-success-surface-l3: rgba(0, 165, 110, 0.36);
+  --status-alert-default: #D29D00;
+  --status-alert-hover: #DFB949;
+  --status-alert-active: #AB8820;
+  --status-alert-surface-l1: rgba(210, 157, 0, 0.16);
+  --status-alert-surface-l2: rgba(210, 157, 0, 0.28);
+  --status-alert-surface-l3: rgba(210, 157, 0, 0.36);
+  --status-warning-default: #D27E24;
+  --status-warning-hover: #D78B28;
+  --status-warning-active: #B46510;
+  --status-warning-surface-l1: rgba(210, 126, 36, 0.16);
+  --status-warning-surface-l2: rgba(210, 126, 36, 0.28);
+  --status-warning-surface-l3: rgba(210, 126, 36, 0.36);
+  --status-error-default: #F65A5A;
+  --status-error-hover: #F86262;
+  --status-error-active: #B33636;
+  --status-error-surface-l1: rgba(246, 70, 70, 0.18);
+  --status-error-surface-l2: rgba(246, 70, 70, 0.28);
+  --status-error-surface-l3: rgba(246, 70, 70, 0.36);
+  --color-info: var(--status-primary-default);
+  --color-success: var(--status-success-default);
+  --color-warning: var(--status-warning-default);
+  --color-error: var(--status-error-default);
+  --color-error-soft: var(--status-error-surface-l1);
+
+  /* brand */
+  --brand-green-100: #E5FFF2;
+  --brand-green-200: #B4FDD9;
+  --brand-green-300: #85FABF;
+  --brand-green-400: #5CF5A8;
+  --brand-green-500: #32F08C;
+  --brand-green-600: #0FDC78;
+  --brand-green-700: #0AB861;
+  --brand-green-800: #05994F;
+  --brand-green-900: #02743B;
+  --brand-green-1000: #004D26;
+  --brand-red-100: #FFE5E5;
+  --brand-red-200: #FFCCCC;
+  --brand-red-300: #FFB2B2;
+  --brand-red-400: #FF9999;
+  --brand-red-500: #FF8080;
+  --brand-red-600: #FF6464;
+  --brand-red-700: #E63737;
+  --brand-red-800: #CB1010;
+  --brand-red-900: #8F0505;
+  --brand-red-1000: #4D0000;
+  --brand-yellow-100: #FFF6E5;
+  --brand-yellow-200: #FFECCC;
+  --brand-yellow-300: #FFE3B2;
+  --brand-yellow-400: #FFDA99;
+  --brand-yellow-500: #FFD080;
+  --brand-yellow-600: #FFC864;
+  --brand-yellow-700: #E6A637;
+  --brand-yellow-800: #CB8710;
+  --brand-yellow-900: #8F5C05;
+  --brand-yellow-1000: #4D3000;
+  --brand-blue-100: #E5F3FF;
+  --brand-blue-200: #CCE6FF;
+  --brand-blue-300: #B2DAFF;
+  --brand-blue-400: #99CEFF;
+  --brand-blue-500: #80C1FF;
+  --brand-blue-600: #64B4FF;
+  --brand-blue-700: #3792E6;
+  --brand-blue-800: #1071CB;
+  --brand-blue-900: #054C8F;
+  --brand-blue-1000: #00284D;
+  --brand-purple-100: #E8E5FF;
+  --brand-purple-200: #D2CCFF;
+  --brand-purple-300: #BBB2FF;
+  --brand-purple-400: #A599FF;
+  --brand-purple-500: #8E80FF;
+  --brand-purple-600: #7864FF;
+  --brand-purple-700: #4C37E6;
+  --brand-purple-800: #2610CB;
+  --brand-purple-900: #15058F;
+  --brand-purple-1000: #09004D;
+  /* original source token: --brand-neutral grey-100 */
+  --brand-neutral-grey-100: #F2F2F2;
+  /* original source token: --brand-neutral grey-200 */
+  --brand-neutral-grey-200: #E3E3E3;
+  /* original source token: --brand-neutral grey-300 */
+  --brand-neutral-grey-300: #D6D6D6;
+  /* original source token: --brand-neutral grey-400 */
+  --brand-neutral-grey-400: #C7C7C7;
+  /* original source token: --brand-neutral grey-500 */
+  --brand-neutral-grey-500: #BABABA;
+  /* original source token: --brand-neutral grey-600 */
+  --brand-neutral-grey-600: #ABABAB;
+  /* original source token: --brand-neutral grey-700 */
+  --brand-neutral-grey-700: #8A8A8A;
+  /* original source token: --brand-neutral grey-800 */
+  --brand-neutral-grey-800: #686868;
+  /* original source token: --brand-neutral grey-900 */
+  --brand-neutral-grey-900: #474747;
+  /* original source token: --brand-neutral grey-1000 */
+  --brand-neutral-grey-1000: #262626;
+  /* original source token: --brand-blue grey-100 */
+  --brand-blue-grey-100: #F1EFF4;
+  /* original source token: --brand-blue grey-200 */
+  --brand-blue-grey-200: #E0E1E6;
+  /* original source token: --brand-blue grey-300 */
+  --brand-blue-grey-300: #CFD3D8;
+  /* original source token: --brand-blue grey-400 */
+  --brand-blue-grey-400: #BFC5CA;
+  /* original source token: --brand-blue grey-500 */
+  --brand-blue-grey-500: #B0B5BA;
+  /* original source token: --brand-blue grey-600 */
+  --brand-blue-grey-600: #A0A6AB;
+  /* original source token: --brand-blue grey-700 */
+  --brand-blue-grey-700: #80898E;
+  /* original source token: --brand-blue grey-800 */
+  --brand-blue-grey-800: #5E696E;
+  /* original source token: --brand-blue grey-900 */
+  --brand-blue-grey-900: #404A4F;
+  /* original source token: --brand-blue grey-1000 */
+  --brand-blue-grey-1000: #21262B;
+  /* original source token: --brand-green grey-100 */
+  --brand-green-grey-100: #F1F4F4;
+  /* original source token: --brand-green grey-200 */
+  --brand-green-grey-200: #E0E6E6;
+  /* original source token: --brand-green grey-300 */
+  --brand-green-grey-300: #CFD8D8;
+  /* original source token: --brand-green grey-400 */
+  --brand-green-grey-400: #BFCACA;
+  /* original source token: --brand-green grey-500 */
+  --brand-green-grey-500: #B0BABA;
+  /* original source token: --brand-green grey-600 */
+  --brand-green-grey-600: #A0ABAB;
+  /* original source token: --brand-green grey-700 */
+  --brand-green-grey-700: #808E8E;
+  /* original source token: --brand-green grey-800 */
+  --brand-green-grey-800: #5E6E6E;
+  /* original source token: --brand-green grey-900 */
+  --brand-green-grey-900: #404F4F;
+  /* original source token: --brand-green grey-1000 */
+  --brand-green-grey-1000: #212B2B;
+
+  /* font (generic fallback — used by a few preview sections) */
+  --font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --font-size: 10px;
+  --font-weight: 400;
+  --line-height: 14px;
+
+  /* viz */
+  --viz-series-coral: #F87454;
+  --viz-series-amber: #EDAA45;
+  --viz-series-mint: #1DC981;
+  --viz-series-teal: #78F2F2;
+  --viz-series-sky: #22A5F7;
+  --viz-series-violet: #B655FC;
+  --viz-series-magenta: #FB9DD7;
+  --viz-series-indigo: #B6A3FF;
+  --viz-series-lime: #A6EA39;
+  --viz-series-slate: #859EAD;
+  --viz-ui-bg-chart: #202123;
+  --viz-ui-bg-tooltip: #1A1B1D;
+  --viz-ui-chart-title: #D1D3DB;
+  --viz-ui-chart-subtitle: #9599A6;
+  --viz-ui-chart-axis: rgba(224, 226, 242, 0.16);
+  --viz-ui-chart-tick: #9599A6;
+  --viz-ui-legend-label: #9599A6;
+  --viz-ui-legend-value: #D1D3DB;
+
+  /* special */
+  --special-white: #FFFFFF;
+  --special-black: #000000;
+  --special-bgtabsoverlay: rgba(0, 0, 0, 0.2);
+
+  /* layout aliases (originally fallback in _preview.css) */
+  --brand-1: #32f08c;
+  --brand-2: #3ee1a3;
+  --brand-3: #60f2bd;
+  --brand-4: #a0fde7;
+  --site-canvas: #1A1B1D;
+  --bg-layout-1: var(--bg-base-secondary);
+  --bg-layout-2: var(--bg-overlay-l1);
+  --border-1: var(--border-neutral-l1);
+
+  /* === Semantic bridge for Tailwind/apply-html-head-contract (derived from TRAE tokens, no invented values) === */
+  --color-background: var(--bg-base-default);
+  --color-foreground: var(--text-default);
+  --color-card: var(--bg-base-secondary);
+  --color-card-foreground: var(--text-default);
+  --color-popover: var(--bg-menu);
+  --color-popover-foreground: var(--text-default);
+  --color-primary: var(--bg-brand);
+  --color-primary-foreground: var(--text-onbrand);
+  --color-secondary: var(--bg-overlay-l2);
+  --color-secondary-foreground: var(--text-default);
+  --color-muted: var(--bg-overlay-l1);
+  --color-muted-foreground: var(--text-secondary);
+  --color-accent: var(--bg-overlay-l2);
+  --color-accent-foreground: var(--text-default);
+  --color-destructive: var(--status-error-default);
+  --color-destructive-foreground: var(--special-white);
+  --color-border: var(--border-neutral-l1);
+  --color-input: var(--border-neutral-l2);
+  --color-ring: var(--border-brand);
+  --color-sidebar: var(--bg-base-secondary);
+  --color-sidebar-foreground: var(--text-default);
+  --color-sidebar-primary: var(--bg-brand);
+  --color-sidebar-primary-foreground: var(--text-onbrand);
+  --color-sidebar-accent: var(--bg-overlay-l2);
+  --color-sidebar-accent-foreground: var(--text-default);
+  --color-sidebar-border: var(--border-neutral-l1);
+  --color-sidebar-ring: var(--border-brand);
+  --color-radius-sm: var(--radius-4);
+  --color-radius-md: var(--radius-6);
+  --color-radius-lg: var(--radius-8);
+  --color-radius: var(--radius-6);
+  --font-sans: var(--body-base-font-family);
+  --font-mono: var(--code-editor-font-family);
+  --color-success: var(--status-success-default);
+  --color-warning: var(--status-warning-default);
+  --color-info: var(--status-primary-default);
+}
+
+    </style>
+    <style id="component-vars">
+/* ═══════════════════════════════════════════════════════════════
+   components.css — Design System Component Definitions
+   Auto-extracted from preview/component-*.html
+   DO NOT EDIT MANUALLY — regenerate via extract-components-css.mjs
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Activity Rail ─────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Activity Rail</h1> <p>竖向活动栏：一列图标按钮，含选中态 .is-active（左侧 --bg-brand 指示条）和 --border-neutral-l2 分隔线。</p> </div>
+*/
+/* ===== Activity Rail ===== */
+    .ds-activityrail {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacer-4);
+      width: 48px;
+      padding: var(--spacer-8) 0;
+      background: var(--bg-base-secondary);
+      border-right: 1px solid var(--border-neutral-l1);
+    }
+    .ds-activityrail__btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-8);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .ds-activityrail__btn:hover { background: var(--bg-overlay-l2); }
+    .ds-activityrail__btn.is-active {
+      background: var(--bg-overlay-l3);
+    }
+    .ds-activityrail__btn.is-active::before {
+      content: "";
+      position: absolute;
+      left: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 20px;
+      border-radius: var(--radius-full);
+      background: var(--bg-brand);
+    }
+    .ds-activityrail__divider {
+      width: 24px;
+      height: 1px;
+      margin: var(--spacer-4) 0;
+      background: var(--border-neutral-l2);
+    }
+    .ds-activityrail__spacer { flex: 1; }
+
+/* ── Alert ─────────────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Notifications</h1> <p>Two layouts (Simple, Complex) × four statuses (Error, Warning, Alert, Information). Status is conveyed by an <strong>outline</strong> icon color + tinted surface — never by a filled glyph.</p> </div>
+*/
+/* ===== Alert / Banner ===== */
+    .ds-alert {
+      display: flex; gap: var(--spacer-12);
+      padding: var(--spacer-12) var(--spacer-16);
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      color: var(--text-default);
+      align-items: flex-start;
+    }
+    .ds-alert__icon { flex-shrink: 0; margin-top: 1px; color: var(--icon-default); display: inline-flex; }
+    .ds-alert--success .ds-alert__icon { color: var(--status-success-default); }
+    .ds-alert--warning .ds-alert__icon { color: var(--status-warning-default); }
+    .ds-alert--danger  .ds-alert__icon { color: var(--status-error-default); }
+    .ds-alert--info    .ds-alert__icon { color: var(--status-primary-default); }
+    .ds-alert__title { font-weight: var(--font-weight-medium, 500); margin-bottom: var(--spacer-4); }
+    .ds-alert__desc { color: var(--text-secondary); font-size: var(--body-sm-font-size); }
+
+/* ── Avatar ────────────────────────────────────────────────── */
+/* @anatomy
+   <span class="ds-avatar ds-avatar--sm">A</span> <span class="ds-avatar">M</span> <span class="ds-avatar ds-avatar--lg">L</span> <div class="row" style="gap: -8px;"> <span class="ds-avatar" style="border: 2px solid var(--bg-base-default); margin-right: -10px; z-index: 3;">A</span> <span class="ds-avatar" style="border: 2px solid var(--bg-base-default); margin-right: -10px; z-index: 2;">M</span> <...
+*/
+/* ===== Avatar ===== */
+    .ds-avatar {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--bg-overlay-l3);
+      color: var(--text-default);
+      font-size: var(--body-sm-font-size); font-weight: var(--font-weight-strong);
+      flex-shrink: 0;
+    }
+    .ds-avatar--sm { width: 24px; height: 24px; font-size: var(--body-xs-font-size); }
+    .ds-avatar--lg { width: 40px; height: 40px; }
+    .ds-avatar--square { border-radius: var(--radius-4); }
+    .ds-avatar--accent { background: var(--bg-brand); color: var(--text-onbrand); }
+
+/* ── Buttons ───────────────────────────────────────────────── */
+/* @anatomy
+   <span class="size-tag" style="margin:0;">Brand · max 1 per page</span><button class="ds-btn ds-btn--brand"><img src="../assets/icons/dl_builtin_trae/zap.0c0c0d.svg" width="14" height="14" alt="zap" class="icon"><span>Generate spec</span></button>
+*/
+/* ===== Buttons =====
+     * Hierarchy (one BRAND/green CTA per page max):
+     *   primary  → high-contrast neutral (white). Default "main action".
+     *   secondary→ neutral surface, used for any neighbour action.
+     *   tertiary → ghost (no fill, no border), used for dense toolbars / inline.
+     *   danger / danger-subtle / warning / brand / link.
+     * Sizes follow the Figma "Sm / Default / Large":  24 / 28 / 32 / 36
+     * Geek hard-edged — radii are tight (4 / 6 max).
+     */
+    .ds-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: var(--spacer-6);
+      padding: 0 var(--spacer-12); height: 28px;
+      border-radius: var(--radius-4);
+      border: 1px solid transparent;
+      cursor: pointer; user-select: none; white-space: nowrap;
+      font-family: var(--body-sm-strong-font-family);
+      font-size: var(--body-sm-strong-font-size);
+      line-height: 1;
+      font-weight: var(--body-sm-strong-font-weight);
+      transition: background .12s ease, color .12s ease, border-color .12s ease, opacity .12s ease;
+    }
+    .ds-btn .icon { color: currentColor; }
+    .ds-btn--sm { height: 24px; padding: 0 var(--spacer-8); border-radius: var(--radius-4); font-size: var(--body-xs-font-size); }
+    .ds-btn--md { height: 28px; padding: 0 var(--spacer-12); border-radius: var(--radius-4); }
+    .ds-btn--lg { height: 32px; padding: 0 var(--spacer-16); border-radius: var(--radius-4); font-size: var(--body-base-font-size); }
+
+    /* PRIMARY = high-contrast neutral (white). Use this when you don't need
+     * brand emphasis. Page rule: at most ONE brand button per page; every other
+     * "main" action falls back to this neutral primary. */
+    .ds-btn--primary { background: var(--text-default); color: var(--bg-base-default); border-color: var(--text-default); }
+    .ds-btn--primary:hover { background: var(--text-default-hover); }
+    .ds-btn--primary:active { background: var(--text-secondary); border-color: var(--text-secondary); }
+    .ds-btn--primary[disabled] { background: var(--bg-overlay-l3); color: var(--text-tertiary); border-color: var(--border-neutral-l1); cursor: not-allowed; }
+
+    /* SECONDARY = neutral surface */
+    .ds-btn--secondary { background: var(--bg-overlay-l2); color: var(--text-default); border-color: var(--border-neutral-l1); }
+    .ds-btn--secondary:hover { background: var(--bg-overlay-l3); border-color: var(--border-neutral-l2); }
+    .ds-btn--secondary:active { background: var(--bg-overlay-l1); }
+    .ds-btn--secondary[disabled] { color: var(--text-tertiary); cursor: not-allowed; opacity: .6; }
+
+    /* TERTIARY = ghost (no border, no fill) */
+    .ds-btn--tertiary,
+    .ds-btn--ghost { background: transparent; color: var(--text-default); border-color: transparent; }
+    .ds-btn--tertiary:hover,
+    .ds-btn--ghost:hover { background: var(--bg-overlay-l2); }
+    .ds-btn--tertiary:active,
+    .ds-btn--ghost:active { background: var(--bg-overlay-l1); }
+    .ds-btn--tertiary[disabled],
+    .ds-btn--ghost[disabled] { color: var(--text-tertiary); cursor: not-allowed; }
+
+    /* DANGER strong (filled) */
+    .ds-btn--danger,
+    .ds-btn--danger-strong {
+      background: var(--status-error-default); color: var(--special-white);
+      border-color: var(--status-error-default);
+    }
+    .ds-btn--danger:hover,
+    .ds-btn--danger-strong:hover { filter: brightness(0.92); }
+    .ds-btn--danger:active,
+    .ds-btn--danger-strong:active { filter: brightness(0.84); }
+    .ds-btn--danger[disabled],
+    .ds-btn--danger-strong[disabled] { opacity: .5; cursor: not-allowed; }
+
+    /* DANGER subtle (tinted surface) */
+    .ds-btn--danger-subtle {
+      background: var(--status-error-surface-l1);
+      color: var(--status-error-default);
+      border-color: var(--status-error-surface-l2);
+    }
+    .ds-btn--danger-subtle:hover { background: var(--status-error-surface-l2); }
+    .ds-btn--danger-subtle:active { background: var(--status-error-surface-l1); }
+    .ds-btn--danger-subtle[disabled] { opacity: .5; cursor: not-allowed; }
+
+    /* WARNING */
+    .ds-btn--warning {
+      background: var(--status-warning-default); color: var(--text-onbrand);
+      border-color: var(--status-warning-default);
+    }
+    .ds-btn--warning:hover { filter: brightness(0.94); }
+    .ds-btn--warning:active { filter: brightness(0.86); }
+    .ds-btn--warning[disabled] { opacity: .5; cursor: not-allowed; }
+
+    /* BRAND — exactly the Figma "Brand" row. Use AT MOST one per page. */
+    .ds-btn--brand { background: var(--bg-brand); color: var(--text-onbrand); border-color: var(--bg-brand); }
+    .ds-btn--brand:hover { background: var(--bg-brand-hover); border-color: var(--bg-brand-hover); }
+    .ds-btn--brand:active { filter: brightness(0.92); }
+    .ds-btn--brand[disabled] { background: var(--bg-brand-disabled, var(--bg-overlay-l3)); border-color: transparent; color: var(--text-tertiary); cursor: not-allowed; }
+
+    /* LINK */
+    .ds-btn--link { background: transparent; color: var(--text-default); border-color: transparent; padding: 0; height: auto; }
+    .ds-btn--link:hover { color: var(--text-default-hover); text-decoration: underline; }
+    .ds-btn--link[disabled] { color: var(--text-tertiary); text-decoration: none; cursor: not-allowed; }
+
+    /* ICON BUTTON — square */
+    .ds-btn--icon { padding: 0; width: 28px; justify-content: center; }
+    .ds-btn--icon.ds-btn--sm { width: 24px; }
+    .ds-btn--icon.ds-btn--lg { width: 32px; }
+
+    /* BUTTON GROUP — segmented, hard edged */
+    .ds-btn-group { display: inline-flex; }
+    .ds-btn-group > .ds-btn { border-radius: 0; margin-left: -1px; }
+    .ds-btn-group > .ds-btn:first-child { border-top-left-radius: var(--radius-4); border-bottom-left-radius: var(--radius-4); margin-left: 0; }
+    .ds-btn-group > .ds-btn:last-child  { border-top-right-radius: var(--radius-4); border-bottom-right-radius: var(--radius-4); }
+
+/* ── Cards ─────────────────────────────────────────────────── */
+/* @anatomy
+   <span class="ds-tag">New</span> <span class="text-tertiary" style="font-size: var(--body-xs-font-size);">2 min ago</span>
+*/
+/* ===== Card ===== */
+    .ds-card {
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      padding: var(--spacer-24);
+    }
+    .ds-card__title { font-size: var(--heading-xs-font-size); line-height: var(--heading-xs-line-height); font-weight: var(--heading-xs-font-weight); margin-bottom: var(--spacer-8); }
+    .ds-card__desc { font-size: var(--body-sm-font-size); line-height: var(--body-sm-line-height); color: var(--text-secondary); }
+
+/* ── Chat Composer ─────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Chat Composer</h1> <p>AI 对话输入器，含多行输入框、底部工具行与品牌色发送按钮。</p> </div>
+*/
+/* ===== Chat Composer ===== */
+    .ds-composer {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacer-8);
+      width: 100%;
+      max-width: 720px;
+      padding: var(--spacer-12);
+      background: var(--bg-overlay-l1);
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-10);
+    }
+    .ds-composer:focus-within {
+      border-color: var(--border-brand);
+    }
+    .ds-composer__input {
+      width: 100%;
+      min-height: 56px;
+      max-height: 200px;
+      resize: vertical;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text-default);
+      font-size: var(--body-md-font-size);
+      line-height: var(--body-md-line-height);
+      font-weight: var(--body-md-font-weight);
+    }
+    .ds-composer__input::placeholder {
+      color: var(--text-tertiary);
+    }
+    .ds-composer__toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacer-8);
+    }
+    .ds-composer__tools {
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-4);
+    }
+    .ds-composer__icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: none;
+      border-radius: var(--radius-6);
+      background: transparent;
+      cursor: pointer;
+    }
+    .ds-composer__icon-btn:hover {
+      background: var(--bg-overlay-l2);
+    }
+    .ds-composer__model {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacer-4);
+      height: 28px;
+      padding: 0 var(--spacer-8);
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-full);
+      background: var(--bg-overlay-l2);
+      color: var(--text-secondary);
+      font-size: var(--body-sm-font-size);
+      line-height: var(--body-sm-line-height);
+      cursor: pointer;
+    }
+    .ds-composer__model:hover {
+      background: var(--bg-overlay-l3);
+      color: var(--text-default);
+    }
+    .ds-composer__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-8);
+    }
+    .ds-composer__send {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: none;
+      border-radius: var(--radius-8);
+      background: var(--bg-brand);
+      cursor: pointer;
+    }
+    .ds-composer__send:hover {
+      background: var(--bg-brand-hover);
+    }
+
+/* ── Dialog ────────────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Dialog / Modal</h1> <p>Surface <code>--bg-base-secondary</code>, radius <code>--radius-4</code>. Width 360 / 420 / 560. Backdrop <code>rgba(0,0,0,.5)</code>.</p> </div>
+*/
+/* ===== Dialog / Modal ===== */
+    .ds-backdrop {
+      position: relative;
+      background: rgba(0,0,0,.5);
+      border: 1px solid var(--border-neutral-l1);
+      padding: var(--spacer-32) var(--spacer-24);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ds-dialog {
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      width: 100%; max-width: 420px;
+      overflow: hidden;
+    }
+    .ds-dialog__head {
+      padding: var(--spacer-16) var(--spacer-24);
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .ds-dialog__title { font-size: var(--heading-xs-font-size); font-weight: var(--heading-xs-font-weight); color: var(--text-default); }
+    .ds-dialog__close {
+      width: 24px; height: 24px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; border: none; color: var(--icon-secondary);
+      cursor: pointer; border-radius: var(--radius-4);
+    }
+    .ds-dialog__close:hover { background: var(--bg-overlay-l2); color: var(--icon-default); }
+    .ds-dialog__body { padding: var(--spacer-16) var(--spacer-24); color: var(--text-secondary); font-size: var(--body-sm-font-size); line-height: var(--body-sm-line-height); }
+    .ds-dialog__foot {
+      padding: var(--spacer-12) var(--spacer-24);
+      display: flex; justify-content: flex-end; gap: var(--spacer-8);
+      border-top: 1px solid var(--border-neutral-l1);
+    }
+
+    /* ===== Drawer ===== */
+    .ds-drawer {
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      width: 100%; max-width: 360px;
+      display: flex; flex-direction: column;
+    }
+    .ds-drawer__head { padding: var(--spacer-16) var(--spacer-24); border-bottom: 1px solid var(--border-neutral-l1); display: flex; justify-content: space-between; align-items: center; }
+    .ds-drawer__body { padding: var(--spacer-16) var(--spacer-24); flex: 1; }
+
+/* ── Editor Tabs ───────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Editor Tabs</h1> <p>IDE-style closable file tabs with a flex spacer pushing trailing layout/split icon buttons to the right. Active tab gets a 1px inset top indicator and a lifted <code>--bg-base-secondary</code> surface. Distinct from <code>.ds-tabs</code>, which is for content-section navigation.</p> </div>
+*/
+/* ===== Editor Tabs ===== */
+    .ds-editortabs {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--border-neutral-l1);
+      background-color: var(--bg-base-default);
+      background-image: linear-gradient(var(--special-bgtabsoverlay), var(--special-bgtabsoverlay));
+    }
+    .ds-editortab {
+      display: inline-flex;
+      align-items: center;
+      column-gap: 8px;
+      padding: 0 14px;
+      height: 40px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      border-right: 1px solid var(--border-neutral-l1);
+      cursor: pointer;
+      white-space: nowrap;
+      background: transparent;
+      min-width: 0;
+    }
+    .ds-editortab:hover {
+      color: var(--text-default);
+      background-image: linear-gradient(var(--bg-overlay-l1), var(--bg-overlay-l1));
+    }
+    .ds-editortab.is-active {
+      background: var(--bg-base-secondary);
+      color: var(--text-default);
+      box-shadow: inset 0 1px 0 0 var(--icon-default);
+    }
+    .ds-editortab.is-active:hover { background: var(--bg-base-secondary); }
+    .ds-editortab .ic {
+      width: 14px; height: 14px;
+      flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .ds-editortab .close {
+      width: 16px; height: 16px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--icon-tertiary);
+    }
+    .ds-editortab.is-active .close { color: var(--icon-secondary); }
+    .ds-editortabs__spacer { flex: 1; min-width: 0; border-right: 0; }
+    .ds-editortabs__actions {
+      display: inline-flex;
+      align-items: center;
+      column-gap: 4px;
+      padding: 0 8px;
+      color: var(--icon-secondary);
+    }
+    .ds-editortabs__actions button {
+      width: 24px; height: 24px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; border: 0;
+      color: inherit;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .ds-editortabs__actions button:hover {
+      color: var(--icon-default);
+      background: var(--bg-overlay-l1);
+    }
+
+/* ── File Tree ─────────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>File Tree</h1> <p>文件树：多层级行 .ds-filetree__row（data-depth 控制缩进），含展开箭头 chevron、文件/文件夹图标、选中态 .is-active。</p> </div>
+*/
+/* ===== File Tree ===== */
+    .ds-filetree {
+      width: 260px;
+      padding: var(--spacer-4);
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-6);
+      font-size: var(--body-sm-font-size);
+      color: var(--text-default);
+    }
+    .ds-filetree__row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-6);
+      height: 26px;
+      padding: 0 var(--spacer-6);
+      padding-left: var(--spacer-6);
+      border-radius: var(--radius-4);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .ds-filetree__row[data-depth="1"] { padding-left: calc(var(--spacer-6) + 16px); }
+    .ds-filetree__row[data-depth="2"] { padding-left: calc(var(--spacer-6) + 32px); }
+    .ds-filetree__row[data-depth="3"] { padding-left: calc(var(--spacer-6) + 48px); }
+    .ds-filetree__row:hover { background: var(--bg-overlay-l2); }
+    .ds-filetree__row.is-active {
+      background: var(--bg-overlay-l3);
+      color: var(--text-default-hover);
+    }
+    .ds-filetree__chevron {
+      display: inline-flex;
+      width: 14px;
+      height: 14px;
+      flex: 0 0 14px;
+    }
+    .ds-filetree__chevron--leaf { visibility: hidden; }
+    .ds-filetree__label { overflow: hidden; text-overflow: ellipsis; }
+    .ds-filetree__icon--folder { filter: none; }
+    .ds-filetree__icon--ts { color: var(--accent-blue); }
+    .ds-filetree__icon--css { color: var(--code-attribute); }
+    .ds-filetree__icon--json { color: var(--code-constant); }
+
+/* ── Forms ─────────────────────────────────────────────────── */
+/* @anatomy
+   <button class="ds-btn ds-btn--secondary"><span>Sort by</span><img src="../assets/icons/dl_builtin_trae/chevron-down.svg" width="14" height="14" alt="chevron-down" class="icon"></button> <div class="ds-popover" style="margin-left: -120px; margin-top: 36px;"> <div class="ds-menu" style="border:none; padding: 0; min-width: 180px;"> <div class="ds-menu__item"><span>Most recent</span><img src="../assets/icons/dl_builtin_trae/check.svg"
+*/
+/* ===== Input / Search ===== */
+    .ds-input {
+      display: flex; align-items: center; gap: var(--spacer-8);
+      padding: 0 var(--spacer-12); height: 28px;
+      background: var(--bg-overlay-l1);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      color: var(--text-default);
+      width: 100%;
+      font-size: var(--body-sm-font-size); line-height: 1;
+    }
+    .ds-input:focus-within { border-color: var(--border-brand); background: var(--bg-overlay-l2); }
+    .ds-input input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--text-default); font: inherit;
+    }
+    .ds-input input::placeholder { color: var(--text-tertiary); }
+    .ds-input__icon { color: var(--icon-secondary); display: inline-flex; }
+    .ds-search { position: relative; }
+
+    /* ===== Select =====
+     * Dropdown indicator is a linear chevron (Lucide-style SVG, 2px stroke) — never a
+     * filled triangle / caret. The svg is inlined as a data-uri using currentColor
+     * stand-in so it inherits via the --icon-tertiary fallback.
+     */
+    .ds-select {
+      width: 100%; height: 28px;
+      padding: 0 var(--spacer-32) 0 var(--spacer-12);
+      background: var(--bg-overlay-l1);
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa0aa' stroke-width='2' stroke-linecap='butt' stroke-linejoin='miter'><polyline points='6 9 12 15 18 9'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right var(--spacer-12) center;
+      background-size: 12px 12px;
+      color: var(--text-default);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      appearance: none; -webkit-appearance: none;
+      font: inherit; font-size: var(--body-sm-font-size);
+    }
+    .ds-select:focus { border-color: var(--border-brand); outline: none; }
+
+    /* ===== Textarea ===== */
+    .ds-textarea {
+      width: 100%; min-height: 96px; padding: var(--spacer-8) var(--spacer-12);
+      background: var(--bg-overlay-l1);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      color: var(--text-default);
+      font-family: var(--body-base-font-family);
+      font-size: var(--body-sm-font-size);
+      line-height: var(--body-base-line-height);
+      resize: vertical;
+    }
+    .ds-textarea:focus { outline: none; border-color: var(--border-brand); }
+
+    /* ===== Slider ===== */
+    .ds-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: var(--bg-overlay-l3); border-radius: var(--radius-full); outline: none; }
+    .ds-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--text-default); border: 2px solid var(--bg-base-default); box-shadow: 0 0 0 1px var(--border-neutral-l2); cursor: pointer; }
+    .ds-slider::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--text-default); border: 2px solid var(--bg-base-default); box-shadow: 0 0 0 1px var(--border-neutral-l2); cursor: pointer; }
+
+    /* ===== Checkbox / Radio / Switch ===== */
+    .ds-check, .ds-radio {
+      display: inline-flex; align-items: center; gap: var(--spacer-8);
+      font-size: var(--body-sm-font-size); color: var(--text-default);
+      cursor: pointer; user-select: none;
+    }
+    .ds-check__box {
+      width: 14px; height: 14px;
+      border: 1px solid var(--border-neutral-l2);
+      background: var(--bg-overlay-l1);
+      border-radius: var(--radius-2);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--text-onbrand);
+      transition: background .12s, border-color .12s;
+    }
+    .ds-check input { display: none; }
+    .ds-check input:checked + .ds-check__box {
+      background: var(--bg-brand);
+      border-color: var(--bg-brand);
+    }
+    .ds-check input:checked + .ds-check__box::after {
+      content: ''; width: 8px; height: 4px;
+      border-left: 2px solid var(--text-onbrand);
+      border-bottom: 2px solid var(--text-onbrand);
+      transform: rotate(-45deg) translate(1px, -1px);
+    }
+    .ds-check input:disabled + .ds-check__box { opacity: .5; cursor: not-allowed; }
+
+    .ds-radio__dot {
+      width: 16px; height: 16px;
+      border: 1px solid var(--border-neutral-l2);
+      background: var(--bg-overlay-l1);
+      border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .ds-radio input { display: none; }
+    .ds-radio input:checked + .ds-radio__dot {
+      border-color: var(--bg-brand);
+    }
+    .ds-radio input:checked + .ds-radio__dot::after {
+      content: ''; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--bg-brand);
+    }
+
+    .ds-switch {
+      position: relative; display: inline-flex;
+      width: 32px; height: 18px;
+      background: var(--bg-overlay-l3);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-full);
+      cursor: pointer; transition: background .15s, border-color .15s;
+    }
+    .ds-switch input { display: none; }
+    .ds-switch__thumb {
+      position: absolute; top: 2px; left: 2px;
+      width: 12px; height: 12px;
+      background: var(--text-default);
+      border-radius: 50%;
+      transition: left .15s, background .15s;
+    }
+    .ds-switch input:checked ~ .ds-switch__thumb { left: 16px; background: var(--text-onbrand); }
+    .ds-switch:has(input:checked) {
+      background: var(--bg-brand);
+      border-color: var(--bg-brand);
+    }
+
+    /* Small switch */
+    .ds-switch--sm { width: 26px; height: 14px; }
+    .ds-switch--sm .ds-switch__thumb { width: 10px; height: 10px; }
+    .ds-switch--sm input:checked ~ .ds-switch__thumb { left: 12px; }
+
+    /* Labelled switch row: description on the left, switch on the right */
+    .ds-switch-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--spacer-16); padding: var(--spacer-8) 0;
+      max-width: 480px;
+    }
+    .ds-switch-row__text { display: flex; flex-direction: column; gap: var(--spacer-4); }
+    .ds-switch-row__title { font-size: var(--body-sm-font-size); color: var(--text-default); }
+    .ds-switch-row__hint { font-size: var(--body-xs-font-size); color: var(--text-tertiary); }
+
+/* ── Kbd ───────────────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Kbd</h1> <p>键盘快捷键提示，小圆角方块。</p> </div>
+*/
+/* ===== Kbd ===== */
+    .ds-kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 var(--spacer-6);
+      font-family: var(--code-editor-font-family);
+      font-size: var(--body-xs-font-size);
+      line-height: 1;
+      font-weight: var(--font-weight-medium);
+      color: var(--text-secondary);
+      background: var(--bg-overlay-l2);
+      border: 1px solid var(--border-neutral-l2);
+      border-bottom-width: 2px;
+      border-radius: var(--radius-4);
+    }
+    .ds-kbd__combo {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacer-4);
+    }
+    .ds-kbd__plus {
+      color: var(--text-tertiary);
+      font-size: var(--body-xs-font-size);
+    }
+    .ds-kbd__row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--spacer-16);
+    }
+
+/* ── Atoms ─────────────────────────────────────────────────── */
+/* @anatomy
+   <span class="ds-tooltip">Tooltip A</span> <span class="ds-tooltip">Tooltip B</span> <span class="ds-tooltip">Tooltip C</span>
+*/
+/* ===== Section / heading helpers ===== */
+    .h1 { font-family: var(--heading-2xl-font-family); font-size: var(--heading-2xl-font-size); line-height: var(--heading-2xl-line-height); font-weight: var(--heading-2xl-font-weight); color: var(--text-default); }
+    .h2 { font-family: var(--heading-md-font-family); font-size: var(--heading-md-font-size); line-height: var(--heading-md-line-height); font-weight: var(--heading-md-font-weight); color: var(--text-default); }
+    .h3 { font-family: var(--heading-sm-font-family); font-size: var(--heading-sm-font-size); line-height: var(--heading-sm-line-height); font-weight: var(--heading-sm-font-weight); color: var(--text-default); }
+    .eyebrow { font-size: var(--body-xs-font-size); line-height: var(--body-xs-line-height); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; }
+    .text-secondary { color: var(--text-secondary); }
+    .text-tertiary { color: var(--text-tertiary); }
+
+    /* ===== Hero / brand title ===== */
+    .ds-hero-title {
+      font-family: var(--heading-3xl-font-family);
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 1.04;
+      font-weight: var(--heading-3xl-font-weight, 600);
+      letter-spacing: -0.03em;
+      color: var(--text-default);
+    }
+    .ds-hero-title .brand1 { color: var(--bg-brand); }
+    .ds-hero-title .brand2 { color: var(--text-default); }
+    .ds-hero-title .brand3 { color: var(--bg-brand); }
+    .ds-hero-title .brand4 { color: var(--text-default); }
+    .ds-hero-title__sub {
+      display: block;
+      margin-top: var(--spacer-12);
+      font-size: clamp(28px, 4vw, 56px);
+      color: var(--text-secondary);
+      letter-spacing: -0.02em;
+    }
+
+    /* ===== Section title with mono index ===== */
+    .ds-section-title__index {
+      display: block;
+      font-family: var(--code-editor-font-family, 'JetBrains Mono', ui-monospace, monospace);
+      font-size: var(--body-sm-font-size, 14px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      color: var(--bg-brand);
+      margin-bottom: var(--spacer-16);
+    }
+    .ds-section-title {
+      font-family: var(--heading-xl-font-family, var(--heading-3xl-font-family));
+      font-size: clamp(24px, 2.4vw, 32px);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: var(--text-default);
+      font-weight: var(--font-weight-strong, 600);
+      margin: 0;
+    }
+
+    /* ===== Layout helpers ===== */
+    .ds-row { display: flex; gap: var(--spacer-12); flex-wrap: wrap; align-items: center; }
+    .ds-col { display: flex; flex-direction: column; gap: var(--spacer-12); }
+    .ds-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacer-16); }
+    .ds-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacer-16); }
+    .ds-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacer-16); }
+    .ds-stack-8 { display: flex; flex-direction: column; gap: var(--spacer-8); }
+    .ds-stack-12 { display: flex; flex-direction: column; gap: var(--spacer-12); }
+    .ds-stack-16 { display: flex; flex-direction: column; gap: var(--spacer-16); }
+    .ds-stack-24 { display: flex; flex-direction: column; gap: var(--spacer-24); }
+    .ds-stack-40 { display: flex; flex-direction: column; gap: var(--spacer-40); }
+    /* legacy aliases kept for preview/component-*.html markup */
+    .row { display: flex; gap: var(--spacer-12); flex-wrap: wrap; align-items: center; }
+    .col { display: flex; flex-direction: column; gap: var(--spacer-12); }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacer-16); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacer-16); }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacer-16); }
+    .stack-8 { display: flex; flex-direction: column; gap: var(--spacer-8); }
+    .stack-12 { display: flex; flex-direction: column; gap: var(--spacer-12); }
+    .stack-16 { display: flex; flex-direction: column; gap: var(--spacer-16); }
+    .stack-24 { display: flex; flex-direction: column; gap: var(--spacer-24); }
+    .stack-40 { display: flex; flex-direction: column; gap: var(--spacer-40); }
+
+    /* ===== Tooltip / Popover ===== */
+    .ds-tooltip {
+      display: inline-flex; align-items: center; gap: var(--spacer-6);
+      padding: var(--spacer-4) var(--spacer-8);
+      background: var(--bg-tooltip);
+      color: var(--text-default);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      font-size: var(--body-xs-font-size); line-height: var(--body-xs-line-height);
+      box-shadow: 0 8px 24px rgba(0,0,0,.36);
+    }
+    .ds-popover {
+      background: var(--bg-overlay-l1);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      padding: var(--spacer-12);
+      box-shadow: 0 12px 32px rgba(0,0,0,.36);
+    }
+
+    /* ===== Empty state ===== */
+    .ds-empty {
+      display: flex; flex-direction: column; align-items: center;
+      padding: var(--spacer-40) var(--spacer-24);
+      color: var(--text-tertiary); text-align: center;
+      border: 1px dashed var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+    }
+    .ds-empty__icon {
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border-neutral-l1); margin-bottom: var(--spacer-12);
+      color: var(--icon-secondary);
+    }
+    .ds-empty__title { color: var(--text-default); font-size: var(--body-base-font-size); font-weight: var(--font-weight-medium, 500); margin-bottom: var(--spacer-4); }
+    .ds-empty__desc { font-size: var(--body-sm-font-size); }
+
+    /* ===== Code block ===== */
+    .ds-code {
+      background: var(--bg-overlay-l1);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      padding: var(--spacer-12) var(--spacer-16);
+      color: var(--text-default);
+      font-family: var(--code-editor-font-family);
+      font-size: var(--code-editor-font-size);
+      line-height: var(--code-editor-line-height);
+      white-space: pre;
+      overflow: auto;
+    }
+
+    /* ===== Mono / Numeric utilities =====
+     * Anything code-like or numeric (counts, currencies, percentages, IDs,
+     * tabular cells, kbd, code) MUST use the mono token + tabular figures. */
+    .mono,
+    .num,
+    code, samp, pre {
+      font-family: var(--code-editor-font-family);
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1, "lnum" 1;
+    }
+
+/* ── Menu ──────────────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Menu</h1> <p>Context menus and sidebar menus. Background <code>--bg-menu</code>, item radius <code>--radius-4</code>, hover <code>--bg-overlay-l2</code>. Destructive items use <code>--status-error-default</code>.</p> </div>
+*/
+/* ===== Menu ===== */
+    .ds-menu {
+      background: var(--bg-menu);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-4);
+      padding: var(--spacer-4);
+      min-width: 180px;
+    }
+    .ds-menu__item {
+      display: flex; align-items: center; gap: var(--spacer-8);
+      padding: var(--spacer-6) var(--spacer-8);
+      border-radius: var(--radius-2);
+      color: var(--text-default);
+      font-size: var(--body-sm-font-size);
+      cursor: pointer;
+    }
+    .ds-menu__item .icon { color: var(--icon-secondary); }
+    .ds-menu__item:hover { background: var(--bg-overlay-l2); }
+    .ds-menu__item--danger { color: var(--status-error-default); }
+    .ds-menu__item--danger .icon { color: var(--status-error-default); }
+    .ds-menu__divider { height: 1px; background: var(--border-neutral-l1); margin: var(--spacer-4) 0; }
+    .ds-menu__shortcut { margin-left: auto; color: var(--text-tertiary); font-size: var(--body-xs-font-size); font-family: var(--code-editor-font-family); }
+
+/* ── Nav List ──────────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Nav list</h1> <p>侧栏导航菜单：分组标题 + 菜单项（图标 + 文字 + 选中态）。</p> </div>
+*/
+/* ===== Nav list ===== */
+    .ds-navlist {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacer-16);
+      width: 240px;
+      padding: var(--spacer-12);
+      background: var(--bg-menu);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-10);
+    }
+    .ds-navlist__group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .ds-navlist__group-title {
+      padding: var(--spacer-6) var(--spacer-8);
+      font-size: var(--body-xs-font-size);
+      line-height: var(--body-xs-line-height);
+      font-weight: var(--font-weight-medium);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+    }
+    .ds-navlist__item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-8);
+      padding: var(--spacer-8);
+      border-radius: var(--radius-6);
+      font-size: var(--body-sm-font-size);
+      line-height: var(--body-sm-line-height);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-secondary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .ds-navlist__item:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default);
+    }
+    .ds-navlist__item.is-active {
+      background: var(--bg-brand);
+      color: var(--text-onbrand);
+    }
+    .ds-navlist__label { flex: 1; min-width: 0; }
+    .ds-navlist__badge {
+      font-size: var(--body-xs-font-size);
+      font-variant-numeric: tabular-nums;
+      color: var(--text-tertiary);
+    }
+    .ds-navlist__item.is-active .ds-navlist__badge { color: var(--text-onbrand); }
+
+/* ── Page Header ───────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Page header</h1> <p>页头：左侧标题 + 副标题，右侧操作按钮区。</p> </div>
+*/
+/* ===== Page header ===== */
+    .ds-pagehead {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--spacer-24);
+      padding: var(--spacer-24) 0;
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .ds-pagehead__main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacer-6);
+    }
+    .ds-pagehead__title {
+      font-size: var(--heading-lg-font-size);
+      line-height: var(--heading-lg-line-height);
+      font-weight: var(--font-weight-strong);
+      color: var(--text-default);
+    }
+    .ds-pagehead__subtitle {
+      font-size: var(--body-sm-font-size);
+      line-height: var(--body-sm-line-height);
+      color: var(--text-tertiary);
+    }
+    .ds-pagehead__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-8);
+      flex-shrink: 0;
+    }
+    .ds-pagehead__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacer-6);
+      height: 32px;
+      padding: 0 var(--spacer-12);
+      font-size: var(--body-sm-font-size);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-default);
+      background: var(--bg-overlay-l2);
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-6);
+      cursor: pointer;
+    }
+    .ds-pagehead__btn.is-primary {
+      color: var(--text-onbrand);
+      background: var(--bg-brand);
+      border-color: var(--border-brand);
+    }
+
+/* ── Pagination ────────────────────────────────────────────── */
+/* @anatomy
+   <div class="ds-pagination"> <button class="ds-pagination__item" aria-label="Previous"><img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="12" height="12" alt="chevron-right" class="icon" style="transform: rotate(180deg);"></button> <button class="ds-pagination__item is-active num">1</button> <button class="ds-pagination__item num">2</button> <button class="ds-pagination__item num">3</button> <b...
+*/
+/* ===== Pagination ===== */
+    .ds-pagination { display: inline-flex; gap: var(--spacer-4); }
+    .ds-pagination__item {
+      min-width: 24px; height: 24px; padding: 0 var(--spacer-6);
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-2);
+      font: inherit; font-size: var(--body-xs-font-size);
+      cursor: pointer;
+    }
+    .ds-pagination__item:hover { background: var(--bg-overlay-l2); color: var(--text-default); }
+    .ds-pagination__item.is-active { background: var(--bg-overlay-l3); color: var(--text-default); border-color: var(--border-neutral-l2); }
+    .ds-pagination__item[disabled] { opacity: .4; cursor: not-allowed; }
+
+/* ── Setting Row ───────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Setting row</h1> <p>配置行：左侧标题 + 描述，右侧控件。三个 control 变体：select / button / select-with-icon。多行堆叠到 .ds-settingrow__panel 中；多个 panel 用 .ds-settingrow__group 分组。</p> </div>
+*/
+/* ===== Setting row ===== */
+    .ds-settingrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacer-24);
+      padding: var(--spacer-16) var(--spacer-24);
+    }
+    .ds-settingrow__main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacer-4);
+      min-width: 0;
+    }
+    .ds-settingrow__title {
+      font-size: var(--body-md-font-size);
+      line-height: var(--body-md-line-height);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-default);
+    }
+    .ds-settingrow__desc {
+      font-size: var(--body-sm-font-size);
+      line-height: var(--body-sm-line-height);
+      color: var(--text-tertiary);
+    }
+    .ds-settingrow__control {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacer-8);
+      flex-shrink: 0;
+    }
+
+    /* === Variant A: select === */
+    .ds-settingrow__select {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacer-12);
+      min-width: 200px;
+      height: 36px;
+      padding: 0 var(--spacer-12);
+      font-size: var(--body-sm-font-size);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-default);
+      background: var(--bg-overlay-l2);
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-6);
+      cursor: pointer;
+    }
+    .ds-settingrow__select:hover { background: var(--bg-overlay-l3); }
+    .ds-settingrow__select .icon { color: var(--icon-tertiary); flex-shrink: 0; }
+
+    /* === Variant B: button === */
+    .ds-settingrow__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacer-6);
+      height: 36px;
+      padding: 0 var(--spacer-16);
+      font-size: var(--body-sm-font-size);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-default);
+      background: var(--bg-overlay-l2);
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-6);
+      cursor: pointer;
+    }
+    .ds-settingrow__btn:hover { background: var(--bg-overlay-l3); }
+    .ds-settingrow__btn .icon { color: var(--icon-tertiary); }
+
+    /* danger text button (e.g. 清除 / Clear) */
+    .ds-settingrow__btn--danger {
+      color: var(--status-error-default);
+    }
+    .ds-settingrow__btn--danger:hover {
+      background: var(--status-error-surface-l1);
+      border-color: var(--status-error-surface-l2);
+    }
+
+    /* === Variant C: select-with-icon (select + trailing icon button) === */
+    .ds-settingrow__iconbtn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      color: var(--icon-secondary);
+      background: transparent;
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-6);
+      cursor: pointer;
+    }
+    .ds-settingrow__iconbtn:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--icon-default);
+    }
+
+    /* === Panel container === */
+    .ds-settingrow__panel {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-10);
+      overflow: hidden;
+    }
+    .ds-settingrow__panel > .ds-settingrow + .ds-settingrow {
+      border-top: 1px solid var(--border-neutral-l1);
+    }
+
+    /* === Section group label (e.g. 基础设置 / 偏好设置 / 数据管理) === */
+    .ds-settingrow__group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacer-12);
+    }
+    .ds-settingrow__group + .ds-settingrow__group {
+      margin-top: var(--spacer-24);
+    }
+    .ds-settingrow__grouplabel {
+      font-size: var(--body-sm-font-size);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-secondary);
+      padding-left: var(--spacer-4);
+    }
+
+/* ── Stat Card ─────────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Stat card</h1> <p>KPI 指标卡：大写小标签 + 等宽大数字 + 涨跌 delta。</p> </div>
+*/
+/* ===== Stat card ===== */
+    .ds-statcard {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacer-8);
+      padding: var(--spacer-16);
+      background: var(--bg-base-secondary);
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-10);
+      min-width: 200px;
+    }
+    .ds-statcard__label {
+      font-size: var(--body-xs-font-size);
+      line-height: var(--body-xs-line-height);
+      font-weight: var(--font-weight-medium);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+    }
+    .ds-statcard__value {
+      font-family: var(--code-editor-font-family);
+      font-variant-numeric: tabular-nums;
+      font-size: var(--heading-lg-font-size);
+      line-height: var(--heading-lg-line-height);
+      font-weight: var(--font-weight-strong);
+      color: var(--text-default);
+    }
+    .ds-statcard__delta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacer-4);
+      font-size: var(--body-sm-font-size);
+      line-height: var(--body-sm-line-height);
+      font-weight: var(--font-weight-medium);
+      font-variant-numeric: tabular-nums;
+    }
+    .ds-statcard__delta.is-up { color: var(--status-success-default); }
+    .ds-statcard__delta.is-down { color: var(--status-error-default); }
+    .ds-statcard__delta .ds-statcard__caption {
+      color: var(--text-tertiary);
+      font-weight: var(--font-weight-default);
+    }
+    .ds-statcard__grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacer-16);
+    }
+
+/* ── Status Bar ────────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Status Bar</h1> <p>底部状态栏：左右两组 status-item（图标+文字），含彩色 dot（--status-success/warning/error-default）。背景 --bg-base-secondary。</p> </div>
+*/
+/* ===== Status Bar ===== */
+    .ds-statusbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 24px;
+      padding: 0 var(--spacer-8);
+      background: var(--bg-base-secondary);
+      border-top: 1px solid var(--border-neutral-l1);
+      font-size: var(--body-xs-font-size);
+      color: var(--text-secondary);
+    }
+    .ds-statusbar__group {
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-4);
+    }
+    .ds-statusbar__item {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacer-6);
+      height: 20px;
+      padding: 0 var(--spacer-6);
+      border-radius: var(--radius-4);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .ds-statusbar__item:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default);
+    }
+    .ds-statusbar__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+    }
+    .ds-statusbar__dot--success { background: var(--status-success-default); }
+    .ds-statusbar__dot--warning { background: var(--status-warning-default); }
+    .ds-statusbar__dot--error { background: var(--status-error-default); }
+
+/* ── Table Panel ───────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Table Panel</h1> <p>Dashboard table container with rounded foot only. Pair it with an external header/toolbar (with its own top-rounded corners) above. Use this when the surrounding card already owns the title; for self-contained tables use <code>.ds-table-wrap</code>.</p> </div>
+*/
+/* ===== Table Panel ===== */
+    .ds-tablepanel {
+      background: var(--bg-layout-1);
+      border: 1px solid var(--border-1);
+      border-radius: 0 0 var(--radius-4) var(--radius-4);
+      border-top: none;
+      overflow: hidden;
+    }
+    .ds-tablepanel table { width: 100%; border-collapse: collapse; }
+    .ds-tablepanel th, .ds-tablepanel td {
+      padding: var(--spacer-12) var(--spacer-16);
+      border-bottom: 1px solid var(--border-1);
+      font-size: var(--body-sm-font-size);
+      text-align: left;
+    }
+    .ds-tablepanel th {
+      color: var(--text-tertiary);
+      font-weight: var(--font-weight-default);
+      font-size: var(--body-xs-font-size);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: var(--bg-overlay-l1);
+    }
+    .ds-tablepanel td { color: var(--text-default); }
+    .ds-tablepanel tr:last-child td { border-bottom: none; }
+    .ds-tablepanel td.num, .ds-tablepanel th.num {
+      text-align: right;
+      font-family: var(--code-editor-font-family);
+      font-variant-numeric: tabular-nums;
+    }
+    .ds-tablepanel__foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacer-8) var(--spacer-16);
+      border-top: 1px solid var(--border-1);
+      color: var(--text-tertiary);
+      font-size: var(--body-xs-font-size);
+      gap: var(--spacer-12);
+    }
+
+    /* Local-only header bar to demonstrate the "external header above the panel" usage pattern */
+    .pv-tp-header {
+      background: var(--bg-layout-1);
+      border: 1px solid var(--border-1);
+      border-bottom: none;
+      border-radius: var(--radius-4) var(--radius-4) 0 0;
+      padding: var(--spacer-12) var(--spacer-16);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--spacer-12);
+    }
+    .pv-tp-header h3 { margin: 0; font-size: var(--body-md-font-size, 14px); color: var(--text-default); }
+    .pv-tp-header .meta { color: var(--text-tertiary); font-size: var(--body-xs-font-size); }
+
+/* ── Table ─────────────────────────────────────────────────── */
+/* @anatomy
+   <span class="ds-avatar ds-avatar--sm">A</span> <div> <div>Avery Chen
+*/
+/* ===== Table ===== */
+    .ds-table { width: 100%; border-collapse: collapse; }
+    .ds-table th, .ds-table td { text-align: left; padding: var(--spacer-12) var(--spacer-8); border-bottom: 1px solid var(--border-neutral-l1); font-size: var(--body-sm-font-size); }
+    .ds-table th { color: var(--text-tertiary); font-weight: var(--font-weight-default, 400); font-size: var(--body-xs-font-size); text-transform: uppercase; letter-spacing: 0.04em; }
+    .ds-table td { color: var(--text-default); }
+    .ds-table tr:last-child td { border-bottom: none; }
+    /* Numeric cells in tables default to mono for column alignment */
+    .ds-table td.num,
+    .ds-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    /* Table wrapper: rounded, bordered container */
+    .ds-table-wrap {
+      border: 1px solid var(--border-neutral-l1);
+      border-radius: var(--radius-8);
+      overflow: hidden;
+      background: var(--bg-base-secondary);
+    }
+    /* Toolbar: search on the left, actions on the right */
+    .ds-table__toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--spacer-12);
+      padding: var(--spacer-12);
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .ds-table__toolbar-actions { display: flex; align-items: center; gap: var(--spacer-8); }
+    /* Footer: row count on the left, pagination on the right */
+    .ds-table__footer {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--spacer-12);
+      padding: var(--spacer-12);
+      border-top: 1px solid var(--border-neutral-l1);
+      font-size: var(--body-xs-font-size); color: var(--text-tertiary);
+    }
+    .ds-table__pagination { display: flex; align-items: center; gap: var(--spacer-8); }
+
+/* ── Tabs ──────────────────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Tabs</h1> <p>Underline tabs only. Inactive uses <code>--text-tertiary</code>; active uses <code>--text-default</code> with a 2px neutral underline (never brand fill).</p> </div>
+*/
+/* ===== Tabs ===== */
+    .ds-tabs { display: flex; gap: var(--spacer-24); border-bottom: 1px solid var(--border-neutral-l1); }
+    .ds-tab {
+      padding: var(--spacer-12) 0;
+      background: transparent; border: none;
+      color: var(--text-tertiary); cursor: pointer;
+      font: inherit; font-size: var(--body-sm-font-size);
+      position: relative;
+    }
+    .ds-tab:hover { color: var(--text-default); }
+    .ds-tab.is-active { color: var(--text-default); }
+    .ds-tab.is-active::after {
+      content: ''; position: absolute;
+      left: 0; right: 0; bottom: -1px; height: 2px;
+      background: var(--icon-default);
+    }
+
+    /* Filled tabs: selected item gets a filled background + radius, no underline */
+    .ds-tabs--filled { border-bottom: none; gap: var(--spacer-4); }
+    .ds-tabs--filled .ds-tab {
+      padding: var(--spacer-6) var(--spacer-12);
+      border-radius: var(--radius-4);
+    }
+    .ds-tabs--filled .ds-tab.is-active::after { display: none; }
+    .ds-tabs--filled .ds-tab.is-active {
+      background: var(--bg-overlay-l3);
+      color: var(--text-default);
+    }
+
+    /* Closable tabs: each tab carries an inline close button on the right */
+    .ds-tabs--closable .ds-tab {
+      display: inline-flex; align-items: center; gap: var(--spacer-8);
+    }
+    .ds-tab__close {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px;
+      border-radius: var(--radius-2);
+      color: var(--icon-secondary);
+    }
+    .ds-tab__close:hover { background: var(--bg-overlay-l3); color: var(--icon-default); }
+
+/* ── Tag ───────────────────────────────────────────────────── */
+/* @anatomy
+   <span class="ds-tag">Default</span> <span class="ds-tag ds-tag--success">Active</span> <span class="ds-tag ds-tag--warning">Pending</span> <span class="ds-tag ds-tag--danger">Failed</span> <span class="ds-tag ds-tag--brand"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;margin-right:6px;"></span>Live</span>
+*/
+/* ===== Tag / Badge ===== */
+    .ds-tag {
+      display: inline-flex; align-items: center;
+      padding: 0 var(--spacer-6); height: 18px;
+      border-radius: var(--radius-2);
+      font-size: var(--body-xs-font-size); line-height: 1;
+      background: var(--bg-overlay-l2); color: var(--text-secondary);
+      border: 1px solid var(--border-neutral-l1);
+    }
+    .ds-tag--brand { background: var(--bg-brand-popup); color: var(--text-brand); }
+    .ds-tag--success { background: var(--status-success-surface-l1); color: var(--status-success-default); }
+    .ds-tag--warning { background: var(--status-warning-surface-l1); color: var(--status-warning-default); }
+    .ds-tag--danger  { background: var(--status-error-surface-l1); color: var(--status-error-default); }
+    /* Count badge: numeric pill for list counts */
+    .ds-tag--count {
+      justify-content: center;
+      min-width: 18px; padding: 0 var(--spacer-6);
+      border-radius: var(--radius-full);
+      background: var(--bg-overlay-l3); color: var(--text-secondary);
+      border: none;
+      font-variant-numeric: tabular-nums;
+    }
+    /* Neutral strong: plan-style emphasis badge */
+    .ds-tag--neutral-strong {
+      background: var(--bg-overlay-l4); color: var(--text-default);
+      border: none; font-weight: var(--font-weight-medium);
+    }
+
+/* ── Workbench Titlebar ────────────────────────────────────── */
+/* @anatomy
+   <div class="pv-header"> <h1>Workbench Titlebar</h1> <p>IDE/Agent 工作台顶栏：左侧窗口控制点 + 产品模式胶囊 + 项目选择器，右侧图标按钮组。背景用 --bg-base-secondary，分隔用 --border-neutral-l1。</p> </div>
+*/
+/* ===== Workbench Titlebar ===== */
+    .ds-wbtitlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacer-12);
+      height: 40px;
+      padding: 0 var(--spacer-12);
+      background: var(--bg-base-secondary);
+      border-bottom: 1px solid var(--border-neutral-l1);
+    }
+    .ds-wbtitlebar__left,
+    .ds-wbtitlebar__right {
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-8);
+    }
+    .ds-wbtitlebar__lights {
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-8);
+      margin-right: var(--spacer-8);
+    }
+    .ds-wbtitlebar__light {
+      width: 12px;
+      height: 12px;
+      border-radius: var(--radius-full);
+    }
+    .ds-wbtitlebar__light--close { background: var(--status-error-default); }
+    .ds-wbtitlebar__light--min { background: var(--status-alert-default); }
+    .ds-wbtitlebar__light--max { background: var(--status-success-default); }
+    .ds-wbtitlebar__mode-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacer-6);
+      height: 24px;
+      padding: 0 var(--spacer-8);
+      background: var(--bg-brand);
+      color: var(--text-onbrand);
+      border-radius: var(--radius-full);
+      font-size: var(--body-xs-font-size);
+      font-weight: var(--font-weight-medium);
+    }
+    .ds-wbtitlebar__project-selector {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacer-6);
+      height: 24px;
+      padding: 0 var(--spacer-8);
+      background: var(--bg-overlay-l1);
+      color: var(--text-default);
+      border: 1px solid var(--border-neutral-l2);
+      border-radius: var(--radius-6);
+      font-size: var(--body-sm-font-size);
+      cursor: pointer;
+    }
+    .ds-wbtitlebar__project-selector:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default-hover);
+    }
+    .ds-wbtitlebar__iconbtn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-6);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .ds-wbtitlebar__iconbtn:hover { background: var(--bg-overlay-l2); }
+    .ds-wbtitlebar .icon { display: block; }
+    </style>
+
+    <!-- ===== Page-specific styles (cocreate prototype only) ===== -->
+    <style id="cocreate-page">
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0; padding: 0;
+        height: 100%;
+        background: var(--bg-base-default);
+        color: var(--text-default);
+        font-family: var(--body-base-font-family);
+        font-size: var(--body-base-font-size);
+        line-height: var(--body-base-line-height);
+        overflow: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ===== Title bar (40px) ===== */
+      .titlebar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacer-12);
+        height: 40px;
+        padding: 0 var(--spacer-12);
+        background: var(--bg-base-secondary);
+        border-bottom: 1px solid var(--border-neutral-l1);
+        flex-shrink: 0;
+      }
+      .titlebar__left, .titlebar__right {
+        display: flex; align-items: center; gap: var(--spacer-8);
+      }
+      .titlebar__back {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 28px; height: 28px;
+        border-radius: var(--radius-6);
+        background: transparent; border: none; cursor: pointer;
+        color: var(--icon-secondary);
+      }
+      .titlebar__back:hover { background: var(--bg-overlay-l2); color: var(--icon-default); }
+      .titlebar__title {
+        font-size: var(--body-sm-font-size);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-default);
+      }
+      .titlebar__title .sep { color: var(--text-tertiary); margin: 0 var(--spacer-6); }
+      .titlebar__title .topic { color: var(--text-secondary); }
+      .titlebar__lock-btn {
+        display: inline-flex; align-items: center; gap: var(--spacer-6);
+        height: 28px; padding: 0 var(--spacer-12);
+        border-radius: var(--radius-4);
+        background: var(--bg-overlay-l2);
+        border: 1px solid var(--border-neutral-l2);
+        color: var(--text-default);
+        font-size: var(--body-sm-font-size);
+        font-weight: var(--font-weight-medium);
+        cursor: pointer;
+        position: relative;
+        transition: background .15s ease, border-color .15s ease, opacity .15s ease;
+      }
+      .titlebar__lock-btn:hover { background: var(--bg-overlay-l3); }
+      .titlebar__lock-btn.is-disabled { opacity: .5; cursor: not-allowed; }
+      .titlebar__lock-btn .lock-icon { color: var(--icon-secondary); display: inline-flex; }
+      .titlebar__lock-btn:hover .lock-icon { color: var(--icon-default); }
+      .titlebar__lock-btn[data-state="locked"] { color: var(--text-default); }
+      .titlebar__lock-btn .tt {
+        position: absolute; bottom: -30px; right: 0;
+        white-space: nowrap;
+        padding: var(--spacer-4) var(--spacer-8);
+        background: var(--bg-tooltip);
+        border: 1px solid var(--border-neutral-l1);
+        border-radius: var(--radius-4);
+        color: var(--text-default);
+        font-size: var(--body-xs-font-size);
+        opacity: 0; pointer-events: none;
+        transition: opacity .12s ease;
+        z-index: 50;
+      }
+      .titlebar__lock-btn.is-disabled:hover .tt { opacity: 1; }
+
+      /* ===== Main two-column split ===== */
+      .main {
+        display: flex;
+        height: calc(100vh - 40px);
+        overflow: hidden;
+      }
+
+      /* ----- Left panel: chat (420px) ----- */
+      .chat-panel {
+        width: 420px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-base-secondary);
+        border-right: 1px solid var(--border-neutral-l1);
+        overflow: hidden;
+      }
+      .chat-panel__head {
+        display: flex; align-items: center; gap: var(--spacer-8);
+        padding: var(--spacer-12) var(--spacer-16);
+        border-bottom: 1px solid var(--border-neutral-l1);
+        flex-shrink: 0;
+      }
+      .chat-panel__head .ic { color: var(--bg-brand); display: inline-flex; }
+      .chat-panel__head-title {
+        font-size: var(--heading-xs-font-size);
+        font-weight: var(--heading-xs-font-weight);
+        color: var(--text-default);
+      }
+      .chat-panel__head-sub {
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+      }
+      .chat-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--spacer-16);
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacer-16);
+      }
+      .chat-scroll::-webkit-scrollbar { width: 8px; }
+      .chat-scroll::-webkit-scrollbar-track { background: transparent; }
+      .chat-scroll::-webkit-scrollbar-thumb { background: var(--bg-overlay-l2); border-radius: 4px; }
+
+      /* message rows */
+      .msg { display: flex; gap: var(--spacer-8); max-width: 100%; }
+      .msg--user { flex-direction: row-reverse; }
+      .msg__avatar {
+        width: 28px; height: 28px; border-radius: 50%;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: var(--body-xs-font-size); font-weight: var(--font-weight-strong);
+        flex-shrink: 0;
+      }
+      .msg--ai .msg__avatar { background: var(--bg-brand); color: var(--text-onbrand); }
+      .msg--user .msg__avatar { background: var(--bg-overlay-l3); color: var(--text-default); }
+      .msg__body {
+        display: flex; flex-direction: column; gap: var(--spacer-4);
+        min-width: 0;
+      }
+      .msg--user .msg__body { align-items: flex-end; }
+      .msg__bubble {
+        padding: var(--spacer-12);
+        border-radius: var(--radius-10);
+        font-size: var(--body-sm-font-size);
+        line-height: 1.55;
+        color: var(--text-default);
+        word-break: break-word;
+      }
+      .msg--ai .msg__bubble {
+        background: var(--bg-base-secondary);
+        border: 1px solid var(--border-neutral-l1);
+        border-left: 2px solid var(--bg-brand);
+        border-top-left-radius: var(--radius-4);
+        border-bottom-left-radius: var(--radius-4);
+      }
+      .msg--user .msg__bubble {
+        background: var(--bg-overlay-l3);
+        border-top-right-radius: var(--radius-4);
+        border-bottom-right-radius: var(--radius-4);
+      }
+      .msg__meta {
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+      }
+      .msg__bubble .em { color: var(--text-brand); font-weight: var(--font-weight-medium); }
+      .msg__bubble strong { color: var(--text-default); font-weight: var(--font-weight-medium); }
+      .msg__bubble ol, .msg__bubble ul { margin: var(--spacer-6) 0 0; padding-left: var(--spacer-16); }
+      .msg__bubble ol li, .msg__bubble ul li { margin-bottom: var(--spacer-4); }
+      .msg__bubble .mini-card {
+        margin-top: var(--spacer-8);
+        padding: var(--spacer-8) var(--spacer-12);
+        background: var(--bg-overlay-l1);
+        border: 1px solid var(--border-neutral-l1);
+        border-radius: var(--radius-6);
+        font-size: var(--body-xs-font-size);
+        color: var(--text-secondary);
+      }
+      .msg__bubble .mini-card .lvl-row {
+        display: flex; align-items: center; gap: var(--spacer-6);
+        padding: var(--spacer-4) 0;
+      }
+      .msg__bubble .mini-card .lvl-row + .lvl-row { border-top: 1px solid var(--border-neutral-l1); }
+      .msg__bubble .mini-card .lvl-num {
+        font-family: var(--code-editor-font-family);
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+        min-width: 40px;
+      }
+      .msg__bubble .mini-card .lvl-row.is-current .lvl-num { color: var(--text-brand); }
+      .msg__bubble .mini-card .lvl-row.is-current .lvl-name { color: var(--text-default); }
+      .msg__bubble .mini-card .lvl-here {
+        font-size: var(--body-xs-font-size);
+        color: var(--text-brand);
+        margin-left: auto;
+      }
+
+      /* typing indicator */
+      .typing { display: inline-flex; gap: 4px; padding: var(--spacer-12); }
+      .typing span {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--icon-secondary);
+        animation: blink 1.4s infinite both;
+      }
+      .typing span:nth-child(2) { animation-delay: .2s; }
+      .typing span:nth-child(3) { animation-delay: .4s; }
+      @keyframes blink { 0%,80%,100%{ opacity:.25 } 40%{ opacity:1 } }
+
+      /* quick-start chips */
+      .chips { display: flex; flex-direction: column; gap: var(--spacer-8); margin-top: var(--spacer-12); }
+      .chip {
+        display: inline-flex; align-items: center; gap: var(--spacer-8);
+        padding: var(--spacer-8) var(--spacer-12);
+        background: var(--bg-base-default);
+        border: 1px solid var(--border-neutral-l2);
+        border-radius: var(--radius-8);
+        color: var(--text-default);
+        font-size: var(--body-sm-font-size);
+        cursor: pointer;
+        transition: border-color .15s ease, background .15s ease;
+        text-align: left;
+      }
+      .chip:hover { border-color: var(--border-brand); background: var(--bg-overlay-l1); }
+      .chip .ic { color: var(--bg-brand); display: inline-flex; flex-shrink: 0; }
+      .chip .arrow { margin-left: auto; color: var(--text-tertiary); }
+
+      /* composer area */
+      .composer-wrap {
+        padding: var(--spacer-12) var(--spacer-16);
+        border-top: 1px solid var(--border-neutral-l1);
+        flex-shrink: 0;
+        background: var(--bg-base-secondary);
+      }
+      .composer-wrap .ds-composer { max-width: none; border-radius: var(--radius-8); }
+      .composer-wrap .ds-composer__input { min-height: 40px; max-height: 120px; }
+      .composer-wrap .ds-composer__send { width: 32px; height: 32px; border-radius: var(--radius-6); }
+      .composer-wrap .ds-composer__send img { color: var(--text-onbrand); }
+      .composer-locked {
+        display: flex; align-items: center; gap: var(--spacer-8);
+        padding: var(--spacer-12) var(--spacer-16);
+        color: var(--text-tertiary);
+        font-size: var(--body-sm-font-size);
+        border-top: 1px solid var(--border-neutral-l1);
+      }
+      .composer-locked .ic { color: var(--icon-tertiary); display: inline-flex; }
+      .composer-locked .unlock-link {
+        margin-left: auto;
+        color: var(--text-brand);
+        cursor: pointer;
+        font-size: var(--body-xs-font-size);
+      }
+      .composer-locked .unlock-link:hover { text-decoration: underline; }
+
+      /* ----- Right panel: live document (flex-1) ----- */
+      .doc-panel {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-base-default);
+        overflow: hidden;
+      }
+      .doc-head {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: var(--spacer-12);
+        padding: var(--spacer-12) var(--spacer-24);
+        border-bottom: 1px solid var(--border-neutral-l1);
+        flex-shrink: 0;
+      }
+      .doc-head__title {
+        display: flex; align-items: center; gap: var(--spacer-8);
+        font-size: var(--heading-xs-font-size);
+        font-weight: var(--heading-xs-font-weight);
+        color: var(--text-default);
+      }
+      .doc-head__title .ic { color: var(--icon-secondary); display: inline-flex; }
+      .doc-head__title .badge-locked {
+        display: inline-flex; align-items: center; gap: var(--spacer-4);
+        height: 20px; padding: 0 var(--spacer-8);
+        border-radius: var(--radius-full);
+        background: var(--status-success-surface-l1);
+        color: var(--status-success-default);
+        font-size: var(--body-xs-font-size);
+        font-weight: var(--font-weight-medium);
+        margin-left: var(--spacer-8);
+      }
+      .doc-head__title .badge-locked .ic { color: var(--status-success-default); }
+      .doc-head__hint {
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+      }
+      .doc-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--spacer-24) var(--spacer-32) var(--spacer-40);
+      }
+      .doc-scroll::-webkit-scrollbar { width: 10px; }
+      .doc-scroll::-webkit-scrollbar-track { background: transparent; }
+      .doc-scroll::-webkit-scrollbar-thumb { background: var(--bg-overlay-l2); border-radius: 5px; }
+      .doc-inner {
+        max-width: 880px;
+        margin: 0 auto;
+        display: flex; flex-direction: column;
+        gap: var(--spacer-32);
+        transition: filter .3s ease;
+      }
+      .doc-panel.is-locked .doc-inner {
+        position: relative;
+      }
+      .doc-panel.is-locked .doc-inner::before {
+        content: ""; position: absolute; left: -16px; top: 0; bottom: 0;
+        width: 3px; border-radius: 2px;
+        background: var(--status-success-default);
+        opacity: .5;
+      }
+
+      /* doc flash on update */
+      .doc-inner.is-flash { animation: docFlash .9s ease; }
+      @keyframes docFlash {
+        0% { box-shadow: 0 0 0 0 rgba(50,240,140,0); }
+        20% { box-shadow: 0 0 0 2px rgba(50,240,140,.35); }
+        100% { box-shadow: 0 0 0 0 rgba(50,240,140,0); }
+      }
+
+      /* session card click flash */
+      .session-card.is-flash { animation: sessionFlash .9s ease; }
+      @keyframes sessionFlash {
+        0% { border-color: var(--border-neutral-l2); box-shadow: 0 0 0 0 rgba(50,240,140,0); }
+        20% { border-color: var(--border-brand); box-shadow: 0 0 0 2px rgba(50,240,140,.30); }
+        100% { border-color: var(--border-neutral-l2); box-shadow: 0 0 0 0 rgba(50,240,140,0); }
+      }
+
+      /* doc foot */
+      .doc-foot {
+        display: flex; align-items: center; gap: var(--spacer-6);
+        margin-top: var(--spacer-16);
+        padding-top: var(--spacer-12);
+        border-top: 1px solid var(--border-neutral-l1);
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+      }
+      .doc-foot .ic { color: var(--icon-tertiary); }
+
+      /* section header */
+      .doc-section { display: flex; flex-direction: column; gap: var(--spacer-12); }
+      .doc-section__head {
+        display: flex; align-items: center; gap: var(--spacer-8);
+      }
+      .doc-section__index {
+        font-family: var(--code-editor-font-family);
+        font-size: var(--body-xs-font-size);
+        color: var(--bg-brand);
+        letter-spacing: 0.04em;
+      }
+      .doc-section__title {
+        font-size: var(--heading-xs-font-size);
+        font-weight: var(--heading-xs-font-weight);
+        color: var(--text-default);
+      }
+      .doc-section__title .ic { color: var(--icon-secondary); display: inline-flex; margin-right: var(--spacer-6); }
+
+      /* ===== A. Learning ladder ===== */
+      .ladder { display: flex; flex-direction: column; gap: var(--spacer-8); }
+      .ladder__row {
+        display: grid;
+        grid-template-columns: 44px 1fr auto;
+        gap: var(--spacer-12);
+        align-items: start;
+        padding: var(--spacer-12);
+        background: var(--bg-overlay-l1);
+        border: 1px solid var(--border-neutral-l1);
+        border-radius: var(--radius-6);
+        transition: border-color .15s ease, background .15s ease;
+      }
+      .ladder__row.is-current {
+        background: var(--bg-brand-popup);
+        border-color: var(--border-brand);
+      }
+      .ladder__lvl {
+        font-family: var(--code-editor-font-family);
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+        padding-top: 2px;
+      }
+      .ladder__row.is-current .ladder__lvl { color: var(--text-brand); }
+      .ladder__name {
+        font-size: var(--body-sm-font-size);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-default);
+        margin-bottom: var(--spacer-4);
+      }
+      .ladder__row.is-current .ladder__name { color: var(--text-brand); }
+      .ladder__desc {
+        font-size: var(--body-xs-font-size);
+        line-height: 1.5;
+        color: var(--text-secondary);
+      }
+      .ladder__desc .row { margin-bottom: 2px; }
+      .ladder__desc .k { color: var(--text-tertiary); }
+      .ladder__here {
+        display: inline-flex; align-items: center; gap: var(--spacer-4);
+        font-size: var(--body-xs-font-size);
+        color: var(--text-brand);
+        white-space: nowrap;
+      }
+
+      /* ===== B. Core 20% ===== */
+      .core20 { display: flex; flex-direction: column; gap: var(--spacer-6); }
+      .core20__item {
+        display: flex; align-items: flex-start; gap: var(--spacer-8);
+        padding: var(--spacer-10) var(--spacer-12);
+        background: var(--bg-overlay-l1);
+        border: 1px solid var(--border-neutral-l1);
+        border-radius: var(--radius-6);
+        font-size: var(--body-sm-font-size);
+        color: var(--text-default);
+      }
+      .core20__item .dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--bg-brand);
+        margin-top: 7px; flex-shrink: 0;
+      }
+      .core20__item .idx {
+        font-family: var(--code-editor-font-family);
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+        min-width: 20px;
+      }
+
+      /* ===== C. Session cards ===== */
+      .sessions { display: flex; flex-direction: column; gap: var(--spacer-8); }
+      .session-card {
+        background: var(--bg-overlay-l1);
+        border: 1px solid var(--border-neutral-l2);
+        border-radius: var(--radius-6);
+        padding: var(--spacer-12) var(--spacer-16);
+        cursor: pointer;
+        transition: border-color .15s ease, background .15s ease, transform .15s ease;
+      }
+      .session-card:hover { border-color: var(--border-brand); background: var(--bg-overlay-l2); }
+      .session-card.is-flash { animation: cardFlash 1s ease; }
+      @keyframes cardFlash {
+        0% { border-color: var(--border-neutral-l2); box-shadow: 0 0 0 0 rgba(50,240,140,0); }
+        25% { border-color: var(--bg-brand); box-shadow: 0 0 0 2px rgba(50,240,140,.3); }
+        100% { border-color: var(--border-neutral-l2); box-shadow: 0 0 0 0 rgba(50,240,140,0); }
+      }
+      .session-card__top {
+        display: flex; align-items: center; gap: var(--spacer-8);
+        margin-bottom: var(--spacer-8);
+      }
+      .session-card__num {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 22px; height: 22px;
+        border-radius: var(--radius-4);
+        background: var(--bg-overlay-l3);
+        color: var(--text-default);
+        font-family: var(--code-editor-font-family);
+        font-size: var(--body-xs-font-size);
+        font-weight: var(--font-weight-medium);
+        flex-shrink: 0;
+      }
+      .session-card__title {
+        font-size: var(--body-sm-font-size);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-default);
+      }
+      .session-card__duration {
+        margin-left: auto;
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+        display: inline-flex; align-items: center; gap: var(--spacer-4);
+      }
+      .session-card__duration .ic { color: var(--icon-tertiary); }
+      .session-card__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacer-6) var(--spacer-16);
+      }
+      .session-field { display: flex; flex-direction: column; gap: 2px; }
+      .session-field--full { grid-column: 1 / -1; }
+      .session-field__label {
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .session-field__value {
+        font-size: var(--body-sm-font-size);
+        line-height: 1.5;
+        color: var(--text-default);
+      }
+      .session-field__value .accent { color: var(--text-brand); }
+      .session-card.is-modified .session-field--exercise .session-field__label { color: var(--text-brand); }
+      .session-card .modified-tag {
+        display: inline-flex; align-items: center; gap: var(--spacer-4);
+        height: 16px; padding: 0 var(--spacer-6);
+        border-radius: var(--radius-2);
+        background: var(--bg-brand-popup);
+        color: var(--text-brand);
+        font-size: 10px;
+        margin-left: var(--spacer-6);
+      }
+
+      /* ===== D. Resources ===== */
+      .resources { display: flex; flex-direction: column; gap: var(--spacer-8); }
+      .resource-card {
+        background: var(--bg-overlay-l1);
+        border: 1px solid var(--border-neutral-l2);
+        border-radius: var(--radius-6);
+        padding: var(--spacer-12) var(--spacer-16);
+      }
+      .resource-card__head {
+        display: flex; align-items: center; gap: var(--spacer-8);
+        margin-bottom: var(--spacer-10);
+      }
+      .resource-card__icon {
+        width: 28px; height: 28px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: var(--bg-overlay-l3);
+        border-radius: var(--radius-6);
+        color: var(--accent-amber);
+      }
+      .resource-card__title {
+        font-size: var(--body-sm-font-size);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-default);
+      }
+      .resource-card__author {
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+      }
+      .resource-card__tags { margin-left: auto; display: inline-flex; gap: var(--spacer-6); }
+      .resource-card__body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacer-6) var(--spacer-16);
+      }
+      .resource-field { display: flex; flex-direction: column; gap: 2px; }
+      .resource-field--full { grid-column: 1 / -1; }
+      .resource-field__label {
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .resource-field__value {
+        font-size: var(--body-sm-font-size);
+        line-height: 1.5;
+        color: var(--text-default);
+      }
+      .resource-field__warning {
+        font-size: var(--body-xs-font-size);
+        color: var(--status-warning-default);
+        line-height: 1.5;
+      }
+
+      /* ===== E. Final validation ===== */
+      .validation-card {
+        background: var(--bg-brand-popup);
+        border: 1px solid var(--border-brand);
+        border-radius: var(--radius-8);
+        padding: var(--spacer-16) var(--spacer-20);
+      }
+      .validation-card__head {
+        display: flex; align-items: center; gap: var(--spacer-8);
+        margin-bottom: var(--spacer-8);
+      }
+      .validation-card__icon {
+        width: 28px; height: 28px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: var(--bg-brand);
+        color: var(--text-onbrand);
+        border-radius: var(--radius-6);
+      }
+      .validation-card__title {
+        font-size: var(--heading-xs-font-size);
+        font-weight: var(--heading-xs-font-weight);
+        color: var(--text-default);
+      }
+      .validation-card__desc {
+        font-size: var(--body-sm-font-size);
+        line-height: 1.6;
+        color: var(--text-default);
+      }
+      .validation-card__meta {
+        display: flex; gap: var(--spacer-12); margin-top: var(--spacer-10);
+      }
+      .validation-card__meta .m {
+        display: inline-flex; align-items: center; gap: var(--spacer-4);
+        font-size: var(--body-xs-font-size);
+        color: var(--text-secondary);
+      }
+      .validation-card__meta .m .ic { color: var(--icon-secondary); }
+
+      /* ===== Right empty state ===== */
+      .doc-empty {
+        flex: 1;
+        display: flex; align-items: center; justify-content: center;
+        padding: var(--spacer-40);
+      }
+      .doc-empty__inner {
+        max-width: 360px; text-align: center;
+        padding: var(--spacer-40) var(--spacer-24);
+        border: 1.5px dashed var(--border-neutral-l2);
+        border-radius: var(--radius-10);
+      }
+      .doc-empty__icon {
+        width: 56px; height: 56px;
+        margin: 0 auto var(--spacer-16);
+        display: inline-flex; align-items: center; justify-content: center;
+        background: var(--bg-overlay-l2);
+        border-radius: var(--radius-10);
+        color: var(--icon-secondary);
+      }
+      .doc-empty__title {
+        font-size: var(--body-base-font-size);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-default);
+        margin-bottom: var(--spacer-6);
+      }
+      .doc-empty__desc {
+        font-size: var(--body-sm-font-size);
+        color: var(--text-tertiary);
+        line-height: 1.6;
+      }
+
+      /* ===== State visibility transitions ===== */
+      .state-layer { transition: opacity .25s ease; }
+      .state-layer[hidden] { display: none !important; }
+
+      /* ===== Floating state-switcher ===== */
+      .switcher {
+        position: fixed;
+        bottom: var(--spacer-16);
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        background: var(--bg-menu);
+        border: 1px solid var(--border-neutral-l2);
+        border-radius: var(--radius-8);
+        padding: var(--spacer-6);
+        box-shadow: 0 12px 32px rgba(0,0,0,.4);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacer-4);
+      }
+      .switcher__label {
+        font-size: var(--body-xs-font-size);
+        color: var(--text-tertiary);
+        padding: 0 var(--spacer-8) 0 var(--spacer-6);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .switcher__btn {
+        height: 28px; padding: 0 var(--spacer-12);
+        border: 1px solid var(--border-neutral-l1);
+        background: transparent;
+        color: var(--text-secondary);
+        border-radius: var(--radius-4);
+        font-size: var(--body-sm-font-size);
+        cursor: pointer;
+        transition: all .12s ease;
+      }
+      .switcher__btn:hover { background: var(--bg-overlay-l2); color: var(--text-default); }
+      .switcher__btn.is-active {
+        background: var(--bg-brand);
+        color: var(--text-onbrand);
+        border-color: var(--bg-brand);
+      }
+      .switcher__btn + .switcher__btn { margin-left: -1px; }
+
+      /* narrow screen stack */
+      @media (max-width: 880px) {
+        .main { flex-direction: column; height: auto; }
+        .chat-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--border-neutral-l1); }
+        .doc-panel { min-height: 60vh; }
+        body { overflow: auto; }
+      }
+    </style>
+</head>
+<body>
+
+  <!-- ===================== TITLE BAR ===================== -->
+  <header class="titlebar">
+    <div class="titlebar__left">
+      <button class="titlebar__back" title="返回工作台" onclick="history.length>1?history.back():null">
+        <img src="../assets/icons/dl_builtin_trae/arrow-left.svg" width="18" height="18" alt="back" class="icon">
+      </button>
+      <div class="titlebar__title">
+        学习计划<span class="sep">·</span><span class="topic">革新学习方法</span>
+      </div>
+      <span id="statusTag" class="ds-tag">未开始</span>
+    </div>
+    <div class="titlebar__right">
+      <button id="lockBtn" class="titlebar__lock-btn is-disabled" data-state="unlocked" title="锁定计划">
+        <img src="../assets/icons/dl_builtin_trae/lock.svg" width="14" height="14" alt="lock" class="lock-icon icon">
+        <span id="lockBtnText">锁定计划</span>
+        <span class="tt">先完成计划再锁定</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <!-- ============ LEFT: CHAT PANEL ============ -->
+    <section class="chat-panel">
+      <div class="chat-panel__head">
+        <img src="../assets/icons/dl_builtin_trae/message-circle.svg" width="16" height="16" alt="chat" class="ic icon">
+        <div>
+          <div class="chat-panel__head-title">对话共创</div>
+          <div class="chat-panel__head-sub">AI 教练 · 多轮调整直到收敛</div>
+        </div>
+      </div>
+
+      <div id="chatScroll" class="chat-scroll">
+
+        <!-- ===== STATE 1: Empty / Guide ===== -->
+        <div id="state-empty-chat" class="state-layer">
+          <div class="msg msg--ai">
+            <div class="msg__avatar"><img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="ai" class="icon"></div>
+            <div class="msg__body">
+              <div class="msg__bubble">
+                我来帮你制定<span class="em">「革新学习方法」</span>的学习计划。先聊聊你的情况吧——选一个起点，或直接告诉我你的想法。
+                <div class="chips">
+                  <button class="chip" data-chip="我每天有30分钟阅读时间">
+                    <img src="../assets/icons/dl_builtin_trae/clock.svg" width="14" height="14" alt="" class="ic icon">
+                    <span>我每天有30分钟阅读时间</span>
+                    <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" class="arrow icon">
+                  </button>
+                  <button class="chip" data-chip="先帮我定位学习阶梯">
+                    <img src="../assets/icons/dl_builtin_trae/layers.svg" width="14" height="14" alt="" class="ic icon">
+                    <span>先帮我定位学习阶梯</span>
+                    <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" class="arrow icon">
+                  </button>
+                  <button class="chip" data-chip="我已经有一些材料了">
+                    <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="14" height="14" alt="" class="ic icon">
+                    <span>我已经有一些材料了</span>
+                    <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" class="arrow icon">
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== STATE 2 & 3: Conversation history ===== -->
+        <div id="state-active-chat" class="state-layer" style="display:none">
+
+          <!-- Turn 1: User -->
+          <div class="msg msg--user">
+            <div class="msg__avatar">我</div>
+            <div class="msg__body">
+              <div class="msg__bubble">我每天大概有30分钟，主要用微信读书。已经读了《如何阅读一本书》的前三章，感觉检视阅读最有用。</div>
+              <div class="msg__meta">你 · 刚刚</div>
+            </div>
+          </div>
+
+          <!-- Turn 2: AI Coach -->
+          <div class="msg msg--ai">
+            <div class="msg__avatar"><img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="ai" class="icon"></div>
+            <div class="msg__body">
+              <div class="msg__bubble">
+                收到。先给你一份「革新学习方法」的<strong>学习阶梯</strong>，看看你现在站在哪一级——
+                <div class="mini-card">
+                  <div class="lvl-row"><span class="lvl-num">L1</span><span class="lvl-name">阅读入门</span></div>
+                  <div class="lvl-row is-current"><span class="lvl-num">L2</span><span class="lvl-name">方法理解</span><span class="lvl-here">← 你在这里</span></div>
+                  <div class="lvl-row"><span class="lvl-num">L3</span><span class="lvl-name">实践应用</span></div>
+                  <div class="lvl-row"><span class="lvl-num">L4</span><span class="lvl-name">融会贯通</span></div>
+                  <div class="lvl-row"><span class="lvl-num">L5</span><span class="lvl-name">方法论内化</span></div>
+                </div>
+                根据你的阅读进度，我初步判断你在 <span class="em">Level 2（基础理解）</span>。两个问题帮我进一步聚焦：
+                <ol>
+                  <li>你希望20小时聚焦在「阅读方法」这一个方向，还是也要覆盖笔记/费曼等？</li>
+                  <li>你的微信读书书架里，除了《如何阅读一本书》，还有哪些相关书？</li>
+                </ol>
+              </div>
+              <div class="msg__meta">AI 教练 · 刚刚</div>
+            </div>
+          </div>
+
+          <!-- Turn 3: User -->
+          <div class="msg msg--user">
+            <div class="msg__avatar">我</div>
+            <div class="msg__body">
+              <div class="msg__bubble">聚焦阅读方法就行，笔记和费曼后面再说。书架里有《刻意练习》《学习之道》《认知天性》。</div>
+              <div class="msg__meta">你 · 刚刚</div>
+            </div>
+          </div>
+
+          <!-- Turn 4: AI Coach -->
+          <div class="msg msg--ai">
+            <div class="msg__avatar"><img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="ai" class="icon"></div>
+            <div class="msg__body">
+              <div class="msg__bubble">
+                好的，已聚焦<span class="em">「阅读方法」</span>，并用你书架里的3本书作为资源。右侧是<span class="em">10节×2小时</span>的课表初稿——
+                <br><br>你可以直接对某节课提修改意见，比如「第3节太难了，拆成两节 simpler 的」，或者整体调整节奏。
+              </div>
+              <div class="msg__meta">AI 教练 · 刚刚</div>
+            </div>
+          </div>
+
+          <!-- Turn 5: User (latest) -->
+          <div class="msg msg--user">
+            <div class="msg__avatar">我</div>
+            <div class="msg__body">
+              <div class="msg__bubble">第4节的练习改成"用检视阅读法30分钟内扫完一篇长文并写出3个核心论点"，更具体一些。还有，第7节能不能加入《认知天性》的间隔重复章节？</div>
+              <div class="msg__meta">你 · 刚刚</div>
+            </div>
+          </div>
+
+          <!-- AI placeholder for dynamic responses -->
+          <div id="dynamicMessages"></div>
+        </div>
+      </div>
+
+      <!-- Composer (State 1 & 2) -->
+      <div id="composerActive" class="composer-wrap">
+        <div class="ds-composer">
+          <textarea id="composerInput" class="ds-composer__input" placeholder="对计划提修改意见，或直接说你的想法…（Enter 发送）"></textarea>
+          <div class="ds-composer__toolbar">
+            <div class="ds-composer__tools">
+              <button class="ds-composer__icon-btn" title="附加资源">
+                <img src="../assets/icons/dl_builtin_trae/plus.svg" width="16" height="16" alt="plus" class="icon">
+              </button>
+              <div class="ds-composer__model">
+                <img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="12" height="12" alt="model" class="icon">
+                <span>教练模式</span>
+              </div>
+            </div>
+            <div class="ds-composer__actions">
+              <button id="sendBtn" class="ds-composer__send" title="发送">
+                <img src="../assets/icons/dl_builtin_trae/send.0c0c0d.svg" width="16" height="16" alt="send" class="icon">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Composer locked (State 3) -->
+      <div id="composerLocked" class="composer-locked" hidden>
+        <img src="../assets/icons/dl_builtin_trae/lock.svg" width="14" height="14" alt="lock" class="ic icon">
+        <span>计划已锁定。如需修改请先解锁。</span>
+        <span class="unlock-link" id="unlockLink">解锁计划</span>
+      </div>
+    </section>
+
+    <!-- ============ RIGHT: LIVE DOCUMENT PANEL ============ -->
+    <section class="doc-panel" id="docPanel">
+
+      <!-- ===== STATE 1: Empty ===== -->
+      <div id="state-empty-doc" class="state-layer doc-empty" style="display:none">
+        <div class="doc-empty__inner">
+          <div class="doc-empty__icon">
+            <img src="../assets/icons/dl_builtin_trae/scroll-text.svg" width="28" height="28" alt="doc" class="icon">
+          </div>
+          <div class="doc-empty__title">计划将在这里实时生成</div>
+          <div class="doc-empty__desc">随着对话推进，学习阶梯、核心20%、20小时课表和资源会逐步出现在这里。你可以随时对任意部分提出修改。</div>
+        </div>
+      </div>
+
+      <!-- ===== STATE 2 & 3: Live plan ===== -->
+      <div id="state-active-doc" class="state-layer" style="display:flex; flex-direction:column; height:100%; min-height:0;">
+        <div class="doc-head">
+          <div class="doc-head__title">
+            <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="doc" class="ic icon">
+            <span>「革新学习方法」学习计划</span>
+            <span class="badge-locked" id="lockedBadge" hidden>
+              <img src="../assets/icons/dl_builtin_trae/check-circle.svg" width="12" height="12" alt="locked" class="ic icon">
+              已锁定
+            </span>
+          </div>
+          <div class="doc-head__hint">10 节 × 2 小时 · 共 20 小时</div>
+        </div>
+
+        <div class="doc-scroll">
+          <div class="doc-inner" id="docInner">
+
+            <!-- ===== A. 学习阶梯定位 ===== -->
+            <section class="doc-section">
+              <div class="doc-section__head">
+                <span class="doc-section__index">A</span>
+                <h3 class="doc-section__title">
+                  <img src="../assets/icons/dl_builtin_trae/layers.svg" width="14" height="14" alt="" class="ic icon">
+                  学习阶梯定位
+                </h3>
+                <span class="ds-tag ds-tag--brand" style="margin-left:auto;">当前 Level 2</span>
+              </div>
+              <div class="ladder">
+                <div class="ladder__row">
+                  <div class="ladder__lvl">L1</div>
+                  <div>
+                    <div class="ladder__name">阅读入门</div>
+                    <div class="ladder__desc">
+                      <div class="row"><span class="k">理解：</span>知道不同阅读层次的存在</div>
+                      <div class="row"><span class="k">里程碑：</span>能区分检视阅读和分析阅读</div>
+                      <div class="row"><span class="k">核心概念：</span>阅读的四个层次</div>
+                    </div>
+                  </div>
+                  <div></div>
+                </div>
+                <div class="ladder__row is-current">
+                  <div class="ladder__lvl">L2</div>
+                  <div>
+                    <div class="ladder__name">方法理解</div>
+                    <div class="ladder__desc">
+                      <div class="row"><span class="k">理解：</span>理解检视阅读的系统步骤</div>
+                      <div class="row"><span class="k">里程碑：</span>能独立完成一次30分钟检视阅读</div>
+                      <div class="row"><span class="k">核心概念：</span>检视阅读六步法、分析阅读四问</div>
+                    </div>
+                  </div>
+                  <div class="ladder__here">← 你在这里</div>
+                </div>
+                <div class="ladder__row">
+                  <div class="ladder__lvl">L3</div>
+                  <div>
+                    <div class="ladder__name">实践应用</div>
+                    <div class="ladder__desc">
+                      <div class="row"><span class="k">理解：</span>能针对不同目标选择阅读策略</div>
+                      <div class="row"><span class="k">里程碑：</span>灵活切换检视、分析、主题阅读</div>
+                      <div class="row"><span class="k">核心概念：</span>主题阅读、阅读目标匹配策略</div>
+                    </div>
+                  </div>
+                  <div></div>
+                </div>
+                <div class="ladder__row">
+                  <div class="ladder__lvl">L4</div>
+                  <div>
+                    <div class="ladder__name">融会贯通</div>
+                    <div class="ladder__desc">
+                      <div class="row"><span class="k">理解：</span>理解阅读与刻意练习、间隔重复的关系</div>
+                      <div class="row"><span class="k">里程碑：</span>能设计自己的阅读练习体系</div>
+                      <div class="row"><span class="k">核心概念：</span>刻意练习在阅读中的应用、间隔重复策略</div>
+                    </div>
+                  </div>
+                  <div></div>
+                </div>
+                <div class="ladder__row">
+                  <div class="ladder__lvl">L5</div>
+                  <div>
+                    <div class="ladder__name">方法论内化</div>
+                    <div class="ladder__desc">
+                      <div class="row"><span class="k">理解：</span>阅读方法已成为直觉反应</div>
+                      <div class="row"><span class="k">里程碑：</span>能教授他人并持续优化自己的方法</div>
+                      <div class="row"><span class="k">核心概念：</span>费曼学习法、元认知监控</div>
+                    </div>
+                  </div>
+                  <div></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ===== B. 核心20% ===== -->
+            <section class="doc-section">
+              <div class="doc-section__head">
+                <span class="doc-section__index">B</span>
+                <h3 class="doc-section__title">
+                  <img src="../assets/icons/dl_builtin_trae/zap.svg" width="14" height="14" alt="" class="ic icon">
+                  核心 20%
+                </h3>
+                <span class="ds-tag" style="margin-left:auto;">5 个关键概念</span>
+              </div>
+              <div class="core20">
+                <div class="core20__item"><span class="dot"></span><span class="idx">01</span><span>检视阅读（系统化略读）</span></div>
+                <div class="core20__item"><span class="dot"></span><span class="idx">02</span><span>分析阅读（精读四问）</span></div>
+                <div class="core20__item"><span class="dot"></span><span class="idx">03</span><span>主题阅读（多书交叉对比）</span></div>
+                <div class="core20__item"><span class="dot"></span><span class="idx">04</span><span>速读与单次阅读的局限</span></div>
+                <div class="core20__item"><span class="dot"></span><span class="idx">05</span><span>阅读与主动学习的结合</span></div>
+              </div>
+            </section>
+
+            <!-- ===== C. 20小时课表 ===== -->
+            <section class="doc-section">
+              <div class="doc-section__head">
+                <span class="doc-section__index">C</span>
+                <h3 class="doc-section__title">
+                  <img src="../assets/icons/dl_builtin_trae/calendar.svg" width="14" height="14" alt="" class="ic icon">
+                  20 小时课表
+                </h3>
+                <span class="ds-tag ds-tag--brand" style="margin-left:auto;">10 节 × 2 小时</span>
+              </div>
+              <div class="sessions">
+
+                <div class="session-card" data-session="1">
+                  <div class="session-card__top">
+                    <span class="session-card__num">01</span>
+                    <span class="session-card__title">建立阅读方法的整体认知框架</span>
+                    <span class="session-card__duration"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2h</span>
+                  </div>
+                  <div class="session-card__grid">
+                    <div class="session-field"><span class="session-field__label">核心概念</span><span class="session-field__value">阅读四个层次、检视阅读定义</span></div>
+                    <div class="session-field"><span class="session-field__label">推荐资源</span><span class="session-field__value">《如何阅读一本书》Ch1-2</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">实战练习</span><span class="session-field__value">翻阅《如何阅读一本书》目录，画出四层次思维导图</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">预期产出</span><span class="session-field__value">能口述四个层次的核心区别</span></div>
+                  </div>
+                </div>
+
+                <div class="session-card" data-session="2">
+                  <div class="session-card__top">
+                    <span class="session-card__num">02</span>
+                    <span class="session-card__title">掌握检视阅读的系统步骤</span>
+                    <span class="session-card__duration"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2h</span>
+                  </div>
+                  <div class="session-card__grid">
+                    <div class="session-field"><span class="session-field__label">核心概念</span><span class="session-field__value">检视阅读六步法（标题→目录→索引→试读→翻阅）</span></div>
+                    <div class="session-field"><span class="session-field__label">推荐资源</span><span class="session-field__value">《如何阅读一本书》Ch4</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">实战练习</span><span class="session-field__value">用检视阅读法30分钟扫完《刻意练习》前半部分</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">预期产出</span><span class="session-field__value">完成第一份检视阅读摘要</span></div>
+                  </div>
+                </div>
+
+                <div class="session-card" data-session="3">
+                  <div class="session-card__top">
+                    <span class="session-card__num">03</span>
+                    <span class="session-card__title">理解分析阅读的四问框架</span>
+                    <span class="session-card__duration"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2h</span>
+                  </div>
+                  <div class="session-card__grid">
+                    <div class="session-field"><span class="session-field__label">核心概念</span><span class="session-field__value">分析阅读四问（整体说的什么→详细说什么→说的对吗→和我有什么关系）</span></div>
+                    <div class="session-field"><span class="session-field__label">推荐资源</span><span class="session-field__value">《如何阅读一本书》Ch5-6</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">实战练习</span><span class="session-field__value">对《如何阅读一本书》Ch5-6 用四问法做检视阅读</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">预期产出</span><span class="session-field__value">能用四问法拆解一本书的核心论点</span></div>
+                  </div>
+                </div>
+
+                <div class="session-card is-modified" data-session="4">
+                  <div class="session-card__top">
+                    <span class="session-card__num">04</span>
+                    <span class="session-card__title">实战检视阅读并提炼核心论点</span>
+                    <span class="modified-tag"><img src="../assets/icons/dl_builtin_trae/edit.svg" width="10" height="10" alt="" class="icon">已按你的意见修改</span>
+                    <span class="session-card__duration"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2h</span>
+                  </div>
+                  <div class="session-card__grid">
+                    <div class="session-field"><span class="session-field__label">核心概念</span><span class="session-field__value">检视阅读的深度应用、核心论点提取</span></div>
+                    <div class="session-field"><span class="session-field__label">推荐资源</span><span class="session-field__value">微信读书任意长文</span></div>
+                    <div class="session-field session-field--full session-field--exercise"><span class="session-field__label">实战练习</span><span class="session-field__value"><span class="accent">用检视阅读法30分钟内扫完一篇长文并写出3个核心论点</span></span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">预期产出</span><span class="session-field__value">产出一份带3个核心论点的阅读笔记</span></div>
+                  </div>
+                </div>
+
+                <div class="session-card" data-session="5">
+                  <div class="session-card__top">
+                    <span class="session-card__num">05</span>
+                    <span class="session-card__title">主题阅读入门——多书交叉</span>
+                    <span class="session-card__duration"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2h</span>
+                  </div>
+                  <div class="session-card__grid">
+                    <div class="session-field"><span class="session-field__label">核心概念</span><span class="session-field__value">主题阅读的定义与步骤、问题驱动阅读</span></div>
+                    <div class="session-field"><span class="session-field__label">推荐资源</span><span class="session-field__value">《如何阅读一本书》Ch7 + 《刻意练习》Ch3</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">实战练习</span><span class="session-field__value">分别用检视法扫《如何阅读一本书》和《刻意练习》中关于「练习」的章节</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">预期产出</span><span class="session-field__value">完成两本书的交叉对比表</span></div>
+                  </div>
+                </div>
+
+                <div class="session-card" data-session="6">
+                  <div class="session-card__top">
+                    <span class="session-card__num">06</span>
+                    <span class="session-card__title">深化主题阅读——提炼共识与分歧</span>
+                    <span class="session-card__duration"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2h</span>
+                  </div>
+                  <div class="session-card__grid">
+                    <div class="session-field"><span class="session-field__label">核心概念</span><span class="session-field__value">共识提炼、分歧识别、论据对比</span></div>
+                    <div class="session-field"><span class="session-field__label">推荐资源</span><span class="session-field__value">三本书相关章节</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">实战练习</span><span class="session-field__value">对比三本书对「主动学习」的论述，填入对比矩阵</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">预期产出</span><span class="session-field__value">产出包含共识和分歧的对比笔记</span></div>
+                  </div>
+                </div>
+
+                <div class="session-card is-modified" data-session="7">
+                  <div class="session-card__top">
+                    <span class="session-card__num">07</span>
+                    <span class="session-card__title">融入间隔重复巩固核心方法</span>
+                    <span class="modified-tag"><img src="../assets/icons/dl_builtin_trae/edit.svg" width="10" height="10" alt="" class="icon">已加入《认知天性》</span>
+                    <span class="session-card__duration"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2h</span>
+                  </div>
+                  <div class="session-card__grid">
+                    <div class="session-field"><span class="session-field__label">核心概念</span><span class="session-field__value">间隔重复原理、艾宾浩斯曲线、阅读回顾策略</span></div>
+                    <div class="session-field"><span class="session-field__label">推荐资源</span><span class="session-field__value"><span class="accent">《认知天性》Ch4-5 间隔重复章节</span></span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">实战练习</span><span class="session-field__value">用《认知天性》的间隔重复方法，回顾前6节的笔记并做自测</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">预期产出</span><span class="session-field__value">建立自己的间隔回顾日程</span></div>
+                  </div>
+                </div>
+
+                <div class="session-card" data-session="8">
+                  <div class="session-card__top">
+                    <span class="session-card__num">08</span>
+                    <span class="session-card__title">设计个人阅读练习体系</span>
+                    <span class="session-card__duration"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2h</span>
+                  </div>
+                  <div class="session-card__grid">
+                    <div class="session-field"><span class="session-field__label">核心概念</span><span class="session-field__value">刻意练习四要素（目标→专注→反馈→突破）在阅读中的映射</span></div>
+                    <div class="session-field"><span class="session-field__label">推荐资源</span><span class="session-field__value">《刻意练习》Ch1</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">实战练习</span><span class="session-field__value">设计一周阅读练习计划，每天30分钟含阅读+刻意练习</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">预期产出</span><span class="session-field__value">产出一份可执行的周计划</span></div>
+                  </div>
+                </div>
+
+                <div class="session-card" data-session="9">
+                  <div class="session-card__top">
+                    <span class="session-card__num">09</span>
+                    <span class="session-card__title">费曼学习法验证阅读理解</span>
+                    <span class="session-card__duration"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2h</span>
+                  </div>
+                  <div class="session-card__grid">
+                    <div class="session-field"><span class="session-field__label">核心概念</span><span class="session-field__value">费曼学习法四步、以教促学</span></div>
+                    <div class="session-field"><span class="session-field__label">推荐资源</span><span class="session-field__value">《学习之道》Ch3</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">实战练习</span><span class="session-field__value">用费曼法向假想听众讲解「检视阅读六步法」</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">预期产出</span><span class="session-field__value">录制或写下费曼讲解稿</span></div>
+                  </div>
+                </div>
+
+                <div class="session-card" data-session="10">
+                  <div class="session-card__top">
+                    <span class="session-card__num">10</span>
+                    <span class="session-card__title">综合实战——主题阅读终局验证</span>
+                    <span class="session-card__duration"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2h</span>
+                  </div>
+                  <div class="session-card__grid">
+                    <div class="session-field"><span class="session-field__label">核心概念</span><span class="session-field__value">所有方法的综合应用</span></div>
+                    <div class="session-field"><span class="session-field__label">推荐资源</span><span class="session-field__value">三本书</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">实战练习</span><span class="session-field__value">用主题阅读法，在2小时内交叉对比3本书对「主动阅读」的论述，输出500字对比笔记</span></div>
+                    <div class="session-field session-field--full"><span class="session-field__label">预期产出</span><span class="session-field__value">产出终局验证笔记，完成学习闭环</span></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ===== D. 关联资源 ===== -->
+            <section class="doc-section">
+              <div class="doc-section__head">
+                <span class="doc-section__index">D</span>
+                <h3 class="doc-section__title">
+                  <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="14" height="14" alt="" class="ic icon">
+                  关联资源
+                </h3>
+                <span class="ds-tag" style="margin-left:auto;">3 本 · 来自你的书架</span>
+              </div>
+              <div class="resources">
+
+                <div class="resource-card">
+                  <div class="resource-card__head">
+                    <div class="resource-card__icon">
+                      <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="book" class="icon">
+                    </div>
+                    <div>
+                      <div class="resource-card__title">《如何阅读一本书》</div>
+                      <div class="resource-card__author">莫提默·J. 艾德勒</div>
+                    </div>
+                    <div class="resource-card__tags">
+                      <span class="ds-tag ds-tag--brand">beginner</span>
+                      <span class="ds-tag">书籍</span>
+                    </div>
+                  </div>
+                  <div class="resource-card__body">
+                    <div class="resource-field resource-field--full"><span class="resource-field__label">为何值得花时间</span><span class="resource-field__value">系统阐述阅读四层次的经典，是本计划的方法论基石。</span></div>
+                    <div class="resource-field"><span class="resource-field__label">用于</span><span class="resource-field__value">检视阅读与分析阅读方法论</span></div>
+                    <div class="resource-field"><span class="resource-field__label">适合谁</span><span class="resource-field__value">系统学习者、喜欢框架化思维的人</span></div>
+                    <div class="resource-field resource-field--full"><span class="resource-field__label">怎么用</span><span class="resource-field__value">精读 Ch1-7，其余用检视法扫。</span></div>
+                    <div class="resource-field resource-field--full"><span class="resource-field__label">避坑提示</span><span class="resource-field__warning">不要试图一次精读全书，先掌握检视和分析两章即可。</span></div>
+                  </div>
+                </div>
+
+                <div class="resource-card">
+                  <div class="resource-card__head">
+                    <div class="resource-card__icon">
+                      <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="book" class="icon">
+                    </div>
+                    <div>
+                      <div class="resource-card__title">《刻意练习》</div>
+                      <div class="resource-card__author">安德斯·艾利克森</div>
+                    </div>
+                    <div class="resource-card__tags">
+                      <span class="ds-tag ds-tag--warning">intermediate</span>
+                      <span class="ds-tag">书籍</span>
+                    </div>
+                  </div>
+                  <div class="resource-card__body">
+                    <div class="resource-field resource-field--full"><span class="resource-field__label">为何值得花时间</span><span class="resource-field__value">提供刻意练习的科学依据和可操作框架，支撑第 8 节的练习体系设计。</span></div>
+                    <div class="resource-field"><span class="resource-field__label">用于</span><span class="resource-field__value">刻意练习原则验证</span></div>
+                    <div class="resource-field"><span class="resource-field__label">适合谁</span><span class="resource-field__value">想把阅读转化为可衡量技能的人</span></div>
+                    <div class="resource-field resource-field--full"><span class="resource-field__label">怎么用</span><span class="resource-field__value">重点读 Ch1（原理）和 Ch3-4（案例），用检视法扫其他章节。</span></div>
+                    <div class="resource-field resource-field--full"><span class="resource-field__label">避坑提示</span><span class="resource-field__warning">不要只读案例不反思自己的练习设计。</span></div>
+                  </div>
+                </div>
+
+                <div class="resource-card">
+                  <div class="resource-card__head">
+                    <div class="resource-card__icon">
+                      <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="book" class="icon">
+                    </div>
+                    <div>
+                      <div class="resource-card__title">《认知天性》</div>
+                      <div class="resource-card__author">彼得·布朗 等</div>
+                    </div>
+                    <div class="resource-card__tags">
+                      <span class="ds-tag ds-tag--warning">intermediate</span>
+                      <span class="ds-tag">书籍</span>
+                    </div>
+                  </div>
+                  <div class="resource-card__body">
+                    <div class="resource-field resource-field--full"><span class="resource-field__label">为何值得花时间</span><span class="resource-field__value">科学解读间隔重复和主动回忆，直接支撑第 7 节的阅读巩固策略。</span></div>
+                    <div class="resource-field"><span class="resource-field__label">用于</span><span class="resource-field__value">间隔重复与记忆巩固</span></div>
+                    <div class="resource-field"><span class="resource-field__label">适合谁</span><span class="resource-field__value">容易读完就忘的人</span></div>
+                    <div class="resource-field resource-field--full"><span class="resource-field__label">怎么用</span><span class="resource-field__value">精读 Ch4-5（间隔重复），其余检视扫读。</span></div>
+                    <div class="resource-field resource-field--full"><span class="resource-field__label">避坑提示</span><span class="resource-field__warning">不要把认知科学当作理论收藏，必须配合练习。</span></div>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            <!-- ===== E. 最终验证项目 ===== -->
+            <section class="doc-section">
+              <div class="doc-section__head">
+                <span class="doc-section__index">E</span>
+                <h3 class="doc-section__title">
+                  <img src="../assets/icons/dl_builtin_trae/check-circle.svg" width="14" height="14" alt="" class="ic icon">
+                  最终验证项目
+                </h3>
+                <span class="ds-tag ds-tag--success" style="margin-left:auto;">终局闭环</span>
+              </div>
+              <div class="validation-card">
+                <div class="validation-card__head">
+                  <div class="validation-card__icon">
+                    <img src="../assets/icons/dl_builtin_trae/zap.svg" width="16" height="16" alt="validate" class="icon">
+                  </div>
+                  <div class="validation-card__title">主题阅读终局验证</div>
+                </div>
+                <div class="validation-card__desc">
+                  用主题阅读法，在 <strong>2 小时内</strong>交叉对比 <strong>3 本书</strong>对「主动阅读」的论述，输出一篇 <strong>500 字</strong>的对比笔记。
+                </div>
+                <div class="validation-card__meta">
+                  <span class="m"><img src="../assets/icons/dl_builtin_trae/clock.svg" width="12" height="12" alt="" class="ic icon">2 小时</span>
+                  <span class="m"><img src="../assets/icons/dl_builtin_trae/layers.svg" width="12" height="12" alt="" class="ic icon">3 本书交叉</span>
+                  <span class="m"><img src="../assets/icons/dl_builtin_trae/file-text.svg" width="12" height="12" alt="" class="ic icon">500 字对比笔记</span>
+                </div>
+              </div>
+            </section>
+
+            <div class="doc-foot">
+              <img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="12" height="12" alt="" class="ic icon">
+              <span>计划由 AI 教练与你共同创建 · 可继续在左侧对话中调整</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== FLOATING STATE SWITCHER ===================== -->
+  <div class="switcher" role="group" aria-label="原型状态切换">
+    <span class="switcher__label">原型状态</span>
+    <button class="switcher__btn" data-state-switch="empty">空状态</button>
+    <button class="switcher__btn is-active" data-state-switch="cocreate">共创中</button>
+    <button class="switcher__btn" data-state-switch="locked">已锁定</button>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // ===== Element refs =====
+    var statusTag = document.getElementById('statusTag');
+    var lockBtn = document.getElementById('lockBtn');
+    var lockBtnText = document.getElementById('lockBtnText');
+    var stateEmptyChat = document.getElementById('state-empty-chat');
+    var stateActiveChat = document.getElementById('state-active-chat');
+    var stateEmptyDoc = document.getElementById('state-empty-doc');
+    var stateActiveDoc = document.getElementById('state-active-doc');
+    var composerActive = document.getElementById('composerActive');
+    var composerLocked = document.getElementById('composerLocked');
+    var composerInput = document.getElementById('composerInput');
+    var sendBtn = document.getElementById('sendBtn');
+    var chatScroll = document.getElementById('chatScroll');
+    var dynamicMessages = document.getElementById('dynamicMessages');
+    var docPanel = document.getElementById('docPanel');
+    var docInner = document.getElementById('docInner');
+    var lockedBadge = document.getElementById('lockedBadge');
+    var unlockLink = document.getElementById('unlockLink');
+    var switcherBtns = document.querySelectorAll('[data-state-switch]');
+
+    var currentState = null; // 'empty' | 'cocreate' | 'locked'; null = not yet initialized
+
+    // ===== State switching =====
+    function setState(state) {
+      if (state === currentState) return;
+      currentState = state;
+
+      // switcher buttons
+      switcherBtns.forEach(function (b) {
+        b.classList.toggle('is-active', b.getAttribute('data-state-switch') === state);
+      });
+
+      if (state === 'empty') {
+        stateEmptyChat.style.display = '';
+        stateActiveChat.style.display = 'none';
+        stateEmptyDoc.style.display = '';
+        stateActiveDoc.style.display = 'none';
+        composerActive.hidden = false;
+        composerLocked.hidden = true;
+        docPanel.classList.remove('is-locked');
+
+        statusTag.textContent = '未开始';
+        statusTag.className = 'ds-tag';
+        setLockBtn('disabled');
+      } else if (state === 'cocreate') {
+        stateEmptyChat.style.display = 'none';
+        stateActiveChat.style.display = '';
+        stateEmptyDoc.style.display = 'none';
+        stateActiveDoc.style.display = 'flex';
+        composerActive.hidden = false;
+        composerLocked.hidden = true;
+        docPanel.classList.remove('is-locked');
+        lockedBadge.hidden = true;
+
+        statusTag.textContent = '共创中';
+        statusTag.className = 'ds-tag ds-tag--brand';
+        setLockBtn('unlocked');
+        scrollChatToBottom();
+      } else if (state === 'locked') {
+        stateEmptyChat.style.display = 'none';
+        stateActiveChat.style.display = '';
+        stateEmptyDoc.style.display = 'none';
+        stateActiveDoc.style.display = 'flex';
+        composerActive.hidden = true;
+        composerLocked.hidden = false;
+        docPanel.classList.add('is-locked');
+        lockedBadge.hidden = false;
+
+        statusTag.textContent = '已锁定';
+        statusTag.className = 'ds-tag ds-tag--success';
+        setLockBtn('locked');
+        scrollChatToBottom();
+      }
+    }
+
+    function setLockBtn(mode) {
+      // 'disabled' | 'unlocked' | 'locked'
+      lockBtn.dataset.state = mode;
+      if (mode === 'disabled') {
+        lockBtn.classList.add('is-disabled');
+        lockBtn.querySelector('.lock-icon').src = '../assets/icons/dl_builtin_trae/lock.svg';
+        lockBtnText.textContent = '锁定计划';
+        lockBtn.title = '先完成计划再锁定';
+      } else if (mode === 'unlocked') {
+        lockBtn.classList.remove('is-disabled');
+        lockBtn.querySelector('.lock-icon').src = '../assets/icons/dl_builtin_trae/lock.svg';
+        lockBtnText.textContent = '锁定计划';
+        lockBtn.title = '确认计划已收敛，点击锁定';
+      } else if (mode === 'locked') {
+        lockBtn.classList.remove('is-disabled');
+        lockBtn.querySelector('.lock-icon').src = '../assets/icons/dl_builtin_trae/refresh.svg';
+        lockBtnText.textContent = '解锁计划';
+        lockBtn.title = '点击解锁以继续修改';
+      }
+    }
+
+    // ===== Switcher wiring =====
+    switcherBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var s = b.getAttribute('data-state-switch');
+        setState(s);
+      });
+    });
+
+    // ===== Lock button wiring =====
+    lockBtn.addEventListener('click', function () {
+      if (currentState === 'empty') return;
+      if (currentState === 'cocreate') {
+        setState('locked');
+        // Add a confirmation AI message
+        addAIMessage('已锁定计划。你随时可以点击「解锁计划」继续调整，或开始执行第 1 节。');
+      } else if (currentState === 'locked') {
+        setState('cocreate');
+      }
+    });
+
+    unlockLink.addEventListener('click', function () {
+      setState('cocreate');
+    });
+
+    // ===== Quick-start chips (State 1) =====
+    document.querySelectorAll('[data-chip]').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        var text = chip.getAttribute('data-chip');
+        // Add as first user message then switch to cocreate
+        // Insert the user message at the top of active chat
+        var firstChild = stateActiveChat.querySelector('.msg');
+        var userMsg = createUserMessage(text);
+        if (firstChild) {
+          stateActiveChat.insertBefore(userMsg, firstChild);
+        } else {
+          stateActiveChat.appendChild(userMsg);
+        }
+        setState('cocreate');
+      });
+    });
+
+    // ===== Chat composer (State 2) =====
+    function sendComposer() {
+      var text = composerInput.value.trim();
+      if (!text) return;
+      composerInput.value = '';
+      composerInput.style.height = 'auto';
+
+      // Append user message
+      var userMsg = createUserMessage(text);
+      dynamicMessages.appendChild(userMsg);
+      scrollChatToBottom();
+
+      // Simulate AI response after 1s
+      setTimeout(function () {
+        addAIMessage('好的，已记录你的修改意见。我调整了相关节次，请看右侧更新。');
+        flashDoc();
+      }, 900);
+    }
+
+    sendBtn.addEventListener('click', sendComposer);
+    composerInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendComposer();
+      }
+    });
+    // auto-grow textarea
+    composerInput.addEventListener('input', function () {
+      composerInput.style.height = 'auto';
+      composerInput.style.height = Math.min(composerInput.scrollHeight, 120) + 'px';
+    });
+
+    function createUserMessage(text) {
+      var msg = document.createElement('div');
+      msg.className = 'msg msg--user';
+      msg.innerHTML =
+        '<div class="msg__avatar">我</div>' +
+        '<div class="msg__body">' +
+          '<div class="msg__bubble"></div>' +
+          '<div class="msg__meta">你 · 刚刚</div>' +
+        '</div>';
+      msg.querySelector('.msg__bubble').textContent = text;
+      return msg;
+    }
+
+    function addAIMessage(text) {
+      var msg = document.createElement('div');
+      msg.className = 'msg msg--ai';
+      msg.style.opacity = '0';
+      msg.style.transform = 'translateY(6px)';
+      msg.innerHTML =
+        '<div class="msg__avatar"><img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="ai" class="icon"></div>' +
+        '<div class="msg__body">' +
+          '<div class="msg__bubble"></div>' +
+          '<div class="msg__meta">AI 教练 · 刚刚</div>' +
+        '</div>';
+      msg.querySelector('.msg__bubble').textContent = text;
+      dynamicMessages.appendChild(msg);
+      scrollChatToBottom();
+      // fade-in
+      requestAnimationFrame(function () {
+        msg.style.transition = 'opacity .3s ease, transform .3s ease';
+        msg.style.opacity = '1';
+        msg.style.transform = 'translateY(0)';
+      });
+    }
+
+    function scrollChatToBottom() {
+      requestAnimationFrame(function () {
+        chatScroll.scrollTop = chatScroll.scrollHeight;
+      });
+    }
+
+    // ===== Flash doc on AI update =====
+    function flashDoc() {
+      docInner.classList.remove('is-flash');
+      // force reflow
+      void docInner.offsetWidth;
+      docInner.classList.add('is-flash');
+    }
+
+    // ===== Session card click highlight (State 2) =====
+    document.querySelectorAll('.session-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        if (currentState !== 'cocreate') return;
+        card.classList.remove('is-flash');
+        void card.offsetWidth;
+        card.classList.add('is-flash');
+      });
+    });
+
+    // ===== Init =====
+    setState('cocreate');
+    scrollChatToBottom();
+  })();
+  </script>
+</body>
+</html>
+

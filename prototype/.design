@@ -4,7 +4,7 @@
       "id": "page-workbench",
       "type": "page",
       "title": "主题工作台 · 革新学习方法",
-      "version": 1,
+      "version": 2,
       "createdAt": 1753555200000,
       "canvasData": {
         "x": 620,
@@ -19,12 +19,37 @@
             "targetPageId": "page-new-theme-intercept"
           },
           {
+            "domId": "btn-open-plan-cocreate",
+            "targetPageId": "page-learning-plan-cocreate"
+          },
+          {
             "domId": "btn-start-review",
             "targetPageId": "page-weekly-review"
           },
           {
             "domId": "btn-theme-plan-phases",
             "targetPageId": "page-theme-plan-phases"
+          },
+          {
+            "domId": "btn-view-drift",
+            "targetPageId": "page-theme-plan-phases"
+          },
+          {
+            "domId": "rail-theme-phases",
+            "targetPageId": "page-theme-plan-phases"
+          },
+          {
+            "domId": "rail-weekly-review",
+            "targetPageId": "page-weekly-review"
+          },
+          {
+            "domId": "rail-improvement",
+            "type": "anchor-scroll",
+            "description": "锚点滚动到工作台 A 栏改进建议面板"
+          },
+          {
+            "domId": "btn-review-from-improvement",
+            "targetPageId": "page-weekly-review"
           }
         ]
       }
@@ -33,7 +58,7 @@
       "id": "page-new-theme-intercept",
       "type": "page",
       "title": "新建主题拦截",
-      "version": 1,
+      "version": 2,
       "createdAt": 1753555200000,
       "canvasData": {
         "x": 0,
@@ -51,14 +76,35 @@
       }
     },
     {
+      "id": "page-learning-plan-cocreate",
+      "type": "page",
+      "title": "学习计划对话共创 · 革新学习方法",
+      "version": 1,
+      "createdAt": 1785218460000,
+      "canvasData": {
+        "x": 0,
+        "y": 377,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/learning-plan-cocreate.html",
+        "interactions": [
+          {
+            "domId": "btn-back-workbench",
+            "targetPageId": "page-workbench"
+          }
+        ]
+      }
+    },
+    {
       "id": "page-weekly-review",
       "type": "page",
       "title": "周复盘 W1 · 革新学习方法",
-      "version": 1,
+      "version": 2,
       "createdAt": 1753555200000,
       "canvasData": {
         "x": 0,
-        "y": 795,
+        "y": 1654,
         "group": 0
       },
       "devMetadata": {
@@ -75,11 +121,11 @@
       "id": "page-theme-plan-phases",
       "type": "page",
       "title": "主题计划 · 阶段切换与并发",
-      "version": 1,
+      "version": 2,
       "createdAt": 1785201592337,
       "canvasData": {
         "x": 0,
-        "y": 2024,
+        "y": 2167,
         "group": 0
       },
       "devMetadata": {

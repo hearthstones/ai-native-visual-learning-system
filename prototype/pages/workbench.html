@@ -2259,6 +2259,58 @@
         font-size: var(--body-xs-font-size);
         color: var(--text-tertiary);
       }
+      /* ── 阶段徽章 + 当前切片摘要 ── */
+      .phase-badge {
+        display: inline-flex; align-items: center; gap: var(--spacer-4);
+        padding: 0 var(--spacer-8); height: 20px; border-radius: var(--radius-full);
+        background: var(--bg-brand-popup); color: var(--text-brand);
+        font-size: var(--body-xs-font-size); font-weight: var(--font-weight-medium);
+      }
+      .phase-badge__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bg-brand); }
+      .phase-badge--completed { background: var(--bg-overlay-l3); color: var(--text-secondary); }
+      .phase-badge--completed .phase-badge__dot { background: var(--icon-secondary); }
+
+      .slot-summary { display: flex; gap: var(--spacer-6); flex-wrap: wrap; }
+      .slot-pill {
+        display: inline-flex; align-items: center; gap: var(--spacer-4);
+        padding: 2px var(--spacer-8); height: 20px; border-radius: var(--radius-full);
+        background: var(--bg-overlay-l1); border: 1px solid var(--border-neutral-l1);
+        font-size: var(--body-xs-font-size); color: var(--text-secondary);
+        font-family: var(--code-editor-font-family); font-variant-numeric: tabular-nums;
+      }
+      .slot-pill.is-full { border-color: var(--status-error-surface-l2); color: var(--status-error-default); background: var(--status-error-surface-l1); }
+
+      .current-slice { display: flex; flex-direction: column; gap: var(--spacer-4); }
+      .current-slice__row { display: flex; align-items: center; gap: var(--spacer-8); }
+      .current-slice__label { flex: 1; font-size: var(--body-sm-font-size); color: var(--text-default); }
+      .current-slice__progress { font-family: var(--code-editor-font-family); font-size: var(--body-xs-font-size); color: var(--text-tertiary); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+      .history-slice {
+        padding: var(--spacer-6) 0; border-top: 1px dashed var(--border-neutral-l1);
+        opacity: 0.65;
+      }
+      .history-slice__toggle {
+        display: flex; align-items: center; gap: var(--spacer-4);
+        font-size: var(--body-xs-font-size); color: var(--text-tertiary);
+        cursor: pointer; user-select: none;
+      }
+      .history-slice__toggle:hover { color: var(--text-secondary); }
+      .history-slice__toggle .chev { transition: transform .15s ease; }
+      .history-slice.is-open .history-slice__toggle .chev { transform: rotate(90deg); }
+      .history-slice__body { display: none; }
+      .history-slice.is-open .history-slice__body { display: block; }
+      .history-slice__title { font-size: var(--body-xs-font-size); color: var(--text-tertiary); display: flex; align-items: center; gap: var(--spacer-4); margin-bottom: var(--spacer-4); }
+      .history-slice__items { display: flex; flex-direction: column; gap: var(--spacer-2, 2px); }
+      .history-slice__item { font-size: var(--body-xs-font-size); color: var(--text-secondary); display: flex; align-items: center; gap: var(--spacer-4); }
+      .history-slice__item::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--icon-tertiary); flex-shrink: 0; }
+
+      .p-actions { display: flex; gap: var(--spacer-8); align-items: center; }
+      .drift-link {
+        font-size: var(--body-xs-font-size); color: var(--status-warning-default);
+        display: inline-flex; align-items: center; gap: var(--spacer-4); cursor: pointer;
+        text-decoration: none;
+      }
+      .drift-link:hover { text-decoration: underline; }
       .pdca-card__empty-text {
         font-size: var(--body-sm-font-size);
         color: var(--text-tertiary);
@@ -2298,15 +2350,15 @@
         <button class="ds-activityrail__btn is-active" type="button" aria-label="工作台">
           <img src="../assets/icons/dl_builtin_trae/dashboard.svg" width="16" height="16" alt="" />
         </button>
-        <button class="ds-activityrail__btn" type="button" aria-label="主题">
+        <a class="ds-activityrail__btn" href="theme-plan-phases.html" data-dom-id="rail-theme-phases" aria-label="主题" title="主题 · 阶段切换">
           <img src="../assets/icons/dl_builtin_trae/scroll-text.svg" width="16" height="16" alt="" />
-        </button>
-        <button class="ds-activityrail__btn" type="button" aria-label="复盘">
+        </a>
+        <a class="ds-activityrail__btn" href="weekly-review.html" data-dom-id="rail-weekly-review" aria-label="复盘" title="周复盘">
           <img src="../assets/icons/dl_builtin_trae/check-circle.svg" width="16" height="16" alt="" />
-        </button>
-        <button class="ds-activityrail__btn" type="button" aria-label="改进">
+        </a>
+        <a class="ds-activityrail__btn" href="#panel-improvement" data-dom-id="rail-improvement" aria-label="改进" title="改进建议">
           <img src="../assets/icons/dl_builtin_trae/trending-up.svg" width="16" height="16" alt="" />
-        </button>
+        </a>
         <div class="ds-activityrail__divider"></div>
         <button class="ds-activityrail__btn" type="button" aria-label="收藏夹">
           <img src="../assets/icons/dl_builtin_trae/box.svg" width="16" height="16" alt="" />
@@ -2330,10 +2382,10 @@
               <img src="../assets/icons/dl_builtin_trae/download.svg" width="14" height="14" alt="" class="icon" />
               <span>导入想法</span>
             </button>
-            <button class="ds-btn ds-btn--tertiary" type="button" data-dom-id="btn-new-theme">
+            <a class="ds-btn ds-btn--tertiary" type="button" href="new-theme-intercept.html" data-dom-id="btn-new-theme">
               <img src="../assets/icons/dl_builtin_trae/plus.svg" width="14" height="14" alt="" class="icon" />
               <span>新建主题</span>
-            </button>
+            </a>
           </div>
         </div>
 
@@ -2355,7 +2407,7 @@
               <span class="ds-statcard__caption">待完成 1 项</span>
             </div>
           </div>
-          <div class="ds-statcard">
+          <div class="ds-statcard" style="cursor: pointer;" onclick="document.querySelector('.pdca-grid .pdca-card .pdca-card__section-title').scrollIntoView({behavior:'smooth',block:'center'})" title="查看 20% 核心清单">
             <div class="ds-statcard__label">核心掌握</div>
             <div class="ds-statcard__value">3/5</div>
             <div class="ds-statcard__delta" style="color: var(--status-warning-default);">
@@ -2375,86 +2427,101 @@
         <!-- PDCA Grid -->
         <div class="pdca-grid">
 
-          <!-- ── P · 计划 ── -->
+          <!-- ── P · 计划（主轴：当前阶段 + 当前切片 + 历史归档） ── -->
           <div class="ds-card pdca-card">
             <div class="pdca-card__header">
               <img src="../assets/icons/dl_builtin_trae/layout.svg" width="16" height="16" alt="" />
               <span class="pdca-card__title">P · 计划</span>
-              <span class="ds-tag ds-tag--neutral-strong">已锁定</span>
+              <span class="phase-badge">
+                <span class="phase-badge__dot"></span>
+                学习阶段 · 革新学习方法
+              </span>
             </div>
 
             <div class="meta-row">
-              <span class="meta-row__label">周期长度</span>
-              <span class="meta-row__value">7 天</span>
+              <span class="meta-row__label">阶段槽位占用</span>
+              <div class="slot-summary">
+                <span class="slot-pill is-full">学 1/1</span>
+                <span class="slot-pill">练 1/3</span>
+                <span class="slot-pill">用 0/5</span>
+              </div>
+            </div>
+            <div class="meta-row">
+              <span class="meta-row__label">主焦点</span>
+              <span class="meta-row__value">2 个 · <a class="drift-link" href="theme-plan-phases.html" data-dom-id="btn-view-drift">查看漂移</a></span>
             </div>
 
             <div class="pdca-card__section">
-              <span class="pdca-card__section-title">20% 核心</span>
+              <span class="pdca-card__section-title">20% 核心 · 3/5 已掌握</span>
               <div class="core-row">
-                <label class="ds-check">
-                  <input type="checkbox" checked />
-                  <span class="ds-check__box"></span>
-                  <span>主动阅读四问</span>
-                </label>
+                <span class="core-row__label" style="font-size: var(--body-sm-font-size); color: var(--text-default);">主动阅读四问</span>
                 <span class="ds-tag ds-tag--success">已掌握</span>
               </div>
               <div class="core-row">
-                <label class="ds-check">
-                  <input type="checkbox" checked />
-                  <span class="ds-check__box"></span>
-                  <span>检视阅读 vs 分析阅读</span>
-                </label>
+                <span class="core-row__label" style="font-size: var(--body-sm-font-size); color: var(--text-default);">检视阅读 vs 分析阅读</span>
                 <span class="ds-tag ds-tag--brand">良好</span>
               </div>
               <div class="core-row">
-                <label class="ds-check">
-                  <input type="checkbox" checked />
-                  <span class="ds-check__box"></span>
-                  <span>刻意练习三要素</span>
-                </label>
+                <span class="core-row__label" style="font-size: var(--body-sm-font-size); color: var(--text-default);">刻意练习三要素</span>
+                <span class="ds-tag ds-tag--success">已掌握</span>
+              </div>
+              <div class="core-row">
+                <span class="core-row__label" style="font-size: var(--body-sm-font-size); color: var(--text-default);">费曼学习法</span>
                 <span class="ds-tag ds-tag--warning">待加强</span>
               </div>
               <div class="core-row">
-                <label class="ds-check">
-                  <input type="checkbox" />
-                  <span class="ds-check__box"></span>
-                  <span>费曼学习法</span>
-                </label>
-                <span class="ds-tag ds-tag--danger">薄弱</span>
-              </div>
-              <div class="core-row">
-                <label class="ds-check">
-                  <input type="checkbox" />
-                  <span class="ds-check__box"></span>
-                  <span>间隔重复与主动回忆</span>
-                </label>
-                <span class="ds-tag">未开始</span>
+                <span class="core-row__label" style="font-size: var(--body-sm-font-size); color: var(--text-default);">间隔重复与主动回忆</span>
+                <span class="ds-tag ds-tag--warning">待加强</span>
               </div>
             </div>
 
             <div class="pdca-card__section">
-              <div class="collapse-row">
-                <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" />
-                <span>学习计划</span>
-              </div>
-              <div class="collapse-row">
-                <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" />
-                <span>练习计划</span>
-              </div>
-              <div class="collapse-row">
-                <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" />
-                <span>应用计划</span>
+              <span class="pdca-card__section-title">当前切片 · 学习计划（每天约 30 分钟）</span>
+              <div class="current-slice">
+                <div class="current-slice__row">
+                  <span class="current-slice__label">用四问法对第1章做检视阅读</span>
+                  <span class="current-slice__progress">已完成</span>
+                </div>
+                <div class="current-slice__row">
+                  <span class="current-slice__label">费曼复述"检视 vs 分析"</span>
+                  <span class="current-slice__progress">已完成</span>
+                </div>
+                <div class="current-slice__row">
+                  <span class="current-slice__label">给一条划线打"待练习"标签</span>
+                  <span class="current-slice__progress">进行中</span>
+                </div>
+                <div class="current-slice__row">
+                  <span class="current-slice__label">整理间隔重复卡片</span>
+                  <span class="current-slice__progress">待开始</span>
+                </div>
               </div>
             </div>
 
-            <div class="card-footer">
-              <button class="ds-btn ds-btn--tertiary ds-btn--sm" type="button">
-                <img src="../assets/icons/dl_builtin_trae/refresh.svg" width="12" height="12" alt="" class="icon" />
-                <span>重新生成</span>
-              </button>
-              <button class="ds-btn ds-btn--brand ds-btn--sm" type="button" data-dom-id="btn-confirm-plan">
-                <span>确认计划</span>
-              </button>
+            <div class="pdca-card__section">
+              <span class="pdca-card__section-title">历史切片 · 只读</span>
+              <div class="history-slice" id="historySlice1">
+                <div class="history-slice__toggle" onclick="document.getElementById('historySlice1').classList.toggle('is-open')">
+                  <img class="chev" src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="12" height="12" alt="" />
+                  <img src="../assets/icons/dl_builtin_trae/lock.svg" width="12" height="12" alt="" />
+                  暂无已归档切片（学习期 W1 进行中）
+                </div>
+                <div class="history-slice__body">
+                  <div class="history-slice__items" style="margin-top: var(--spacer-8);">
+                    <span class="history-slice__item" style="color: var(--text-tertiary);">本主题尚无已归档切片，完成学习期后将自动归档</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer p-actions">
+              <a class="ds-btn ds-btn--brand ds-btn--sm" href="learning-plan-cocreate.html" data-dom-id="btn-open-plan-cocreate">
+                <img src="../assets/icons/dl_builtin_trae/message-circle.svg" width="12" height="12" alt="" class="icon" />
+                <span>打开共创 / 编辑</span>
+              </a>
+              <a class="ds-btn ds-btn--tertiary ds-btn--sm" href="theme-plan-phases.html" data-dom-id="btn-theme-plan-phases">
+                <img src="../assets/icons/dl_builtin_trae/layers.svg" width="12" height="12" alt="" class="icon" />
+                <span>阶段管理</span>
+              </a>
             </div>
           </div>
 
@@ -2467,7 +2534,7 @@
             </div>
 
             <div class="pdca-card__section">
-              <span class="pdca-card__section-title">今日任务</span>
+              <span class="pdca-card__section-title">今日任务 · 来自当前学习切片</span>
               <div class="task-row">
                 <label class="ds-check">
                   <input type="checkbox" checked />
@@ -2570,34 +2637,61 @@
 
             <div class="disabled-block" style="display: flex; flex-direction: column; gap: var(--spacer-12); flex: 1;">
               <div style="font-size: var(--body-sm-font-size); color: var(--text-secondary);">
-                周期第 3 天，距复盘 4 天
+                周期第 3 天，距复盘 4 天（演示态可提前进入）
               </div>
               <div style="font-size: var(--body-sm-font-size); color: var(--text-tertiary);">
-                周复盘将在第 7 天解锁
+                正式周期将在第 7 天自动触发周复盘
               </div>
-              <button class="ds-btn ds-btn--secondary ds-btn--sm" type="button" disabled data-dom-id="btn-start-review">
+              <a class="ds-btn ds-btn--brand ds-btn--sm" href="weekly-review.html" data-dom-id="btn-start-review">
                 <img src="../assets/icons/dl_builtin_trae/play.svg" width="12" height="12" alt="" class="icon" />
                 <span>开始复盘</span>
-              </button>
+              </a>
             </div>
 
-            <div class="pdca-card__hint">完成周期后自动触发</div>
+            <div class="pdca-card__hint">演示态已开放复盘入口</div>
           </div>
 
           <!-- ── A · 改进 ── -->
-          <div class="ds-card pdca-card">
+          <div class="ds-card pdca-card" id="panel-improvement">
             <div class="pdca-card__header">
               <img src="../assets/icons/dl_builtin_trae/trending-up.svg" width="16" height="16" alt="" />
               <span class="pdca-card__title">A · 改进</span>
-              <span class="ds-tag">待生成</span>
+              <span class="ds-tag ds-tag--brand">2 项待采纳</span>
             </div>
 
-            <div class="ds-empty" style="flex: 1; justify-content: center;">
-              <span class="ds-empty__icon">
-                <img src="../assets/icons/dl_builtin_trae/trending-up.svg" width="20" height="20" alt="" />
-              </span>
-              <div class="ds-empty__title">完成周复盘后生成改进建议</div>
-              <div class="ds-empty__desc">采纳的改进项将自动写入下周期 P</div>
+            <div class="pdca-card__section">
+              <span class="pdca-card__section-title">来自 W0 复盘 · 已写入本周 P</span>
+              <div class="task-row">
+                <label class="ds-check">
+                  <input type="checkbox" checked />
+                  <span class="ds-check__box"></span>
+                  <span>把费曼复述改为每日第一项，绑定晨间打卡</span>
+                </label>
+                <span class="ds-tag ds-tag--success">已采纳</span>
+              </div>
+              <div class="task-row">
+                <label class="ds-check">
+                  <input type="checkbox" />
+                  <span class="ds-check__box"></span>
+                  <span>每两天补一次间隔重复卡片整理（针对"间隔重复"待加强）</span>
+                </label>
+                <span class="ds-tag ds-tag--warning">待采纳</span>
+              </div>
+              <div class="task-row">
+                <label class="ds-check">
+                  <input type="checkbox" />
+                  <span class="ds-check__box"></span>
+                  <span>检视阅读练习改用书架内长文，减少找材料时间</span>
+                </label>
+                <span class="ds-tag ds-tag--warning">待采纳</span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <a class="ds-btn ds-btn--tertiary ds-btn--sm" href="weekly-review.html" data-dom-id="btn-review-from-improvement">
+                <img src="../assets/icons/dl_builtin_trae/refresh.svg" width="12" height="12" alt="" class="icon" />
+                <span>复盘更新</span>
+              </a>
             </div>
           </div>
 

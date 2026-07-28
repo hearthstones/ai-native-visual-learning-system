@@ -2185,7 +2185,7 @@
     <div class="intercept-wrap">
       <div class="intercept-top">
         <span class="intercept-eyebrow">刻意练习 · 主题管理</span>
-        <a href="#" class="ds-btn ds-btn--tertiary ds-btn--sm" data-dom-id="btn-back-workbench">
+        <a href="workbench.html" class="ds-btn ds-btn--tertiary ds-btn--sm" data-dom-id="btn-back-workbench">
           <img src="../assets/icons/dl_builtin_trae/arrow-left.svg" width="14" height="14" alt="" />
           <span>返回工作台</span>
         </a>
@@ -2197,7 +2197,7 @@
             <span class="ds-dialog__head-icon">
               <img src="../assets/icons/dl_builtin_trae/alert-triangle.svg" width="16" height="16" alt="" />
             </span>
-            <span class="ds-dialog__title" id="intercept-title">想新建主题？</span>
+            <span class="ds-dialog__title" id="intercept-title">想新建主题？先腾出学习槽位</span>
           </div>
           <button class="ds-dialog__close" type="button" aria-label="关闭">
             <img src="../assets/icons/dl_builtin_trae/x.svg" width="14" height="14" alt="" />
@@ -2211,8 +2211,8 @@
                 <img src="../assets/icons/dl_builtin_trae/alert-triangle.svg" width="16" height="16" alt="" />
               </span>
               <div class="ds-alert__content">
-                <div class="ds-alert__title">你有进行中主题，且当周复盘尚未完成</div>
-                <div class="ds-alert__desc">系统建议先完成当前主题的本周复盘，再开启新主题，以保持刻意练习的连贯性。</div>
+                <div class="ds-alert__title">学习阶段槽位已满（1/1）</div>
+                <div class="ds-alert__desc">学习阶段最多并发 1 个主题。要新建主题，需先把当前学习期主题推进到练习期、休眠或废弃，腾出学习槽位。</div>
               </div>
             </div>
 
@@ -2225,53 +2225,67 @@
               <div class="theme-summary__mono">5 条核心 · 3 条已掌握</div>
             </div>
 
-            <div class="section-label">请选择如何处理</div>
+            <div class="section-label">请选择如何腾出学习槽位</div>
 
             <div class="radio-list">
               <label class="radio-option">
                 <span class="radio-option__main">
                   <span class="ds-radio">
-                    <input type="radio" name="intercept-choice" value="continue" checked />
+                    <input type="radio" name="intercept-choice" value="advance" checked />
                     <span class="ds-radio__dot"></span>
-                    <span class="radio-option__title">继续当前主题</span>
+                    <span class="radio-option__title">推进「革新学习方法」到练习阶段</span>
                     <span class="ds-tag ds-tag--brand radio-option__tag">推荐</span>
                   </span>
                 </span>
-                <span class="radio-option__sub">聚焦执行，完成本周再开新坑</span>
+                <span class="radio-option__sub">把学习切片归档，进入练习期，腾出学习槽位后新建</span>
               </label>
 
               <label class="radio-option">
                 <span class="radio-option__main">
                   <span class="ds-radio">
-                    <input type="radio" name="intercept-choice" value="wishlist" />
+                    <input type="radio" name="intercept-choice" value="hibernate" />
                     <span class="ds-radio__dot"></span>
-                    <span class="radio-option__title">记到 Wishlist，不新建</span>
+                    <span class="radio-option__title">休眠当前主题后新建</span>
                   </span>
                 </span>
-                <span class="radio-option__sub">把想开的坑记下来，不分散注意力</span>
+                <span class="radio-option__sub">暂停「革新学习方法」，留痕可恢复，腾出槽位</span>
               </label>
 
               <label class="radio-option">
                 <span class="radio-option__main">
                   <span class="ds-radio">
-                    <input type="radio" name="intercept-choice" value="archive" />
+                    <input type="radio" name="intercept-choice" value="abandon" />
                     <span class="ds-radio__dot"></span>
-                    <span class="radio-option__title">强制归档当前主题后新建</span>
+                    <span class="radio-option__title">废弃当前主题后新建</span>
                   </span>
                 </span>
-                <span class="radio-option__sub">归档主题进入收尾流程，留痕可追溯</span>
+                <span class="radio-option__sub">归档收尾「革新学习方法」，不再继续，腾出槽位</span>
               </label>
             </div>
           </div>
         </div>
 
         <div class="ds-dialog__foot">
-          <button class="ds-btn ds-btn--tertiary" type="button">取消</button>
-          <button class="ds-btn ds-btn--primary" type="button">确认</button>
+          <a href="workbench.html" class="ds-btn ds-btn--tertiary" type="button" data-dom-id="btn-back-workbench">取消</a>
+          <button class="ds-btn ds-btn--primary" type="button" id="interceptConfirm">确认</button>
         </div>
       </div>
     </div>
-    </main>
-    <script>lucide.createIcons();</script>
+    <main>
+    <script>
+      (function(){
+        var btn = document.getElementById('interceptConfirm');
+        if(!btn) return;
+        btn.addEventListener('click', function(){
+          var checked = document.querySelector('input[name="intercept-choice"]:checked');
+          var val = checked ? checked.value : 'advance';
+          if(val === 'advance'){
+            window.location.href = 'theme-plan-phases.html';
+          } else {
+            window.location.href = 'workbench.html';
+          }
+        });
+      })();
+    </script>
 </body>
 </html>

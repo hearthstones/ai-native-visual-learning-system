@@ -21,6 +21,10 @@
           {
             "domId": "btn-start-review",
             "targetPageId": "page-weekly-review"
+          },
+          {
+            "domId": "btn-theme-plan-phases",
+            "targetPageId": "page-theme-plan-phases"
           }
         ]
       }
@@ -59,6 +63,27 @@
       },
       "devMetadata": {
         "htmlSrc": "pages/weekly-review.html",
+        "interactions": [
+          {
+            "domId": "btn-back-workbench",
+            "targetPageId": "page-workbench"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-theme-plan-phases",
+      "type": "page",
+      "title": "主题计划 · 阶段切换与并发",
+      "version": 1,
+      "createdAt": 1785201592337,
+      "canvasData": {
+        "x": 0,
+        "y": 2024,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/theme-plan-phases.html",
         "interactions": [
           {
             "domId": "btn-back-workbench",

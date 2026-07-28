@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主题阶段计划 - 可视化刻意练习系统</title>
+    <style id="theme-vars">
+:root {
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-10: 10px;
+  --radius-full: 9999px;
+  --spacer-0: 0px;
+  --spacer-4: 4px;
+  --spacer-6: 6px;
+  --spacer-8: 8px;
+  --spacer-12: 12px;
+  --spacer-16: 16px;
+  --spacer-24: 24px;
+  --spacer-32: 32px;
+  --spacer-40: 40px;
+  --font-family-default: SF Pro Text;
+  --font-family-heading: SF Pro;
+  --font-family-mono: JetBrains Mono;
+  --font-weight-default: 400;
+  --font-weight-code: 450;
+  --font-weight-medium: 500;
+  --font-weight-strong: 600;
+  --font-family-base: var(--font-family-default);
+  --font-family-heading-alias: var(--font-family-heading);
+  --font-family-mono-alias: var(--font-family-mono);
+  --body-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-xs-font-size: 10px;
+  --body-xs-font-weight: 400;
+  --body-xs-line-height: 14px;
+  --body-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-sm-font-size: 11px;
+  --body-sm-font-weight: 400;
+  --body-sm-line-height: 16px;
+  --body-sm-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-sm-strong-font-size: 11px;
+  --body-sm-strong-font-weight: 500;
+  --body-sm-strong-line-height: 16px;
+  --body-md-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-md-font-size: 12px;
+  --body-md-font-weight: 400;
+  --body-md-line-height: 18px;
+  --body-md-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-md-strong-font-size: 12px;
+  --body-md-strong-font-weight: 500;
+  --body-md-strong-line-height: 18px;
+  --body-base-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-base-font-size: 13px;
+  --body-base-font-weight: 400;
+  --body-base-line-height: 20px;
+  --body-base-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-base-strong-font-size: 13px;
+  --body-base-strong-font-weight: 500;
+  --body-base-strong-line-height: 20px;
+  --heading-3xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-3xs-font-size: 11px;
+  --heading-3xs-font-weight: 600;
+  --heading-3xs-line-height: 16px;
+  --heading-2xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-2xs-font-size: 12px;
+  --heading-2xs-font-weight: 600;
+  --heading-2xs-line-height: 18px;
+  --heading-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-xs-font-size: 13px;
+  --heading-xs-font-weight: 600;
+  --heading-xs-line-height: 20px;
+  --heading-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-sm-font-size: 16px;
+  --heading-sm-font-weight: 600;
+  --heading-sm-line-height: 24px;
+  --heading-md-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-md-font-size: 20px;
+  --heading-md-font-weight: 600;
+  --heading-md-line-height: 28px;
+  --heading-lg-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-lg-font-size: 22px;
+  --heading-lg-font-weight: 600;
+  --heading-lg-line-height: 30px;
+  --heading-xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-xl-font-size: 24px;
+  --heading-xl-font-weight: 600;
+  --heading-xl-line-height: 32px;
+  --heading-2xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-2xl-font-size: 28px;
+  --heading-2xl-font-weight: 600;
+  --heading-2xl-line-height: 36px;
+  --heading-3xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-3xl-font-size: 32px;
+  --heading-3xl-font-weight: 600;
+  --heading-3xl-line-height: 40px;
+  --code-editor-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif;
+  --code-editor-font-size: 13px;
+  --code-editor-font-weight: 450;
+  --code-editor-line-height: 20px;
+  --code-terminal-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif;
+  --code-terminal-font-size: 12px;
+  --code-terminal-font-weight: 450;
+  --code-terminal-line-height: 18px;
+  --bg-base-default: #1A1B1D;
+  --bg-base-secondary: #222427;
+  --bg-base-tertiary: #2A2D31;
+  --bg-overlay-l1: rgba(224, 226, 242, 0.04);
+  --bg-overlay-l2: rgba(224, 226, 242, 0.06);
+  --bg-overlay-l3: rgba(224, 226, 242, 0.08);
+  --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+  --bg-menu: #202123;
+  --bg-tooltip: #1A1B1D;
+  --bg-invert: #DADDE5;
+  --bg-invert-hover: #EDEFF2;
+  --bg-invert-active: #979AA4;
+  --bg-invert-disabled: rgba(224, 226, 242, 0.12);
+  --color-background: var(--bg-base-default);
+  --color-surface: var(--bg-base-secondary);
+  --color-surface-variant: var(--bg-base-tertiary);
+  --color-overlay-1: var(--bg-overlay-l1);
+  --color-overlay-2: var(--bg-overlay-l2);
+  --color-overlay-3: var(--bg-overlay-l3);
+  --color-overlay-4: var(--bg-overlay-l4);
+  --color-card: var(--bg-base-secondary);
+  --color-tooltip: var(--bg-tooltip);
+  --color-menu: var(--bg-menu);
+  --bg-brand: #32F08C;
+  --bg-brand-hover: #0FDC78;
+  --bg-brand-disabled: rgba(50, 240, 140, 0.2);
+  --bg-brand-popup: rgba(50, 240, 140, 0.12);
+  --color-primary: var(--bg-brand);
+  --color-primary-hover: var(--bg-brand-hover);
+  --color-primary-disabled: var(--bg-brand-disabled);
+  --color-primary-soft: var(--bg-brand-popup);
+  --color-accent: var(--bg-brand);
+  --text-default: #D1D3DB;
+  --text-default-hover: #F5F9FE;
+  --text-default-active: #F5F9FE;
+  --text-secondary: #9599A6;
+  --text-secondary-hover: #D1D3DB;
+  --text-secondary-active: #D1D3DB;
+  --text-tertiary: #666B75;
+  --text-disabled: #666B75;
+  --text-onbrand: #0C0C0D;
+  --text-onaccent: #0C0C0D;
+  --color-foreground: var(--text-default);
+  --text-brand: #32F08C;
+  --text-brand-hover: #0FDC78;
+  --icon-default: #D1D3DB;
+  --icon-default-hover: #F5F9FE;
+  --icon-default-active: #F5F9FE;
+  --icon-secondary: #9599A6;
+  --icon-secondary-hover: #D1D3DB;
+  --icon-secondary-active: #D1D3DB;
+  --icon-tertiary: #666B75;
+  --icon-disabled: #666B75;
+  --icon-onbrand: #0C0C0D;
+  --icon-onaccent: #0C0C0D;
+  --icon-brand: #32F08C;
+  --icon-brand-hover: #0FDC78;
+  --border-neutral-l1: rgba(224, 226, 242, 0.1);
+  --border-neutral-l2: rgba(224, 226, 242, 0.16);
+  --border-neutral-l3: rgba(224, 226, 242, 0.2);
+  --border-contrast: #FFFFFF;
+  --border-brand: #32F08C;
+  --color-border: var(--border-neutral-l1);
+  --border-1: var(--border-neutral-l1);
+  --status-primary-default: #387BFF;
+  --status-primary-hover: #4C88FF;
+  --status-primary-active: #1759DD;
+  --status-primary-surface-l1: rgba(53, 121, 255, 0.18);
+  --status-primary-surface-l2: rgba(53, 121, 255, 0.28);
+  --status-primary-surface-l3: rgba(53, 121, 255, 0.36);
+  --status-success-default: #33C192;
+  --status-success-hover: #5ED4AD;
+  --status-success-active: #27B082;
+  --status-success-surface-l1: rgba(0, 165, 110, 0.18);
+  --status-success-surface-l2: rgba(0, 165, 110, 0.28);
+  --status-success-surface-l3: rgba(0, 165, 110, 0.36);
+  --status-alert-default: #D29D00;
+  --status-alert-hover: #DFB949;
+  --status-alert-active: #AB8820;
+  --status-alert-surface-l1: rgba(210, 157, 0, 0.16);
+  --status-alert-surface-l2: rgba(210, 157, 0, 0.28);
+  --status-alert-surface-l3: rgba(210, 157, 0, 0.36);
+  --status-warning-default: #D27E24;
+  --status-warning-hover: #D78B28;
+  --status-warning-active: #B46510;
+  --status-warning-surface-l1: rgba(210, 126, 36, 0.16);
+  --status-warning-surface-l2: rgba(210, 126, 36, 0.28);
+  --status-warning-surface-l3: rgba(210, 126, 36, 0.36);
+  --status-error-default: #F65A5A;
+  --status-error-hover: #F86262;
+  --status-error-active: #B33636;
+  --status-error-surface-l1: rgba(246, 70, 70, 0.18);
+  --status-error-surface-l2: rgba(246, 70, 70, 0.28);
+  --status-error-surface-l3: rgba(246, 70, 70, 0.36);
+  --color-info: var(--status-primary-default);
+  --color-success: var(--status-success-default);
+  --color-warning: var(--status-warning-default);
+  --color-error: var(--status-error-default);
+  --color-error-soft: var(--status-error-surface-l1);
+  --special-white: #FFFFFF;
+  --special-black: #000000;
+  --special-bgtabsoverlay: rgba(0, 0, 0, 0.2);
+  --brand-1: #32f08c;
+  --site-canvas: #1A1B1D;
+  --bg-layout-1: var(--bg-base-secondary);
+  --bg-layout-2: var(--bg-overlay-l1);
+  --color-muted: var(--bg-overlay-l1);
+  --color-muted-foreground: var(--text-secondary);
+  --color-accent: var(--bg-overlay-l2);
+  --color-accent-foreground: var(--text-default);
+  --color-destructive: var(--status-error-default);
+  --color-destructive-foreground: var(--special-white);
+  --color-input: var(--border-neutral-l2);
+  --color-ring: var(--border-brand);
+  --color-sidebar: var(--bg-base-secondary);
+  --color-sidebar-foreground: var(--text-default);
+  --color-sidebar-primary: var(--bg-brand);
+  --color-sidebar-primary-foreground: var(--text-onbrand);
+  --color-sidebar-accent: var(--bg-overlay-l2);
+  --color-sidebar-accent-foreground: var(--text-default);
+  --color-sidebar-border: var(--border-neutral-l1);
+  --color-sidebar-ring: var(--border-brand);
+  --color-radius-sm: var(--radius-4);
+  --color-radius-md: var(--radius-6);
+  --color-radius-lg: var(--radius-8);
+  --color-radius: var(--radius-6);
+  --font-sans: var(--body-base-font-family);
+  --font-mono: var(--code-editor-font-family);
+  --color-card: var(--bg-base-secondary);
+  --color-card-foreground: var(--text-default);
+  --color-popover: var(--bg-menu);
+  --color-popover-foreground: var(--text-default);
+  --color-primary: var(--bg-brand);
+  --color-primary-foreground: var(--text-onbrand);
+  --color-secondary: var(--bg-overlay-l2);
+  --color-secondary-foreground: var(--text-default);
+  --color-on-primary: var(--text-onbrand);
+}
+    </style>
+    <style id="component-vars">
+/* Activity Rail */
+    .ds-activityrail {
+      display: inline-flex; flex-direction: column; align-items: center;
+      gap: var(--spacer-4); width: 48px; padding: var(--spacer-8) 0;
+      background: var(--bg-base-secondary); border-right: 1px solid var(--border-neutral-l1);
+    }
+    .ds-activityrail__btn {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: var(--radius-8);
+      background: transparent; border: none; cursor: pointer;
+    }
+    .ds-activityrail__btn:hover { background: var(--bg-overlay-l2); }
+    .ds-activityrail__btn.is-active { background: var(--bg-overlay-l3); }
+    .ds-activityrail__btn.is-active::before {
+      content: ""; position: absolute; left: -8px; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 20px; border-radius: var(--radius-full); background: var(--bg-brand);
+    }
+    .ds-activityrail__divider { width: 24px; height: 1px; margin: var(--spacer-4) 0; background: var(--border-neutral-l2); }
+    .ds-activityrail__spacer { flex: 1; }
+
+/* Alert */
+    .ds-alert { display: flex; gap: var(--spacer-12); padding: var(--spacer-12) var(--spacer-16); background: var(--bg-base-secondary); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-4); color: var(--text-default); align-items: flex-start; }
+    .ds-alert__icon { flex-shrink: 0; margin-top: 1px; color: var(--icon-default); display: inline-flex; }
+    .ds-alert--success .ds-alert__icon { color: var(--status-success-default); }
+    .ds-alert--warning .ds-alert__icon { color: var(--status-warning-default); }
+    .ds-alert--danger  .ds-alert__icon { color: var(--status-error-default); }
+    .ds-alert--info    .ds-alert__icon { color: var(--status-primary-default); }
+    .ds-alert__title { font-weight: var(--font-weight-medium, 500); margin-bottom: var(--spacer-4); }
+    .ds-alert__desc { color: var(--text-secondary); font-size: var(--body-sm-font-size); }
+
+/* Buttons */
+    .ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--spacer-6); padding: 0 var(--spacer-12); height: 28px; border-radius: var(--radius-4); border: 1px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; font-family: var(--body-sm-strong-font-family); font-size: var(--body-sm-strong-font-size); line-height: 1; font-weight: var(--body-sm-strong-font-weight); transition: background .12s ease, color .12s ease, border-color .12s ease, opacity .12s ease; }
+    .ds-btn .icon { color: currentColor; }
+    .ds-btn--sm { height: 24px; padding: 0 var(--spacer-8); border-radius: var(--radius-4); font-size: var(--body-xs-font-size); }
+    .ds-btn--md { height: 28px; padding: 0 var(--spacer-12); border-radius: var(--radius-4); }
+    .ds-btn--lg { height: 32px; padding: 0 var(--spacer-16); border-radius: var(--radius-4); font-size: var(--body-base-font-size); }
+    .ds-btn--primary { background: var(--text-default); color: var(--bg-base-default); border-color: var(--text-default); }
+    .ds-btn--primary:hover { background: var(--text-default-hover); }
+    .ds-btn--primary:active { background: var(--text-secondary); border-color: var(--text-secondary); }
+    .ds-btn--primary[disabled] { background: var(--bg-overlay-l3); color: var(--text-tertiary); border-color: var(--border-neutral-l1); cursor: not-allowed; }
+    .ds-btn--secondary { background: var(--bg-overlay-l2); color: var(--text-default); border-color: var(--border-neutral-l1); }
+    .ds-btn--secondary:hover { background: var(--bg-overlay-l3); border-color: var(--border-neutral-l2); }
+    .ds-btn--secondary:active { background: var(--bg-overlay-l1); }
+    .ds-btn--secondary[disabled] { color: var(--text-tertiary); cursor: not-allowed; opacity: .6; }
+    .ds-btn--tertiary, .ds-btn--ghost { background: transparent; color: var(--text-default); border-color: transparent; }
+    .ds-btn--tertiary:hover, .ds-btn--ghost:hover { background: var(--bg-overlay-l2); }
+    .ds-btn--tertiary:active, .ds-btn--ghost:active { background: var(--bg-overlay-l1); }
+    .ds-btn--tertiary[disabled], .ds-btn--ghost[disabled] { color: var(--text-tertiary); cursor: not-allowed; }
+    .ds-btn--danger, .ds-btn--danger-strong { background: var(--status-error-default); color: var(--special-white); border-color: var(--status-error-default); }
+    .ds-btn--danger:hover, .ds-btn--danger-strong:hover { filter: brightness(0.92); }
+    .ds-btn--danger:active, .ds-btn--danger-strong:active { filter: brightness(0.84); }
+    .ds-btn--danger[disabled], .ds-btn--danger-strong[disabled] { opacity: .5; cursor: not-allowed; }
+    .ds-btn--warning { background: var(--status-warning-default); color: var(--text-onbrand); border-color: var(--status-warning-default); }
+    .ds-btn--warning:hover { filter: brightness(0.94); }
+    .ds-btn--brand { background: var(--bg-brand); color: var(--text-onbrand); border-color: var(--bg-brand); }
+    .ds-btn--brand:hover { background: var(--bg-brand-hover); border-color: var(--bg-brand-hover); }
+    .ds-btn--brand:active { filter: brightness(0.92); }
+    .ds-btn--brand[disabled] { background: var(--bg-brand-disabled, var(--bg-overlay-l3)); border-color: transparent; color: var(--text-tertiary); cursor: not-allowed; }
+    .ds-btn--link { background: transparent; color: var(--text-default); border-color: transparent; padding: 0; height: auto; }
+    .ds-btn--link:hover { color: var(--text-default-hover); text-decoration: underline; }
+    .ds-btn--link[disabled] { color: var(--text-tertiary); text-decoration: none; cursor: not-allowed; }
+    .ds-btn--icon { padding: 0; width: 28px; justify-content: center; }
+    .ds-btn--icon.ds-btn--sm { width: 24px; }
+    .ds-btn--icon.ds-btn--lg { width: 32px; }
+
+/* Card */
+    .ds-card { background: var(--bg-base-secondary); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-4); padding: var(--spacer-24); }
+    .ds-card__title { font-size: var(--heading-xs-font-size); line-height: var(--heading-xs-line-height); font-weight: var(--heading-xs-font-weight); margin-bottom: var(--spacer-8); }
+    .ds-card__desc { font-size: var(--body-sm-font-size); line-height: var(--body-sm-line-height); color: var(--text-secondary); }
+
+/* Checkbox */
+    .ds-check { display: inline-flex; align-items: center; gap: var(--spacer-8); font-size: var(--body-sm-font-size); color: var(--text-default); cursor: pointer; user-select: none; }
+    .ds-check__box { width: 14px; height: 14px; border: 1px solid var(--border-neutral-l2); background: var(--bg-overlay-l1); border-radius: var(--radius-2); display: inline-flex; align-items: center; justify-content: center; color: var(--text-onbrand); transition: background .12s, border-color .12s; flex-shrink: 0; }
+    .ds-check input { display: none; }
+    .ds-check input:checked + .ds-check__box { background: var(--bg-brand); border-color: var(--bg-brand); }
+    .ds-check input:checked + .ds-check__box::after { content: ''; width: 8px; height: 4px; border-left: 2px solid var(--text-onbrand); border-bottom: 2px solid var(--text-onbrand); transform: rotate(-45deg) translate(1px, -1px); }
+    .ds-check input:disabled + .ds-check__box { opacity: .5; cursor: not-allowed; }
+
+/* Dialog / Modal */
+    .ds-dialog { background: var(--bg-base-secondary); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-4); width: 100%; max-width: 420px; overflow: hidden; }
+    .ds-dialog__head { padding: var(--spacer-16) var(--spacer-24); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-neutral-l1); }
+    .ds-dialog__title { font-size: var(--heading-xs-font-size); font-weight: var(--heading-xs-font-weight); color: var(--text-default); }
+    .ds-dialog__close { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; color: var(--icon-secondary); cursor: pointer; border-radius: var(--radius-4); }
+    .ds-dialog__close:hover { background: var(--bg-overlay-l2); color: var(--icon-default); }
+    .ds-dialog__body { padding: var(--spacer-16) var(--spacer-24); color: var(--text-secondary); font-size: var(--body-sm-font-size); line-height: var(--body-sm-line-height); }
+    .ds-dialog__foot { padding: var(--spacer-12) var(--spacer-24); display: flex; justify-content: flex-end; gap: var(--spacer-8); border-top: 1px solid var(--border-neutral-l1); }
+
+/* Input */
+    .ds-input { display: flex; align-items: center; gap: var(--spacer-8); padding: 0 var(--spacer-12); height: 28px; background: var(--bg-overlay-l1); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-4); color: var(--text-default); width: 100%; font-size: var(--body-sm-font-size); line-height: 1; }
+    .ds-input:focus-within { border-color: var(--border-brand); background: var(--bg-overlay-l2); }
+    .ds-input input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-default); font: inherit; }
+    .ds-input input::placeholder { color: var(--text-tertiary); }
+
+/* Tag */
+    .ds-tag { display: inline-flex; align-items: center; padding: 0 var(--spacer-6); height: 18px; border-radius: var(--radius-2); font-size: var(--body-xs-font-size); line-height: 1; background: var(--bg-overlay-l2); color: var(--text-secondary); border: 1px solid var(--border-neutral-l1); }
+    .ds-tag--brand { background: var(--bg-brand-popup); color: var(--text-brand); }
+    .ds-tag--success { background: var(--status-success-surface-l1); color: var(--status-success-default); }
+    .ds-tag--warning { background: var(--status-warning-surface-l1); color: var(--status-warning-default); }
+    .ds-tag--danger  { background: var(--status-error-surface-l1); color: var(--status-error-default); }
+
+/* Workbench Titlebar */
+    .ds-wbtitlebar { display: flex; align-items: center; justify-content: space-between; gap: var(--spacer-12); height: 40px; padding: 0 var(--spacer-12); background: var(--bg-base-secondary); border-bottom: 1px solid var(--border-neutral-l1); }
+    .ds-wbtitlebar__left, .ds-wbtitlebar__right { display: flex; align-items: center; gap: var(--spacer-8); }
+    .ds-wbtitlebar__lights { display: flex; align-items: center; gap: var(--spacer-8); margin-right: var(--spacer-8); }
+    .ds-wbtitlebar__light { width: 12px; height: 12px; border-radius: var(--radius-full); }
+    .ds-wbtitlebar__light--close { background: var(--status-error-default); }
+    .ds-wbtitlebar__light--min { background: var(--status-alert-default); }
+    .ds-wbtitlebar__light--max { background: var(--status-success-default); }
+    .ds-wbtitlebar__mode-chip { display: inline-flex; align-items: center; gap: var(--spacer-6); height: 24px; padding: 0 var(--spacer-8); background: var(--bg-brand); color: var(--text-onbrand); border-radius: var(--radius-full); font-size: var(--body-xs-font-size); font-weight: var(--font-weight-medium); }
+    .ds-wbtitlebar__project-selector { display: inline-flex; align-items: center; gap: var(--spacer-6); height: 24px; padding: 0 var(--spacer-8); background: var(--bg-overlay-l1); color: var(--text-default); border: 1px solid var(--border-neutral-l2); border-radius: var(--radius-6); font-size: var(--body-sm-font-size); cursor: pointer; }
+    .ds-wbtitlebar__project-selector:hover { background: var(--bg-overlay-l2); color: var(--text-default-hover); }
+    .ds-wbtitlebar__iconbtn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: var(--radius-6); background: transparent; border: none; cursor: pointer; }
+    .ds-wbtitlebar__iconbtn:hover { background: var(--bg-overlay-l2); }
+    .ds-wbtitlebar .icon { display: block; }
+
+/* Layout helpers */
+    .ds-stack-8 { display: flex; flex-direction: column; gap: var(--spacer-8); }
+    .text-secondary { color: var(--text-secondary); }
+    .text-tertiary { color: var(--text-tertiary); }
+    .mono, code, samp, pre { font-family: var(--code-editor-font-family); font-variant-numeric: tabular-nums; }
+    </style>
+    <style id="page-specific">
+/* App shell layout */
+body { background: var(--bg-base-default); margin: 0; font-family: var(--body-base-font-family); color: var(--text-default); }
+.app-shell {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  grid-template-rows: 40px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+.app-shell > .ds-wbtitlebar { grid-column: 1 / -1; }
+.app-main { overflow-y: auto; background: var(--bg-base-default); }
+
+/* Two-column layout */
+.phase-main { display: grid; grid-template-columns: 65% 35%; min-height: 100%; }
+@media (max-width: 900px) { .phase-main { grid-template-columns: 1fr; } }
+.phase-left { padding: var(--spacer-24); border-right: 1px solid var(--border-neutral-l1); overflow-y: auto; }
+.phase-right { padding: var(--spacer-24); overflow-y: auto; background: var(--bg-base-tertiary); }
+
+/* Timeline */
+.phase-timeline { display: flex; align-items: center; gap: 0; margin-bottom: var(--spacer-24); padding: var(--spacer-16) 0; }
+.phase-timeline__node { display: flex; flex-direction: column; align-items: center; gap: var(--spacer-8); position: relative; z-index: 1; flex-shrink: 0; }
+.phase-timeline__circle { width: 28px; height: 28px; border-radius: var(--radius-full); border: 2px solid var(--border-neutral-l2); background: var(--bg-base-default); display: flex; align-items: center; justify-content: center; color: var(--icon-tertiary); transition: all .2s ease; }
+.phase-timeline__circle.is-active { border-color: var(--bg-brand); background: var(--bg-brand); color: var(--icon-onbrand); box-shadow: 0 0 0 4px var(--bg-brand-popup); }
+.phase-timeline__circle.is-completed { border-color: var(--icon-secondary); background: var(--bg-overlay-l3); color: var(--icon-secondary); }
+.phase-timeline__circle img { width: 14px; height: 14px; }
+.phase-timeline__label { font-size: var(--body-xs-font-size); color: var(--text-tertiary); white-space: nowrap; }
+.phase-timeline__node.is-active .phase-timeline__label { color: var(--text-brand); font-weight: var(--font-weight-medium); }
+.phase-timeline__node.is-completed .phase-timeline__label { color: var(--text-secondary); }
+.phase-timeline__line { flex: 1; height: 2px; background: var(--border-neutral-l2); min-width: 40px; transition: background .2s ease; }
+.phase-timeline__line.is-completed { background: var(--icon-secondary); }
+
+/* Slice Card */
+.slice-card { background: var(--bg-base-secondary); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-4); overflow: hidden; margin-bottom: var(--spacer-16); }
+.slice-card__head { display: flex; align-items: center; justify-content: space-between; gap: var(--spacer-12); padding: var(--spacer-12) var(--spacer-16); border-bottom: 1px solid var(--border-neutral-l1); }
+.slice-card__head-left { display: flex; align-items: center; gap: var(--spacer-8); }
+.slice-card__title { font-size: var(--body-md-strong-font-size); font-weight: var(--body-md-strong-font-weight); color: var(--text-default); line-height: var(--body-md-strong-line-height); }
+.slice-card__body { padding: var(--spacer-8) var(--spacer-16) var(--spacer-16); }
+
+/* Checklist items */
+.checklist-item { display: flex; align-items: center; gap: var(--spacer-8); padding: var(--spacer-6) var(--spacer-4); border-radius: var(--radius-4); transition: background .12s ease; position: relative; }
+.checklist-item:hover { background: var(--bg-overlay-l1); }
+.checklist-item__check { flex-shrink: 0; }
+.checklist-item__content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.checklist-item__label { font-size: var(--body-base-font-size); color: var(--text-default); line-height: var(--body-base-line-height); }
+.checklist-item__desc { font-size: var(--body-xs-font-size); color: var(--text-tertiary); line-height: var(--body-xs-line-height); }
+.checklist-item.is-checked .checklist-item__label { color: var(--text-secondary); text-decoration: line-through; }
+.checklist-item.is-checked .checklist-item__desc { text-decoration: line-through; }
+.checklist-item__delete { opacity: 0; transition: opacity .15s ease; flex-shrink: 0; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; cursor: pointer; border-radius: var(--radius-4); color: var(--icon-tertiary); }
+.checklist-item__delete img { width: 12px; height: 12px; }
+.checklist-item:hover .checklist-item__delete { opacity: 1; }
+.checklist-item__delete:hover { background: var(--status-error-surface-l1); color: var(--status-error-default); }
+.slice-add-row { display: flex; align-items: center; gap: var(--spacer-8); margin-top: var(--spacer-8); }
+.slice-add-row .ds-input { flex: 1; }
+.slice-card__foot { padding: var(--spacer-12) var(--spacer-16); border-top: 1px solid var(--border-neutral-l1); display: flex; justify-content: flex-end; }
+
+/* Archive section */
+.archive-section { opacity: 0.65; margin-bottom: var(--spacer-16); }
+.archive-section__toggle { display: flex; align-items: center; gap: var(--spacer-8); padding: var(--spacer-8) var(--spacer-4); cursor: pointer; font-size: var(--body-sm-font-size); color: var(--text-secondary); border-radius: var(--radius-4); transition: background .12s ease; }
+.archive-section__toggle:hover { background: var(--bg-overlay-l1); }
+.archive-section__toggle img { width: 14px; height: 14px; transition: transform .2s ease; }
+.archive-section__toggle.is-open img { transform: rotate(90deg); }
+.archive-section__badge { display: inline-flex; align-items: center; gap: var(--spacer-4); font-size: var(--body-xs-font-size); color: var(--text-tertiary); }
+.archive-section__body { overflow: hidden; max-height: 0; transition: max-height .3s ease; }
+.archive-section__body.is-open { max-height: 600px; }
+.archive-section__inner { padding: var(--spacer-8) 0; }
+
+/* Slot cards */
+.slot-card { background: var(--bg-base-secondary); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-4); padding: var(--spacer-12) var(--spacer-16); margin-bottom: var(--spacer-8); }
+.slot-card__row { display: flex; align-items: center; justify-content: space-between; gap: var(--spacer-8); margin-bottom: var(--spacer-8); }
+.slot-card__name { font-size: var(--body-sm-strong-font-size); font-weight: var(--body-sm-strong-font-weight); color: var(--text-default); }
+.slot-card__count { font-family: var(--code-editor-font-family); font-size: var(--body-xs-font-size); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.slot-card__minibar { height: 4px; background: var(--bg-overlay-l3); border-radius: var(--radius-full); overflow: hidden; }
+.slot-card__minibar-fill { height: 100%; border-radius: var(--radius-full); background: var(--bg-brand); transition: width .3s ease; }
+.slot-card__minibar-fill.is-full { background: var(--status-error-default); }
+.slot-card__alert { display: flex; align-items: center; gap: var(--spacer-6); margin-top: var(--spacer-8); font-size: var(--body-xs-font-size); color: var(--status-error-default); }
+.slot-card__alert img { width: 12px; height: 12px; flex-shrink: 0; }
+
+/* Focus management */
+.focus-list { display: flex; flex-direction: column; gap: var(--spacer-4); }
+.focus-item { display: flex; align-items: center; gap: var(--spacer-8); padding: var(--spacer-6) var(--spacer-8); border-radius: var(--radius-4); background: var(--bg-overlay-l1); }
+.focus-item__name { flex: 1; font-size: var(--body-sm-font-size); color: var(--text-default); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.focus-item__phase { font-size: var(--body-xs-font-size); color: var(--text-tertiary); flex-shrink: 0; }
+.focus-item__star { flex-shrink: 0; color: var(--status-alert-default); }
+.focus-item__star img { width: 14px; height: 14px; }
+.focus-empty { padding: var(--spacer-16) var(--spacer-8); text-align: center; font-size: var(--body-sm-font-size); color: var(--text-tertiary); }
+
+/* Drift timeline */
+.drift-list { display: flex; flex-direction: column; gap: 0; position: relative; }
+.drift-list::before { content: ''; position: absolute; left: 5px; top: 0; bottom: 0; width: 1px; background: var(--border-neutral-l2); }
+.drift-item { display: flex; gap: var(--spacer-12); padding: var(--spacer-8) 0; position: relative; }
+.drift-item__dot { width: 11px; height: 11px; border-radius: var(--radius-full); background: var(--bg-base-secondary); border: 2px solid var(--border-neutral-l2); flex-shrink: 0; margin-top: 2px; z-index: 1; }
+.drift-item__content { flex: 1; min-width: 0; }
+.drift-item__time { font-family: var(--code-editor-font-family); font-size: var(--body-xs-font-size); color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+.drift-item__desc { font-size: var(--body-sm-font-size); color: var(--text-secondary); line-height: var(--body-sm-line-height); }
+
+/* Modal overlay */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1000; align-items: center; justify-content: center; }
+.modal-overlay.is-open { display: flex; }
+
+/* Section headings */
+.section-heading { font-size: var(--body-md-strong-font-size); font-weight: var(--body-md-strong-font-weight); color: var(--text-default); margin-bottom: var(--spacer-12); display: flex; align-items: center; gap: var(--spacer-8); }
+.section-heading img { width: 14px; height: 14px; color: var(--icon-secondary); }
+.right-section { margin-bottom: var(--spacer-24); }
+
+/* Theme selector dropdown */
+.theme-dropdown { position: relative; display: inline-flex; }
+.theme-dropdown__menu { display: none; position: absolute; top: calc(100% + 4px); left: 0; min-width: 180px; background: var(--bg-menu); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-4); padding: var(--spacer-4); z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,.36); }
+.theme-dropdown__menu.is-open { display: block; }
+.theme-dropdown__item { display: flex; align-items: center; gap: var(--spacer-8); padding: var(--spacer-6) var(--spacer-8); border-radius: var(--radius-2); color: var(--text-default); font-size: var(--body-sm-font-size); cursor: pointer; white-space: nowrap; }
+.theme-dropdown__item:hover { background: var(--bg-overlay-l2); }
+.theme-dropdown__item.is-active { color: var(--text-brand); }
+
+/* Focus buttons */
+.focus-action-btn { font-size: var(--body-xs-font-size); padding: 0 var(--spacer-8); height: 22px; border-radius: var(--radius-2); border: 1px solid var(--border-neutral-l1); background: var(--bg-overlay-l1); color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
+.focus-action-btn:hover { background: var(--bg-overlay-l2); color: var(--text-default); }
+.focus-action-btn.is-danger { border-color: var(--status-error-surface-l2); color: var(--status-error-default); }
+.focus-action-btn.is-danger:hover { background: var(--status-error-surface-l1); }
+
+/* Scrollbar */
+.phase-left::-webkit-scrollbar, .phase-right::-webkit-scrollbar { width: 6px; }
+.phase-left::-webkit-scrollbar-track, .phase-right::-webkit-scrollbar-track { background: transparent; }
+.phase-left::-webkit-scrollbar-thumb, .phase-right::-webkit-scrollbar-thumb { background: var(--border-neutral-l2); border-radius: var(--radius-full); }
+    </style>
+</head>
+<body>
+    <!-- App Shell -->
+    <div class="app-shell" data-viewport-mode="app-shell">
+      <!-- Titlebar -->
+      <div class="ds-wbtitlebar">
+        <div class="ds-wbtitlebar__left">
+          <div class="ds-wbtitlebar__lights">
+            <div class="ds-wbtitlebar__light ds-wbtitlebar__light--close"></div>
+            <div class="ds-wbtitlebar__light ds-wbtitlebar__light--min"></div>
+            <div class="ds-wbtitlebar__light ds-wbtitlebar__light--max"></div>
+          </div>
+          <div class="ds-wbtitlebar__mode-chip">
+            <img src="../assets/icons/dl_builtin_trae/sparkles.32f08c.svg" width="12" height="12" alt="sparkles">
+            刻意练习
+          </div>
+          <div class="theme-dropdown" id="themeSelector">
+            <div class="ds-wbtitlebar__project-selector" id="themeSelectorBtn">
+              <img src="../assets/icons/dl_builtin_trae/layers.svg" width="14" height="14" alt="layers" style="color:var(--icon-secondary)">
+              <span id="themeSelectorLabel">革新学习方法</span>
+              <img src="../assets/icons/dl_builtin_trae/chevron-down.svg" width="12" height="12" alt="chevron-down" style="color:var(--icon-tertiary)">
+            </div>
+            <div class="theme-dropdown__menu" id="themeDropdownMenu"></div>
+          </div>
+        </div>
+        <div class="ds-wbtitlebar__right">
+          <button class="ds-wbtitlebar__iconbtn" title="搜索"><img src="../assets/icons/dl_builtin_trae/search.svg" width="16" height="16" alt="search" style="color:var(--icon-secondary)"></button>
+          <button class="ds-wbtitlebar__iconbtn" title="设置"><img src="../assets/icons/dl_builtin_trae/gear.svg" width="16" height="16" alt="settings" style="color:var(--icon-secondary)"></button>
+        </div>
+      </div>
+
+      <!-- Activity Rail -->
+      <div class="ds-activityrail">
+        <button class="ds-activityrail__btn" title="主页"><img src="../assets/icons/dl_builtin_trae/home.svg" width="18" height="18" alt="home" style="color:var(--icon-secondary)"></button>
+        <button class="ds-activityrail__btn is-active" title="主题" id="activityTheme"><img src="../assets/icons/dl_builtin_trae/layers.svg" width="18" height="18" alt="layers" style="color:var(--icon-default)"></button>
+        <div class="ds-activityrail__divider"></div>
+        <button class="ds-activityrail__btn" title="日历"><img src="../assets/icons/dl_builtin_trae/calendar.svg" width="18" height="18" alt="calendar" style="color:var(--icon-secondary)"></button>
+        <button class="ds-activityrail__btn" title="统计"><img src="../assets/icons/dl_builtin_trae/dashboard.svg" width="18" height="18" alt="dashboard" style="color:var(--icon-secondary)"></button>
+        <div class="ds-activityrail__spacer"></div>
+        <button class="ds-activityrail__btn" title="设置"><img src="../assets/icons/dl_builtin_trae/settings.0c0c0d.svg" width="18" height="18" alt="settings" style="color:var(--icon-secondary)"></button>
+      </div>
+
+      <!-- Main Content -->
+      <div class="app-main">
+        <div class="phase-main">
+          <!-- Left Column: Phase Plan View -->
+          <div class="phase-left" id="phaseLeft">
+            <div class="phase-timeline" id="phaseTimeline"></div>
+            <div id="activeSliceContainer"></div>
+            <div id="archiveContainer"></div>
+          </div>
+
+          <!-- Right Column: Global View -->
+          <div class="phase-right">
+            <div class="right-section">
+              <div class="section-heading">
+                <img src="../assets/icons/dl_builtin_trae/grid-2x2.svg" width="14" height="14" alt="grid" style="color:var(--icon-secondary)">
+                阶段槽位概览
+              </div>
+              <div id="slotOverview"></div>
+            </div>
+            <div class="right-section">
+              <div class="section-heading">
+                <img src="../assets/icons/dl_builtin_trae/star.svg" width="14" height="14" alt="star" style="color:var(--status-alert-default)">
+                主焦点管理
+              </div>
+              <div class="focus-list" id="focusList"></div>
+              <div style="margin-top: var(--spacer-12);" id="focusActionArea"></div>
+            </div>
+            <div class="right-section">
+              <div class="section-heading">
+                <img src="../assets/icons/dl_builtin_trae/trending-down.svg" width="14" height="14" alt="trending-down" style="color:var(--icon-secondary)">
+                漂移记录
+              </div>
+              <div class="drift-list" id="driftList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog: advance phase -->
+    <div class="modal-overlay" id="modalAdvancePhase">
+      <div class="ds-dialog">
+        <div class="ds-dialog__head">
+          <span class="ds-dialog__title" id="modalAdvanceTitle">确认进入下一阶段</span>
+          <button class="ds-dialog__close" onclick="closeModal('modalAdvancePhase')"><img src="../assets/icons/dl_builtin_trae/x.svg" width="14" height="14" alt="close"></button>
+        </div>
+        <div class="ds-dialog__body" id="modalAdvanceBody">当前学习计划将归档，系统将生成下一阶段的练习计划。</div>
+        <div class="ds-dialog__foot">
+          <button class="ds-btn ds-btn--secondary" onclick="closeModal('modalAdvancePhase')">取消</button>
+          <button class="ds-btn ds-btn--brand" id="modalAdvanceConfirm" onclick="confirmAdvancePhase()">确认</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog: focus warning -->
+    <div class="modal-overlay" id="modalFocusWarning">
+      <div class="ds-dialog">
+        <div class="ds-dialog__head">
+          <span class="ds-dialog__title">注意力分散警告</span>
+          <button class="ds-dialog__close" onclick="closeModal('modalFocusWarning')"><img src="../assets/icons/dl_builtin_trae/x.svg" width="14" height="14" alt="close"></button>
+        </div>
+        <div class="ds-dialog__body">
+          <div class="ds-alert ds-alert--warning" style="margin-bottom:var(--spacer-8);">
+            <span class="ds-alert__icon"><img src="../assets/icons/dl_builtin_trae/alert-triangle.svg" width="16" height="16" alt="warning"></span>
+            <div>
+              <div class="ds-alert__title">同时设多个主焦点会导致注意力分散</div>
+              <div class="ds-alert__desc">此操作已记入计划漂移记录。</div>
+            </div>
+          </div>
+          <span id="modalFocusWarningDesc">确定要将此主题设为主焦点吗？</span>
+        </div>
+        <div class="ds-dialog__foot">
+          <button class="ds-btn ds-btn--secondary" onclick="closeModal('modalFocusWarning')">取消</button>
+          <button class="ds-btn ds-btn--warning" id="modalFocusWarningConfirm" onclick="confirmFocusWarning()">仍然设置</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog: focus hard cap -->
+    <div class="modal-overlay" id="modalFocusError">
+      <div class="ds-dialog">
+        <div class="ds-dialog__head">
+          <span class="ds-dialog__title">主焦点数量已达上限</span>
+          <button class="ds-dialog__close" onclick="closeModal('modalFocusError')"><img src="../assets/icons/dl_builtin_trae/x.svg" width="14" height="14" alt="close"></button>
+        </div>
+        <div class="ds-dialog__body">
+          <div class="ds-alert ds-alert--danger" style="margin-bottom:var(--spacer-8);">
+            <span class="ds-alert__icon"><img src="../assets/icons/dl_builtin_trae/alert-circle.svg" width="16" height="16" alt="error"></span>
+            <div>
+              <div class="ds-alert__title">主焦点最多 3 个</div>
+              <div class="ds-alert__desc">请先取消一个已有的主焦点后再设置新的。</div>
+            </div>
+          </div>
+        </div>
+        <div class="ds-dialog__foot">
+          <button class="ds-btn ds-btn--primary" onclick="closeModal('modalFocusError')">知道了</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog: slot full hard block -->
+    <div class="modal-overlay" id="modalSlotFull">
+      <div class="ds-dialog">
+        <div class="ds-dialog__head">
+          <span class="ds-dialog__title">学习槽已满</span>
+          <button class="ds-dialog__close" onclick="closeModal('modalSlotFull')"><img src="../assets/icons/dl_builtin_trae/x.svg" width="14" height="14" alt="close"></button>
+        </div>
+        <div class="ds-dialog__body">
+          <div class="ds-alert ds-alert--danger" style="margin-bottom:var(--spacer-8);">
+            <span class="ds-alert__icon"><img src="../assets/icons/dl_builtin_trae/alert-circle.svg" width="16" height="16" alt="error"></span>
+            <div>
+              <div class="ds-alert__title">当前学习阶段已被占用</div>
+              <div class="ds-alert__desc" id="modalSlotFullDesc">请先推进当前学习期主题到练习期，或将其休眠/废弃。</div>
+            </div>
+          </div>
+        </div>
+        <div class="ds-dialog__foot">
+          <button class="ds-btn ds-btn--primary" onclick="closeModal('modalSlotFull')">知道了</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+    /* Data Model */
+    const PHASES = [
+      { key: 'learning', label: '学习' },
+      { key: 'practice', label: '练习' },
+      { key: 'application', label: '应用' }
+    ];
+    const SLOT_LIMITS = { learning: 1, practice: 3, application: 5 };
+
+    let themes = [
+      {
+        id: 'theme-a', name: '革新学习方法', currentPhase: 'learning', is_focus: true,
+        slices: [
+          { phase: 'learning', status: 'active', items: [
+            { id: 'a1', label: '阅读费曼学习法核心章节', desc: '理解以教代学的底层逻辑', checked: false },
+            { id: 'a2', label: '整理间隔重复卡片', desc: '将核心概念转化为 Anki 闪卡', checked: false },
+            { id: 'a3', label: '完成思维导图笔记', desc: '用思维导图串联知识结构', checked: true },
+            { id: 'a4', label: '录制讲解视频', desc: '用自己的话复述并录制 5 分钟讲解', checked: false }
+          ]}
+        ], history: []
+      },
+      {
+        id: 'theme-b', name: '矛盾论', currentPhase: 'practice', is_focus: false,
+        slices: [
+          { phase: 'practice', status: 'active', items: [
+            { id: 'b1', label: '用矛盾论分析一篇时事评论', desc: '找出主要矛盾与次要矛盾', checked: false },
+            { id: 'b2', label: '完成对立统一练习题', desc: '在具体案例中识别矛盾双方', checked: true },
+            { id: 'b3', label: '撰写矛盾分析短文', desc: '300 字内分析一个现实问题', checked: false }
+          ]}
+        ], history: [
+          { phase: 'learning', status: 'completed', items: [
+            { id: 'bh1', label: '阅读《矛盾论》原文', desc: '通读毛泽东《矛盾论》全文', checked: true },
+            { id: 'bh2', label: '整理核心概念笔记', desc: '对立统一、主要矛盾、矛盾转化', checked: true },
+            { id: 'bh3', label: '完成基础理解测试', desc: '通过自测检验基本概念掌握', checked: true }
+          ]}
+        ]
+      }
+    ];
+
+    let selectedThemeId = 'theme-a';
+    let driftRecords = [
+      { time: '2026-07-27 14:32', desc: '主题「革新学习方法」被设为主焦点' }
+    ];
+    let pendingFocusAction = null;
+
+    /* Helpers */
+    function getTheme(id) { return themes.find(t => t.id === id); }
+    function getSelectedTheme() { return getTheme(selectedThemeId); }
+    function getPhaseIndex(key) { return PHASES.findIndex(p => p.key === key); }
+    function countSlots(phaseKey) { return themes.filter(t => t.currentPhase === phaseKey).length; }
+    function countFocus() { return themes.filter(t => t.is_focus).length; }
+    function now() {
+      const d = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+
+    /* Render: Theme Selector */
+    function renderThemeSelector() {
+      const menu = document.getElementById('themeDropdownMenu');
+      const label = document.getElementById('themeSelectorLabel');
+      const theme = getSelectedTheme();
+      label.textContent = theme.name;
+      menu.innerHTML = themes.map(t => {
+        const icon = t.is_focus ? 'star.svg' : 'circle.svg';
+        const iconColor = t.is_focus ? 'var(--status-alert-default)' : 'var(--icon-tertiary)';
+        const phaseLabel = PHASES.find(p => p.key === t.currentPhase).label;
+        const activeClass = t.id === selectedThemeId ? ' is-active' : '';
+        return '<div class="theme-dropdown__item' + activeClass + '" onclick="selectTheme(\'' + t.id + '\')">' +
+          '<img src="../assets/icons/dl_builtin_trae/' + icon + '" width="14" height="14" alt="" style="color:' + iconColor + '">' +
+          t.name +
+          '<span class="text-tertiary" style="margin-left:auto;font-size:var(--body-xs-font-size);">' + phaseLabel + '期</span>' +
+          '</div>';
+      }).join('');
+    }
+
+    function selectTheme(id) {
+      selectedThemeId = id;
+      renderThemeSelector();
+      renderLeftColumn();
+      renderRightColumn();
+      closeDropdown();
+    }
+
+    /* Dropdown */
+    document.getElementById('themeSelectorBtn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.getElementById('themeDropdownMenu').classList.toggle('is-open');
+    });
+    function closeDropdown() { document.getElementById('themeDropdownMenu').classList.remove('is-open'); }
+    document.addEventListener('click', closeDropdown);
+
+    /* Render: Phase Timeline */
+    function renderTimeline() {
+      const theme = getSelectedTheme();
+      const currentIdx = getPhaseIndex(theme.currentPhase);
+      const container = document.getElementById('phaseTimeline');
+      let html = '';
+      PHASES.forEach(function(phase, i) {
+        const nodeClass = i === currentIdx ? ' is-active' : (i < currentIdx ? ' is-completed' : '');
+        const circleClass = i === currentIdx ? ' is-active' : (i < currentIdx ? ' is-completed' : '');
+        const lineClass = i < currentIdx ? ' is-completed' : '';
+        const icon = i < currentIdx ? 'check.svg' : (i === currentIdx ? 'play.svg' : 'circle.svg');
+        const iconColor = i === currentIdx ? 'var(--icon-onbrand)' : (i < currentIdx ? 'var(--icon-secondary)' : 'var(--icon-tertiary)');
+        html += '<div class="phase-timeline__node' + nodeClass + '">' +
+          '<div class="phase-timeline__circle' + circleClass + '">' +
+          '<img src="../assets/icons/dl_builtin_trae/' + icon + '" alt="" style="color:' + iconColor + '">' +
+          '</div>' +
+          '<span class="phase-timeline__label">' + phase.label + '</span>' +
+          '</div>';
+        if (i < PHASES.length - 1) {
+          html += '<div class="phase-timeline__line' + lineClass + '"></div>';
+        }
+      });
+      container.innerHTML = html;
+    }
+
+    /* Render: Active Slice */
+    function renderActiveSlice() {
+      const theme = getSelectedTheme();
+      const activeSlice = theme.slices.find(function(s) { return s.status === 'active'; });
+      const container = document.getElementById('activeSliceContainer');
+      if (!activeSlice) { container.innerHTML = ''; return; }
+      const phaseLabel = PHASES.find(function(p) { return p.key === activeSlice.phase; }).label;
+      const total = activeSlice.items.length;
+      const done = activeSlice.items.filter(function(it) { return it.checked; }).length;
+      const canAdvance = activeSlice.phase !== 'application';
+
+      let itemsHtml = '';
+      activeSlice.items.forEach(function(item) {
+        const checkedClass = item.checked ? ' is-checked' : '';
+        itemsHtml += '<div class="checklist-item' + checkedClass + '">' +
+          '<label class="ds-check checklist-item__check">' +
+          '<input type="checkbox" ' + (item.checked ? 'checked' : '') + ' onchange="toggleItem(\'' + theme.id + '\', \'' + item.id + '\')">' +
+          '<span class="ds-check__box"></span>' +
+          '</label>' +
+          '<div class="checklist-item__content">' +
+          '<span class="checklist-item__label">' + item.label + '</span>' +
+          '<span class="checklist-item__desc">' + item.desc + '</span>' +
+          '</div>' +
+          '<button class="checklist-item__delete" onclick="deleteItem(\'' + theme.id + '\', \'' + item.id + '\')" title="删除">' +
+          '<img src="../assets/icons/dl_builtin_trae/trash.svg" alt="trash">' +
+          '</button>' +
+          '</div>';
+      });
+
+      container.innerHTML =
+        '<div class="slice-card">' +
+        '<div class="slice-card__head">' +
+        '<div class="slice-card__head-left">' +
+        '<span class="slice-card__title">' + phaseLabel + '计划</span>' +
+        '<span class="ds-tag ds-tag--brand">进行中</span>' +
+        '</div>' +
+        '<span class="mono" style="font-size:var(--body-xs-font-size);color:var(--text-tertiary);">' + done + ' / ' + total + '</span>' +
+        '</div>' +
+        '<div class="slice-card__body ds-stack-8">' +
+        itemsHtml +
+        '<div class="slice-add-row">' +
+        '<button class="ds-btn ds-btn--tertiary ds-btn--sm" onclick="showAddInput(\'' + theme.id + '\')" id="addBtn_' + theme.id + '">' +
+        '<img src="../assets/icons/dl_builtin_trae/plus.svg" width="12" height="12" alt="plus" class="icon">' +
+        ' 添加</button>' +
+        '<div class="ds-input" id="addInput_' + theme.id + '" style="display:none;">' +
+        '<input type="text" placeholder="输入条目名称" id="addInputLabel_' + theme.id + '" onkeydown="handleAddKeydown(event, \'' + theme.id + '\')">' +
+        '</div>' +
+        '<div class="ds-input" id="addInputDesc_' + theme.id + '" style="display:none;">' +
+        '<input type="text" placeholder="一句话说明（可选）" id="addInputDescVal_' + theme.id + '" onkeydown="handleAddKeydown(event, \'' + theme.id + '\')">' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        (canAdvance ? '<div class="slice-card__foot"><button class="ds-btn ds-btn--brand" onclick="tryAdvancePhase(\'' + theme.id + '\')">' +
+        '进入下一阶段 <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="arrow" class="icon"></button></div>' : '') +
+        '</div>';
+    }
+
+    /* Render: Archive */
+    function renderArchive() {
+      const theme = getSelectedTheme();
+      const container = document.getElementById('archiveContainer');
+      if (!theme.history || theme.history.length === 0) { container.innerHTML = ''; return; }
+      let html = '';
+      theme.history.forEach(function(slice) {
+        const phaseLabel = PHASES.find(function(p) { return p.key === slice.phase; }).label;
+        let itemsHtml = '';
+        slice.items.forEach(function(item) {
+          itemsHtml += '<div class="checklist-item is-checked">' +
+            '<label class="ds-check checklist-item__check">' +
+            '<input type="checkbox" checked disabled><span class="ds-check__box"></span></label>' +
+            '<div class="checklist-item__content">' +
+            '<span class="checklist-item__label">' + item.label + '</span>' +
+            '<span class="checklist-item__desc">' + item.desc + '</span></div></div>';
+        });
+        html += '<div class="archive-section">' +
+          '<div class="archive-section__toggle" onclick="toggleArchive(this)">' +
+          '<img src="../assets/icons/dl_builtin_trae/chevron-right.svg" alt="chevron">' +
+          '<span>' + phaseLabel + '计划</span>' +
+          '<span class="archive-section__badge">' +
+          '<img src="../assets/icons/dl_builtin_trae/lock.svg" width="12" height="12" alt="lock" style="color:var(--icon-tertiary)">' +
+          ' 已归档 · 只读</span></div>' +
+          '<div class="archive-section__body"><div class="archive-section__inner ds-stack-8">' +
+          itemsHtml + '</div></div></div>';
+      });
+      container.innerHTML = html;
+    }
+
+    function toggleArchive(el) {
+      el.classList.toggle('is-open');
+      el.nextElementSibling.classList.toggle('is-open');
+    }
+
+    function renderLeftColumn() { renderTimeline(); renderActiveSlice(); renderArchive(); }
+    function renderRightColumn() { renderSlotOverview(); renderFocusList(); renderDriftRecords(); }
+
+    /* Render: Slot Overview */
+    function renderSlotOverview() {
+      const container = document.getElementById('slotOverview');
+      container.innerHTML = PHASES.map(function(phase) {
+        const used = countSlots(phase.key);
+        const limit = SLOT_LIMITS[phase.key];
+        const pct = Math.min((used / limit) * 100, 100);
+        const isFull = used >= limit;
+        const occupying = themes.filter(function(t) { return t.currentPhase === phase.key; }).map(function(t) { return t.name; }).join('、');
+        return '<div class="slot-card">' +
+          '<div class="slot-card__row"><span class="slot-card__name">' + phase.label + '</span>' +
+          '<span class="slot-card__count" style="color:' + (isFull ? 'var(--status-error-default)' : 'var(--text-secondary)') + ';">' + used + ' / ' + limit + '</span></div>' +
+          '<div class="slot-card__minibar"><div class="slot-card__minibar-fill' + (isFull ? ' is-full' : '') + '" style="width:' + pct + '%"></div></div>' +
+          (isFull ? '<div class="slot-card__alert"><img src="../assets/icons/dl_builtin_trae/alert-circle.svg" alt="alert"> 槽位已满，占用：' + occupying + '。请先推进到下一阶段或休眠/废弃。</div>' : '') +
+          '</div>';
+      }).join('');
+    }
+
+    /* Render: Focus List */
+    function renderFocusList() {
+      const container = document.getElementById('focusList');
+      const actionArea = document.getElementById('focusActionArea');
+      const focusedThemes = themes.filter(function(t) { return t.is_focus; });
+      const currentTheme = getSelectedTheme();
+
+      if (focusedThemes.length === 0) {
+        container.innerHTML = '<div class="focus-empty">暂无主焦点主题</div>';
+      } else {
+        container.innerHTML = focusedThemes.map(function(t) {
+          const phaseLabel = PHASES.find(function(p) { return p.key === t.currentPhase; }).label;
+          const boldStyle = t.id === selectedThemeId ? 'font-weight:var(--font-weight-medium);' : '';
+          return '<div class="focus-item">' +
+            '<img src="../assets/icons/dl_builtin_trae/star.svg" width="14" height="14" alt="star" class="focus-item__star">' +
+            '<span class="focus-item__name" style="' + boldStyle + '">' + t.name + '</span>' +
+            '<span class="focus-item__phase">' + phaseLabel + '期</span></div>';
+        }).join('');
+      }
+
+      if (currentTheme.is_focus) {
+        actionArea.innerHTML = '<button class="focus-action-btn is-danger" onclick="removeFocus(\'' + currentTheme.id + '\')">取消焦点</button>';
+      } else {
+        actionArea.innerHTML = '<button class="focus-action-btn" onclick="trySetFocus(\'' + currentTheme.id + '\')">设为主焦点</button>';
+      }
+    }
+
+    /* Render: Drift Records */
+    function renderDriftRecords() {
+      const container = document.getElementById('driftList');
+      container.innerHTML = driftRecords.map(function(r) {
+        return '<div class="drift-item"><div class="drift-item__dot"></div>' +
+          '<div class="drift-item__content"><div class="drift-item__time">' + r.time + '</div>' +
+          '<div class="drift-item__desc">' + r.desc + '</div></div></div>';
+      }).join('');
+    }
+
+    /* Actions */
+    function toggleItem(themeId, itemId) {
+      const theme = getTheme(themeId);
+      const slice = theme.slices.find(function(s) { return s.status === 'active'; });
+      const item = slice.items.find(function(it) { return it.id === itemId; });
+      if (item) { item.checked = !item.checked; renderLeftColumn(); renderRightColumn(); }
+    }
+
+    function deleteItem(themeId, itemId) {
+      const theme = getTheme(themeId);
+      const slice = theme.slices.find(function(s) { return s.status === 'active'; });
+      slice.items = slice.items.filter(function(it) { return it.id !== itemId; });
+      renderLeftColumn();
+    }
+
+    function showAddInput(themeId) {
+      document.getElementById('addBtn_' + themeId).style.display = 'none';
+      document.getElementById('addInput_' + themeId).style.display = 'flex';
+      document.getElementById('addInputDesc_' + themeId).style.display = 'flex';
+      document.getElementById('addInputLabel_' + themeId).focus();
+    }
+
+    function handleAddKeydown(e, themeId) {
+      if (e.key === 'Enter') { addNewItem(themeId); }
+      else if (e.key === 'Escape') { renderLeftColumn(); }
+    }
+
+    function addNewItem(themeId) {
+      const labelInput = document.getElementById('addInputLabel_' + themeId);
+      const descInput = document.getElementById('addInputDescVal_' + themeId);
+      const label = labelInput.value.trim();
+      if (!label) return;
+      const desc = descInput.value.trim() || '暂无说明';
+      const theme = getTheme(themeId);
+      const slice = theme.slices.find(function(s) { return s.status === 'active'; });
+      slice.items.push({ id: 'new_' + Date.now(), label: label, desc: desc, checked: false });
+      renderLeftColumn();
+      renderRightColumn();
+    }
+
+    /* Advance Phase */
+    function tryAdvancePhase(themeId) {
+      const theme = getTheme(themeId);
+      const currentIdx = getPhaseIndex(theme.currentPhase);
+      if (currentIdx >= PHASES.length - 1) return;
+      const nextPhase = PHASES[currentIdx + 1];
+      /* Check target phase slot limit (hard block) */
+      var nextCount = countSlots(nextPhase.key);
+      var nextLimit = SLOT_LIMITS[nextPhase.key];
+      /* If the theme itself is already counted in the target (shouldn't be), exclude it */
+      if (nextCount >= nextLimit) {
+        var occupying = themes.filter(function(t) { return t.currentPhase === nextPhase.key; }).map(function(t) { return t.name; }).join('、');
+        document.getElementById('modalSlotFullDesc').textContent = nextPhase.label + '期槽位已满（' + nextCount + '/' + nextLimit + '），占用：' + occupying + '。请先推进其他主题到下一阶段，或将其休眠/废弃。';
+        openModal('modalSlotFull');
+        return;
+      }
+      const currentPhaseLabel = PHASES[currentIdx].label;
+      const nextPhaseLabel = nextPhase.label;
+      document.getElementById('modalAdvanceTitle').textContent = '确认进入下一阶段';
+      document.getElementById('modalAdvanceBody').textContent = currentPhaseLabel + '计划将归档，系统将生成' + nextPhaseLabel + '计划。归档后不可编辑。';
+      document.getElementById('modalAdvanceConfirm').setAttribute('data-theme-id', themeId);
+      openModal('modalAdvancePhase');
+    }
+
+    function confirmAdvancePhase() {
+      const btn = document.getElementById('modalAdvanceConfirm');
+      const themeId = btn.getAttribute('data-theme-id');
+      const theme = getTheme(themeId);
+      const currentIdx = getPhaseIndex(theme.currentPhase);
+      const nextPhase = PHASES[currentIdx + 1];
+      const activeSlice = theme.slices.find(function(s) { return s.status === 'active'; });
+      if (activeSlice) { activeSlice.status = 'completed'; theme.history.push(activeSlice); }
+      const newSlice = { phase: nextPhase.key, status: 'active', items: generateDefaultItems(theme.name, nextPhase.key) };
+      theme.slices.push(newSlice);
+      theme.slices = theme.slices.filter(function(s) { return s.status === 'active' || s.status === 'completed'; });
+      theme.currentPhase = nextPhase.key;
+      driftRecords.unshift({ time: now(), desc: '主题「' + theme.name + '」从' + PHASES[currentIdx].label + '期推进到' + nextPhase.label + '期' });
+      closeModal('modalAdvancePhase');
+      renderLeftColumn(); renderRightColumn(); renderThemeSelector();
+    }
+
+    function generateDefaultItems(themeName, phaseKey) {
+      const ts = Date.now();
+      if (phaseKey === 'application') {
+        return [
+          { id: 'a_' + ts + '_1', label: '在真实场景中应用「' + themeName + '」', desc: '将知识迁移到实际问题', checked: false },
+          { id: 'a_' + ts + '_2', label: '完成应用项目或案例分析', desc: '综合运用所学知识', checked: false }
+        ];
+      }
+      return [
+        { id: 'p_' + ts + '_1', label: '运用「' + themeName + '」核心概念做练习', desc: '将理论知识转化为实际操作', checked: false },
+        { id: 'p_' + ts + '_2', label: '完成基础练习题目', desc: '巩固核心概念的应用能力', checked: false },
+        { id: 'p_' + ts + '_3', label: '记录练习中的困惑与反思', desc: '为后续深化做准备', checked: false }
+      ];
+    }
+
+    /* Focus Management */
+    function trySetFocus(themeId) {
+      const theme = getTheme(themeId);
+      const currentFocusCount = countFocus();
+      if (currentFocusCount >= 3) { openModal('modalFocusError'); return; }
+      if (currentFocusCount >= 1) {
+        pendingFocusAction = themeId;
+        document.getElementById('modalFocusWarningDesc').textContent = '当前已有 ' + currentFocusCount + ' 个主焦点。确定要将「' + theme.name + '」也设为主焦点吗？';
+        openModal('modalFocusWarning');
+        return;
+      }
+      setFocusDirectly(themeId);
+    }
+
+    function confirmFocusWarning() {
+      if (pendingFocusAction) {
+        const theme = getTheme(pendingFocusAction);
+        driftRecords.unshift({ time: now(), desc: '多焦点警告：将「' + theme.name + '」设为主焦点，已记入计划漂移' });
+        setFocusDirectly(pendingFocusAction);
+        pendingFocusAction = null;
+      }
+      closeModal('modalFocusWarning');
+      renderRightColumn(); renderThemeSelector();
+    }
+
+    function setFocusDirectly(themeId) {
+      const theme = getTheme(themeId);
+      theme.is_focus = true;
+      if (!driftRecords.some(function(r) { return r.desc.indexOf(theme.name) !== -1 && r.desc.indexOf('主焦点') !== -1; })) {
+        driftRecords.unshift({ time: now(), desc: '主题「' + theme.name + '」被设为主焦点' });
+      }
+      renderRightColumn(); renderThemeSelector();
+    }
+
+    function removeFocus(themeId) {
+      const theme = getTheme(themeId);
+      theme.is_focus = false;
+      driftRecords.unshift({ time: now(), desc: '取消「' + theme.name + '」的主焦点' });
+      renderRightColumn(); renderThemeSelector();
+    }
+
+    /* Modal */
+    function openModal(id) { document.getElementById(id).classList.add('is-open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('is-open'); }
+
+    /* Init */
+    renderThemeSelector();
+    renderLeftColumn();
+    renderRightColumn();
+    </script>
+</body>
+</html>

@@ -1,54 +1,131 @@
 {
   "data": [
     {
-      "id": "page-workbench",
+      "id": "page-home",
       "type": "page",
-      "title": "主题工作台 · 革新学习方法",
+      "title": "首页 · 今天与我的主题",
       "version": 2,
-      "createdAt": 1753555200000,
+      "createdAt": 1785228800000,
       "canvasData": {
         "x": 620,
         "y": 0,
         "group": 0
       },
       "devMetadata": {
-        "htmlSrc": "pages/workbench.html",
+        "htmlSrc": "pages/home.html",
         "interactions": [
           {
             "domId": "btn-new-theme",
             "targetPageId": "page-new-theme-intercept"
           },
           {
-            "domId": "btn-open-plan-cocreate",
-            "targetPageId": "page-learning-plan-cocreate"
+            "domId": "btn-today-task-1",
+            "targetPageId": "page-theme-work"
           },
           {
-            "domId": "btn-start-review",
-            "targetPageId": "page-weekly-review"
+            "domId": "btn-today-task-2",
+            "targetPageId": "page-theme-work"
           },
           {
-            "domId": "btn-theme-plan-phases",
-            "targetPageId": "page-theme-plan-phases"
+            "domId": "btn-today-task-3",
+            "targetPageId": "page-theme-work"
+          },
+          {
+            "domId": "btn-theme-1",
+            "targetPageId": "page-theme-overview"
+          },
+          {
+            "domId": "btn-theme-2",
+            "targetPageId": "page-theme-overview"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-theme-overview",
+      "type": "page",
+      "title": "主题看板 · 革新学习方法",
+      "version": 2,
+      "createdAt": 1785228800000,
+      "canvasData": {
+        "x": 0,
+        "y": 754,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/theme-overview.html",
+        "interactions": [
+          {
+            "domId": "btn-back-home",
+            "targetPageId": "page-home"
+          },
+          {
+            "domId": "rail-home",
+            "targetPageId": "page-home"
+          },
+          {
+            "domId": "rail-work",
+            "targetPageId": "page-theme-work"
+          },
+          {
+            "domId": "btn-enter-execution",
+            "targetPageId": "page-theme-work"
           },
           {
             "domId": "btn-view-drift",
             "targetPageId": "page-theme-plan-phases"
           },
           {
-            "domId": "rail-theme-phases",
+            "domId": "btn-mode-execute",
+            "targetPageId": "page-theme-work"
+          },
+          {
+            "domId": "btn-mode-plan",
             "targetPageId": "page-theme-plan-phases"
           },
           {
-            "domId": "rail-weekly-review",
+            "domId": "btn-mode-review",
             "targetPageId": "page-weekly-review"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-theme-work",
+      "type": "page",
+      "title": "作业面 · 革新学习方法",
+      "version": 2,
+      "createdAt": 1785228800000,
+      "canvasData": {
+        "x": 0,
+        "y": 377,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/theme-work.html",
+        "interactions": [
+          {
+            "domId": "btn-back-overview",
+            "targetPageId": "page-theme-overview"
           },
           {
-            "domId": "rail-improvement",
-            "type": "anchor-scroll",
-            "description": "锚点滚动到工作台 A 栏改进建议面板"
+            "domId": "rail-home",
+            "targetPageId": "page-home"
           },
           {
-            "domId": "btn-review-from-improvement",
+            "domId": "rail-overview",
+            "targetPageId": "page-theme-overview"
+          },
+          {
+            "domId": "btn-open-cocreate",
+            "targetPageId": "page-learning-plan-cocreate"
+          },
+          {
+            "domId": "btn-open-phases",
+            "targetPageId": "page-theme-plan-phases"
+          },
+          {
+            "domId": "btn-open-full-review",
             "targetPageId": "page-weekly-review"
           }
         ]
@@ -69,8 +146,8 @@
         "htmlSrc": "pages/new-theme-intercept.html",
         "interactions": [
           {
-            "domId": "btn-back-workbench",
-            "targetPageId": "page-workbench"
+            "domId": "btn-back-home",
+            "targetPageId": "page-home"
           }
         ]
       }
@@ -83,15 +160,15 @@
       "createdAt": 1785218460000,
       "canvasData": {
         "x": 0,
-        "y": 377,
+        "y": 2021,
         "group": 0
       },
       "devMetadata": {
         "htmlSrc": "pages/learning-plan-cocreate.html",
         "interactions": [
           {
-            "domId": "btn-back-workbench",
-            "targetPageId": "page-workbench"
+            "domId": "btn-back-work",
+            "targetPageId": "page-theme-work"
           }
         ]
       }
@@ -104,15 +181,15 @@
       "createdAt": 1753555200000,
       "canvasData": {
         "x": 0,
-        "y": 1654,
+        "y": 1508,
         "group": 0
       },
       "devMetadata": {
         "htmlSrc": "pages/weekly-review.html",
         "interactions": [
           {
-            "domId": "btn-back-workbench",
-            "targetPageId": "page-workbench"
+            "domId": "btn-back-work",
+            "targetPageId": "page-theme-work"
           }
         ]
       }
@@ -125,15 +202,15 @@
       "createdAt": 1785201592337,
       "canvasData": {
         "x": 0,
-        "y": 2167,
+        "y": 1131,
         "group": 0
       },
       "devMetadata": {
         "htmlSrc": "pages/theme-plan-phases.html",
         "interactions": [
           {
-            "domId": "btn-back-workbench",
-            "targetPageId": "page-workbench"
+            "domId": "btn-back-work",
+            "targetPageId": "page-theme-work"
           }
         ]
       }

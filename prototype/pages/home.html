@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今天 - 可视化刻意练习系统</title>
+    <style id="theme-vars">
+/**
+ * Trae design library tokens
+ * Dark-only colors and typography tokens.
+ */
+:root {
+  /* radius */
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-10: 10px;
+  --radius-full: 9999px;
+
+  /* spacers */
+  --spacer-0: 0px;
+  --spacer-4: 4px;
+  --spacer-6: 6px;
+  --spacer-8: 8px;
+  --spacer-12: 12px;
+  --spacer-16: 16px;
+  --spacer-24: 24px;
+  --spacer-32: 32px;
+  --spacer-40: 40px;
+
+  /* font */
+  --font-family-default: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --font-family-heading: "SF Pro", system-ui, -apple-system, sans-serif;
+  --font-family-mono: "JetBrains Mono", system-ui, -apple-system, sans-serif;
+  --font-weight-default: 400;
+  --font-weight-medium: 500;
+  --font-weight-strong: 600;
+
+  /* body */
+  --body-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-xs-font-size: 10px;
+  --body-xs-font-weight: 400;
+  --body-xs-line-height: 14px;
+  --body-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-sm-font-size: 11px;
+  --body-sm-font-weight: 400;
+  --body-sm-line-height: 16px;
+  --body-sm-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-sm-strong-font-size: 11px;
+  --body-sm-strong-font-weight: 500;
+  --body-sm-strong-line-height: 16px;
+  --body-md-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-md-font-size: 12px;
+  --body-md-font-weight: 400;
+  --body-md-line-height: 18px;
+  --body-md-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-md-strong-font-size: 12px;
+  --body-md-strong-font-weight: 500;
+  --body-md-strong-line-height: 18px;
+  --body-base-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-base-font-size: 13px;
+  --body-base-font-weight: 400;
+  --body-base-line-height: 20px;
+  --body-base-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --body-base-strong-font-size: 13px;
+  --body-base-strong-font-weight: 500;
+  --body-base-strong-line-height: 20px;
+
+  /* heading */
+  --heading-3xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-3xs-font-size: 11px;
+  --heading-3xs-font-weight: 600;
+  --heading-3xs-line-height: 16px;
+  --heading-2xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-2xs-font-size: 12px;
+  --heading-2xs-font-weight: 600;
+  --heading-2xs-line-height: 18px;
+  --heading-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-xs-font-size: 13px;
+  --heading-xs-font-weight: 600;
+  --heading-xs-line-height: 20px;
+  --heading-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --heading-sm-font-size: 16px;
+  --heading-sm-font-weight: 600;
+  --heading-sm-line-height: 24px;
+  --heading-md-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-md-font-size: 20px;
+  --heading-md-font-weight: 600;
+  --heading-md-line-height: 28px;
+  --heading-lg-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-lg-font-size: 22px;
+  --heading-lg-font-weight: 600;
+  --heading-lg-line-height: 30px;
+  --heading-xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-xl-font-size: 24px;
+  --heading-xl-font-weight: 600;
+  --heading-xl-line-height: 32px;
+  --heading-2xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-2xl-font-size: 28px;
+  --heading-2xl-font-weight: 600;
+  --heading-2xl-line-height: 36px;
+  --heading-3xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif;
+  --heading-3xl-font-size: 32px;
+  --heading-3xl-font-weight: 600;
+  --heading-3xl-line-height: 40px;
+
+  /* code */
+  --code-editor-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif;
+  --code-editor-font-size: 13px;
+  --code-editor-font-weight: 450;
+  --code-editor-line-height: 20px;
+
+  /* bg */
+  --bg-base-default: #1A1B1D;
+  --bg-base-secondary: #222427;
+  --bg-base-tertiary: #2A2D31;
+  --bg-overlay-l1: rgba(224, 226, 242, 0.04);
+  --bg-overlay-l2: rgba(224, 226, 242, 0.06);
+  --bg-overlay-l3: rgba(224, 226, 242, 0.08);
+  --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+  --bg-menu: #202123;
+
+  /* bg-brand */
+  --bg-brand: #32F08C;
+  --bg-brand-hover: #0FDC78;
+  --bg-brand-disabled: rgba(50, 240, 140, 0.2);
+  --bg-brand-popup: rgba(50, 240, 140, 0.12);
+
+  /* text */
+  --text-default: #D1D3DB;
+  --text-default-hover: #F5F9FE;
+  --text-secondary: #9599A6;
+  --text-tertiary: #666B75;
+  --text-disabled: #666B75;
+  --text-onbrand: #0C0C0D;
+
+  /* text-brand */
+  --text-brand: #32F08C;
+
+  /* icon */
+  --icon-default: #D1D3DB;
+  --icon-secondary: #9599A6;
+  --icon-tertiary: #666B75;
+
+  /* border */
+  --border-neutral-l1: rgba(224, 226, 242, 0.1);
+  --border-neutral-l2: rgba(224, 226, 242, 0.16);
+  --border-neutral-l3: rgba(224, 226, 242, 0.2);
+  --border-brand: #32F08C;
+
+  /* status */
+  --status-success-default: #33C192;
+  --status-warning-default: #D27E24;
+  --status-error-default: #F65A5A;
+  --status-alert-default: #D29D00;
+
+  /* accent — used as topic color dots */
+  --accent-teal: #2DD288;
+  --accent-amber: #DCB364;
+  --accent-coral: #FF9392;
+}
+    </style>
+
+    <style id="component-vars">
+/* ═══════════════════════════════════════════════════════════════
+   Design System Component Definitions — Home Page Subset
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Activity Rail ─────────────────────────────────────────── */
+.ds-activityrail {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacer-4);
+  width: 48px;
+  padding: var(--spacer-8) 0;
+  background: var(--bg-base-secondary);
+  border-right: 1px solid var(--border-neutral-l1);
+}
+.ds-activityrail__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-8);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+.ds-activityrail__btn:hover { background: var(--bg-overlay-l2); }
+.ds-activityrail__btn.is-active {
+  background: var(--bg-overlay-l3);
+}
+.ds-activityrail__btn.is-active::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: var(--bg-brand);
+}
+.ds-activityrail__divider {
+  width: 24px;
+  height: 1px;
+  margin: var(--spacer-4) 0;
+  background: var(--border-neutral-l2);
+}
+.ds-activityrail__spacer { flex: 1; }
+.ds-activityrail__btn img { display: block; }
+
+/* ── Window Titlebar ──────────────────────────────────────── */
+.ds-wbtitlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacer-12);
+  height: 40px;
+  padding: 0 var(--spacer-12);
+  background: var(--bg-base-secondary);
+  border-bottom: 1px solid var(--border-neutral-l1);
+}
+.ds-wbtitlebar__left,
+.ds-wbtitlebar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-8);
+}
+.ds-wbtitlebar__lights {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-8);
+  margin-right: var(--spacer-8);
+}
+.ds-wbtitlebar__light {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+}
+.ds-wbtitlebar__light--close { background: var(--status-error-default); }
+.ds-wbtitlebar__light--min { background: var(--status-alert-default); }
+.ds-wbtitlebar__light--max { background: var(--status-success-default); }
+.ds-wbtitlebar__mode-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacer-6);
+  height: 24px;
+  padding: 0 var(--spacer-8);
+  background: var(--bg-brand);
+  color: var(--text-onbrand);
+  border-radius: var(--radius-full);
+  font-size: var(--body-xs-font-size);
+  font-weight: var(--font-weight-medium);
+}
+.ds-wbtitlebar__project-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacer-6);
+  height: 24px;
+  padding: 0 var(--spacer-8);
+  background: var(--bg-overlay-l1);
+  color: var(--text-default);
+  border: 1px solid var(--border-neutral-l2);
+  border-radius: var(--radius-6);
+  font-size: var(--body-sm-font-size);
+  cursor: pointer;
+}
+.ds-wbtitlebar__project-selector:hover {
+  background: var(--bg-overlay-l2);
+  color: var(--text-default-hover);
+}
+.ds-wbtitlebar__iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-6);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.ds-wbtitlebar__iconbtn:hover { background: var(--bg-overlay-l2); }
+.ds-wbtitlebar .icon { display: block; }
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacer-6);
+  padding: 0 var(--spacer-12);
+  height: 28px;
+  border-radius: var(--radius-4);
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  font-family: var(--body-sm-strong-font-family);
+  font-size: var(--body-sm-strong-font-size);
+  line-height: 1;
+  font-weight: var(--body-sm-strong-font-weight);
+  transition: background .12s ease, color .12s ease, border-color .12s ease, opacity .12s ease;
+  text-decoration: none;
+}
+.ds-btn .icon { color: currentColor; }
+.ds-btn--sm {
+  height: 24px;
+  padding: 0 var(--spacer-8);
+  border-radius: var(--radius-4);
+  font-size: var(--body-xs-font-size);
+}
+.ds-btn--tertiary {
+  background: transparent;
+  color: var(--text-default);
+  border-color: transparent;
+}
+.ds-btn--tertiary:hover {
+  background: var(--bg-overlay-l2);
+}
+.ds-btn--brand {
+  background: var(--bg-brand);
+  color: var(--text-onbrand);
+  border-color: var(--bg-brand);
+}
+.ds-btn--brand:hover {
+  background: var(--bg-brand-hover);
+  border-color: var(--bg-brand-hover);
+}
+
+/* ── Tags ──────────────────────────────────────────────────── */
+.ds-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--spacer-6);
+  height: 18px;
+  border-radius: var(--radius-2);
+  font-size: var(--body-xs-font-size);
+  line-height: 1;
+  background: var(--bg-overlay-l2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-neutral-l1);
+}
+.ds-tag--brand {
+  background: var(--bg-brand-popup);
+  color: var(--text-brand);
+  border-color: transparent;
+}
+.ds-tag--success {
+  background: rgba(0, 165, 110, 0.18);
+  color: var(--status-success-default);
+  border-color: transparent;
+}
+.ds-tag--warning {
+  background: rgba(210, 126, 36, 0.16);
+  color: var(--status-warning-default);
+  border-color: transparent;
+}
+
+/* ── Card ──────────────────────────────────────────────────── */
+.ds-card {
+  background: var(--bg-base-secondary);
+  border: 1px solid var(--border-neutral-l1);
+  border-radius: var(--radius-4);
+  padding: var(--spacer-24);
+}
+
+/* ── App Shell Layout ──────────────────────────────────────── */
+.app-shell {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  grid-template-rows: 40px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+.app-shell > .ds-wbtitlebar { grid-column: 1 / -1; }
+.app-main {
+  overflow-y: auto;
+  background: var(--bg-base-default);
+}
+
+/* ── Utility ───────────────────────────────────────────────── */
+body {
+  background: var(--bg-base-default);
+  margin: 0;
+  font-family: var(--body-base-font-family);
+  color: var(--text-default);
+}
+.mono {
+  font-family: var(--code-editor-font-family);
+  font-variant-numeric: tabular-nums;
+}
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+    </style>
+
+    <style id="page-specific">
+/* ═══════════════════════════════════════════════════════════════
+   Home Page (L1) — Layout & Component Styles
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Container ──────────────────────────────────────── */
+.home-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--spacer-40) var(--spacer-32) var(--spacer-32);
+}
+
+/* ── Page Header ──────────────────────────────────────────── */
+.home-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacer-16);
+  margin-bottom: var(--spacer-40);
+}
+.home-header__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-4);
+}
+.home-header__title {
+  font-family: var(--heading-sm-font-family);
+  font-size: var(--heading-sm-font-size);
+  font-weight: var(--heading-sm-font-weight);
+  line-height: var(--heading-sm-line-height);
+  color: var(--text-default);
+}
+.home-header__subtitle {
+  font-size: var(--body-sm-font-size);
+  line-height: var(--body-sm-line-height);
+  color: var(--text-tertiary);
+}
+
+/* ── Section ──────────────────────────────────────────────── */
+.home-section {
+  margin-bottom: var(--spacer-32);
+}
+.home-section__label {
+  font-size: var(--body-xs-font-size);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacer-12);
+}
+
+/* ── Today Task List ──────────────────────────────────────── */
+.today-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-4);
+}
+.today-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-12);
+  padding: var(--spacer-12) var(--spacer-16);
+  background: var(--bg-base-secondary);
+  border: 1px solid var(--border-neutral-l1);
+  border-radius: var(--radius-6);
+  text-decoration: none;
+  color: var(--text-default);
+  transition: background .12s ease, border-color .12s ease;
+}
+.today-item:hover {
+  background: var(--bg-overlay-l2);
+  border-color: var(--border-neutral-l2);
+}
+.today-item__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+.today-item__dot--teal { background: var(--accent-teal); }
+.today-item__dot--amber { background: var(--accent-amber); }
+
+.today-item__topic-tag {
+  flex-shrink: 0;
+}
+.today-item__text {
+  flex: 1;
+  font-size: var(--body-base-font-size);
+  line-height: var(--body-base-line-height);
+  color: var(--text-default);
+  min-width: 0;
+}
+.today-item__enter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacer-4);
+  flex-shrink: 0;
+  font-size: var(--body-sm-font-size);
+  color: var(--text-secondary);
+  transition: color .12s ease;
+}
+.today-item:hover .today-item__enter {
+  color: var(--text-brand);
+}
+.today-item__enter img {
+  display: block;
+  transition: transform .12s ease;
+}
+.today-item:hover .today-item__enter img {
+  transform: translateX(2px);
+}
+
+/* ── Theme Card Grid ───────────────────────────────────────── */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacer-16);
+}
+.theme-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-12);
+  padding: var(--spacer-24);
+  background: var(--bg-base-secondary);
+  border: 1px solid var(--border-neutral-l1);
+  border-radius: var(--radius-6);
+  transition: background .12s ease, border-color .12s ease;
+}
+.theme-card:hover {
+  border-color: var(--border-neutral-l2);
+}
+.theme-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacer-8);
+}
+.theme-card__name {
+  font-family: var(--heading-xs-font-family);
+  font-size: var(--heading-xs-font-size);
+  font-weight: var(--heading-xs-font-weight);
+  line-height: var(--heading-xs-line-height);
+  color: var(--text-default);
+}
+.theme-card__status {
+  font-size: var(--body-sm-font-size);
+  line-height: var(--body-sm-line-height);
+  color: var(--text-secondary);
+}
+.theme-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--spacer-8);
+}
+.theme-card__task-hint {
+  font-size: var(--body-sm-font-size);
+  line-height: var(--body-sm-line-height);
+  color: var(--text-tertiary);
+}
+.theme-card__enter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacer-4);
+  font-size: var(--body-sm-font-size);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color .12s ease;
+}
+.theme-card__enter:hover {
+  color: var(--text-brand);
+}
+.theme-card__enter img {
+  display: block;
+}
+
+/* ── Slot Occupancy ───────────────────────────────────────── */
+.slot-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacer-16);
+  padding-top: var(--spacer-16);
+  margin-top: var(--spacer-8);
+  border-top: 1px solid var(--border-neutral-l1);
+}
+.slot-bar__item {
+  font-family: var(--code-editor-font-family);
+  font-size: var(--body-xs-font-size);
+  color: var(--text-tertiary);
+}
+.slot-bar__label {
+  color: var(--text-tertiary);
+  font-size: var(--body-xs-font-size);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 720px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .ds-activityrail { display: none; }
+  .theme-grid { grid-template-columns: 1fr; }
+  .home-page { padding: var(--spacer-24) var(--spacer-16); }
+}
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main>
+    <div class="app-shell" data-viewport-mode="app-shell">
+
+      <!-- ═══ Window Titlebar ═══ -->
+      <div class="ds-wbtitlebar">
+        <div class="ds-wbtitlebar__left">
+          <div class="ds-wbtitlebar__lights">
+            <span class="ds-wbtitlebar__light ds-wbtitlebar__light--close"></span>
+            <span class="ds-wbtitlebar__light ds-wbtitlebar__light--min"></span>
+            <span class="ds-wbtitlebar__light ds-wbtitlebar__light--max"></span>
+          </div>
+          <span class="ds-wbtitlebar__mode-chip">刻意练习</span>
+          <div class="ds-wbtitlebar__project-selector">
+            <span>2026-07-28 · W1 Day 3</span>
+            <img src="../assets/icons/dl_builtin_trae/chevron-down.svg" width="12" height="12" alt="" class="icon" />
+          </div>
+        </div>
+        <div class="ds-wbtitlebar__right">
+          <button class="ds-wbtitlebar__iconbtn" type="button" aria-label="搜索">
+            <img src="../assets/icons/dl_builtin_trae/search.svg" width="16" height="16" alt="" class="icon" />
+          </button>
+          <button class="ds-wbtitlebar__iconbtn" type="button" aria-label="通知">
+            <img src="../assets/icons/dl_builtin_trae/bell.svg" width="16" height="16" alt="" class="icon" />
+          </button>
+          <button class="ds-wbtitlebar__iconbtn" type="button" aria-label="设置">
+            <img src="../assets/icons/dl_builtin_trae/settings.svg" width="16" height="16" alt="" class="icon" />
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ Activity Rail ═══ -->
+      <div class="ds-activityrail">
+        <a class="ds-activityrail__btn is-active" href="home.html" data-dom-id="rail-home" aria-label="今天" title="今天">
+          <img src="../assets/icons/dl_builtin_trae/home.svg" width="16" height="16" alt="" />
+        </a>
+        <a class="ds-activityrail__btn" href="#" data-dom-id="rail-themes" aria-label="我的主题" title="我的主题">
+          <img src="../assets/icons/dl_builtin_trae/layers.svg" width="16" height="16" alt="" />
+        </a>
+        <a class="ds-activityrail__btn" href="#" data-dom-id="rail-calendar" aria-label="日历" title="日历">
+          <img src="../assets/icons/dl_builtin_trae/calendar.svg" width="16" height="16" alt="" />
+        </a>
+        <div class="ds-activityrail__divider"></div>
+        <div class="ds-activityrail__spacer"></div>
+        <a class="ds-activityrail__btn" href="#" data-dom-id="rail-settings" aria-label="设置" title="设置">
+          <img src="../assets/icons/dl_builtin_trae/settings.svg" width="16" height="16" alt="" />
+        </a>
+      </div>
+
+      <!-- ═══ Main Content ═══ -->
+      <div class="app-main overflow-y-auto" data-scroll-region="primary">
+        <div class="home-page">
+
+          <!-- ── Page Header ── -->
+          <div class="home-header">
+            <div class="home-header__title-group">
+              <div class="home-header__title">今天</div>
+              <div class="home-header__subtitle">2026-07-28（周二）&middot; W1 Day 3</div>
+            </div>
+            <a class="ds-btn ds-btn--tertiary" href="new-theme-intercept.html" data-dom-id="btn-new-theme">
+              <img src="../assets/icons/dl_builtin_trae/plus.svg" width="14" height="14" alt="" class="icon" />
+              <span>新建主题</span>
+            </a>
+          </div>
+
+          <!-- ── Today Section ── -->
+          <section class="home-section">
+            <div class="home-section__label">今日任务</div>
+            <div class="today-list">
+
+              <!-- Task 1: 革新学习方法 -->
+              <a class="today-item" href="theme-work.html" data-dom-id="btn-today-task-1">
+                <span class="today-item__dot today-item__dot--teal"></span>
+                <span class="ds-tag today-item__topic-tag">革新学习方法</span>
+                <span class="today-item__text">检视阅读《如何阅读一本书》第 2 章（约 15 分钟）</span>
+                <span class="today-item__enter">
+                  <span>进入</span>
+                  <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="" />
+                </span>
+              </a>
+
+              <!-- Task 2: 革新学习方法 -->
+              <a class="today-item" href="theme-work.html" data-dom-id="btn-today-task-2">
+                <span class="today-item__dot today-item__dot--teal"></span>
+                <span class="ds-tag today-item__topic-tag">革新学习方法</span>
+                <span class="today-item__text">用费曼法复述「检视阅读 vs 分析阅读」（约 15 分钟）</span>
+                <span class="today-item__enter">
+                  <span>进入</span>
+                  <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="" />
+                </span>
+              </a>
+
+              <!-- Task 3: 矛盾论 -->
+              <a class="today-item" href="theme-work.html" data-dom-id="btn-today-task-3">
+                <span class="today-item__dot today-item__dot--amber"></span>
+                <span class="ds-tag today-item__topic-tag">矛盾论</span>
+                <span class="today-item__text">用矛盾论分析一篇时事评论（约 15 分钟）</span>
+                <span class="today-item__enter">
+                  <span>进入</span>
+                  <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="" />
+                </span>
+              </a>
+
+            </div>
+          </section>
+
+          <!-- ── My Themes Section ── -->
+          <section class="home-section">
+            <div class="home-section__label">我的主题</div>
+            <div class="theme-grid">
+
+              <!-- Theme Card 1: 革新学习方法 -->
+              <div class="theme-card">
+                <div class="theme-card__head">
+                  <span class="theme-card__name">革新学习方法</span>
+                  <span class="ds-tag ds-tag--brand">学习期</span>
+                </div>
+                <div class="theme-card__status">主焦点之一，正在建立阅读方法论框架</div>
+                <div class="theme-card__footer">
+                  <span class="theme-card__task-hint">今日 2 项任务</span>
+                  <a class="theme-card__enter" href="theme-overview.html" data-dom-id="btn-theme-1">
+                    <span>进入看板</span>
+                    <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" />
+                  </a>
+                </div>
+              </div>
+
+              <!-- Theme Card 2: 矛盾论 -->
+              <div class="theme-card">
+                <div class="theme-card__head">
+                  <span class="theme-card__name">矛盾论</span>
+                  <span class="ds-tag ds-tag--warning">练习期</span>
+                </div>
+                <div class="theme-card__status">第二主焦点，练习期续跑中</div>
+                <div class="theme-card__footer">
+                  <span class="theme-card__task-hint">今日 1 项任务</span>
+                  <a class="theme-card__enter" href="theme-overview.html" data-dom-id="btn-theme-2">
+                    <span>进入看板</span>
+                    <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" />
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Slot occupancy bar -->
+            <div class="slot-bar">
+              <span class="slot-bar__label">阶段槽位</span>
+              <span class="slot-bar__item">学 1/1</span>
+              <span class="slot-bar__item">练 1/3</span>
+              <span class="slot-bar__item">用 0/5</span>
+            </div>
+          </section>
+
+        </div><!-- /home-page -->
+      </div><!-- /app-main -->
+
+    </div><!-- /app-shell -->
+    </main>
+</body>
+</html>

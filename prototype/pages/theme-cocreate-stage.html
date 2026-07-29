@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习阶梯 · 革新学习方法 — 对话式共创</title>
+    <style id="theme-vars">
+:root {
+  --radius-2: 2px; --radius-4: 4px; --radius-6: 6px; --radius-8: 8px; --radius-10: 10px; --radius-full: 9999px;
+  --spacer-0: 0px; --spacer-4: 4px; --spacer-6: 6px; --spacer-8: 8px; --spacer-12: 12px; --spacer-16: 16px; --spacer-24: 24px; --spacer-32: 32px; --spacer-40: 40px;
+  --font-family-default: SF Pro Text; --font-family-heading: SF Pro; --font-family-mono: JetBrains Mono;
+  --font-weight-default: 400; --font-weight-code: 450; --font-weight-medium: 500; --font-weight-strong: 600;
+  --font-family-base: var(--font-family-default); --font-family-heading-alias: var(--font-family-heading); --font-family-mono-alias: var(--font-family-mono);
+  --body-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-xs-font-size: 10px; --body-xs-font-weight: 400; --body-xs-line-height: 14px;
+  --body-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-sm-font-size: 11px; --body-sm-font-weight: 400; --body-sm-line-height: 16px;
+  --body-sm-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-sm-strong-font-size: 11px; --body-sm-strong-font-weight: 500; --body-sm-strong-line-height: 16px;
+  --body-md-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-md-font-size: 12px; --body-md-font-weight: 400; --body-md-line-height: 18px;
+  --body-md-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-md-strong-font-size: 12px; --body-md-strong-font-weight: 500; --body-md-strong-line-height: 18px;
+  --body-base-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-base-font-size: 13px; --body-base-font-weight: 400; --body-base-line-height: 20px;
+  --body-base-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-base-strong-font-size: 13px; --body-base-strong-font-weight: 500; --body-base-strong-line-height: 20px;
+  --heading-3xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-3xs-font-size: 11px; --heading-3xs-font-weight: 600; --heading-3xs-line-height: 16px;
+  --heading-2xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-2xs-font-size: 12px; --heading-2xs-font-weight: 600; --heading-2xs-line-height: 18px;
+  --heading-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-xs-font-size: 13px; --heading-xs-font-weight: 600; --heading-xs-line-height: 20px;
+  --heading-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-sm-font-size: 16px; --heading-sm-font-weight: 600; --heading-sm-line-height: 24px;
+  --heading-md-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-md-font-size: 20px; --heading-md-font-weight: 600; --heading-md-line-height: 28px;
+  --heading-lg-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-lg-font-size: 22px; --heading-lg-font-weight: 600; --heading-lg-line-height: 30px;
+  --heading-xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-xl-font-size: 24px; --heading-xl-font-weight: 600; --heading-xl-line-height: 32px;
+  --heading-2xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-2xl-font-size: 28px; --heading-2xl-font-weight: 600; --heading-2xl-line-height: 36px;
+  --heading-3xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-3xl-font-size: 32px; --heading-3xl-font-weight: 600; --heading-3xl-line-height: 40px;
+  --code-editor-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif; --code-editor-font-size: 13px; --code-editor-font-weight: 450; --code-editor-line-height: 20px;
+  --code-terminal-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif; --code-terminal-font-size: 12px; --code-terminal-font-weight: 450; --code-terminal-line-height: 18px;
+  --bg-base-default: #1A1B1D; --bg-base-secondary: #222427; --bg-base-tertiary: #2A2D31;
+  --bg-overlay-l1: rgba(224, 226, 242, 0.04); --bg-overlay-l2: rgba(224, 226, 242, 0.06); --bg-overlay-l3: rgba(224, 226, 242, 0.08); --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+  --bg-menu: #202123; --bg-tooltip: #1A1B1D; --bg-invert: #DADDE5; --bg-invert-hover: #EDEFF2; --bg-invert-active: #979AA4; --bg-invert-disabled: rgba(224, 226, 242, 0.12);
+  --color-background: var(--bg-base-default); --color-surface: var(--bg-base-secondary); --color-surface-variant: var(--bg-base-tertiary);
+  --color-overlay-1: var(--bg-overlay-l1); --color-overlay-2: var(--bg-overlay-l2); --color-overlay-3: var(--bg-overlay-l3); --color-overlay-4: var(--bg-overlay-l4);
+  --color-card: var(--bg-base-secondary); --color-tooltip: var(--bg-tooltip); --color-menu: var(--bg-menu);
+  --bg-brand: #32F08C; --bg-brand-hover: #0FDC78; --bg-brand-disabled: rgba(50, 240, 140, 0.2); --bg-brand-popup: rgba(50, 240, 140, 0.12);
+  --color-primary: var(--bg-brand); --color-primary-hover: var(--bg-brand-hover); --color-primary-disabled: var(--bg-brand-disabled); --color-primary-soft: var(--bg-brand-popup); --color-accent: var(--bg-brand);
+  --text-default: #D1D3DB; --text-default-hover: #F5F9FE; --text-default-active: #F5F9FE; --text-secondary: #9599A6; --text-secondary-hover: #D1D3DB; --text-secondary-active: #D1D3DB;
+  --text-tertiary: #666B75; --text-disabled: #666B75; --text-onbrand: #0C0C0D; --text-onaccent: #0C0C0D;
+  --color-foreground: var(--text-default); --color-foreground-hover: var(--text-default-hover); --color-on-surface: var(--text-default); --color-on-surface-variant: var(--text-secondary);
+  --color-muted-foreground: var(--text-secondary); --color-disabled-foreground: var(--text-disabled); --color-on-primary: var(--text-onbrand);
+  --text-brand: #32F08C; --text-brand-hover: #0FDC78;
+  --icon-default: #D1D3DB; --icon-default-hover: #F5F9FE; --icon-default-active: #F5F9FE; --icon-secondary: #9599A6; --icon-secondary-hover: #D1D3DB; --icon-secondary-active: #D1D3DB;
+  --icon-tertiary: #666B75; --icon-disabled: #666B75; --icon-onbrand: #0C0C0D; --icon-onaccent: #0C0C0D; --icon-brand: #32F08C; --icon-brand-hover: #0FDC78;
+  --border-neutral-l1: rgba(224, 226, 242, 0.1); --border-neutral-l2: rgba(224, 226, 242, 0.16); --border-neutral-l3: rgba(224, 226, 242, 0.2);
+  --border-contrast: #FFFFFF; --border-brand: #32F08C;
+  --color-border: var(--border-neutral-l1); --color-border-strong: var(--border-neutral-l2); --color-border-stronger: var(--border-neutral-l3); --color-border-contrast: var(--border-contrast); --color-outline: var(--border-neutral-l1);
+  --accent-teal: #2DD288; --accent-coral: #FF9392; --accent-amber: #DCB364; --accent-lime: #8ACB3A; --accent-cyan: #04CBE5; --accent-blue: #7BB8FF; --accent-magenta: #EC93FF; --accent-violet: #BFA5FF; --accent-slate: #AFB9CF;
+  --status-primary-default: #387BFF; --status-primary-hover: #4C88FF; --status-primary-active: #1759DD;
+  --status-primary-surface-l1: rgba(53, 121, 255, 0.18); --status-primary-surface-l2: rgba(53, 121, 255, 0.28); --status-primary-surface-l3: rgba(53, 121, 255, 0.36);
+  --status-success-default: #33C192; --status-success-hover: #5ED4AD; --status-success-active: #27B082;
+  --status-success-surface-l1: rgba(0, 165, 110, 0.18); --status-success-surface-l2: rgba(0, 165, 110, 0.28); --status-success-surface-l3: rgba(0, 165, 110, 0.36);
+  --status-alert-default: #D29D00; --status-alert-hover: #DFB949; --status-alert-active: #AB8820;
+  --status-alert-surface-l1: rgba(210, 157, 0, 0.16); --status-alert-surface-l2: rgba(210, 157, 0, 0.28); --status-alert-surface-l3: rgba(210, 157, 0, 0.36);
+  --status-warning-default: #D27E24; --status-warning-hover: #D78B28; --status-warning-active: #B46510;
+  --status-warning-surface-l1: rgba(210, 126, 36, 0.16); --status-warning-surface-l2: rgba(210, 126, 36, 0.28); --status-warning-surface-l3: rgba(210, 126, 36, 0.36);
+  --status-error-default: #F65A5A; --status-error-hover: #F86262; --status-error-active: #B33636;
+  --status-error-surface-l1: rgba(246, 70, 70, 0.18); --status-error-surface-l2: rgba(246, 70, 70, 0.28); --status-error-surface-l3: rgba(246, 70, 70, 0.36);
+  --color-info: var(--status-primary-default); --color-success: var(--status-success-default); --color-warning: var(--status-warning-default); --color-error: var(--status-error-default); --color-error-soft: var(--status-error-surface-l1);
+  --brand-1: #32f08c; --brand-2: #3ee1a3; --brand-3: #60f2bd; --brand-4: #a0fde7; --site-canvas: #1A1B1D;
+  --bg-layout-1: var(--bg-base-secondary); --bg-layout-2: var(--bg-overlay-l1); --border-1: var(--border-neutral-l1);
+  --color-muted: var(--bg-base-tertiary); --color-secondary: var(--bg-base-tertiary); --color-secondary-foreground: var(--text-default);
+  --color-input: var(--border-neutral-l1); --color-ring: var(--bg-brand); --color-radius-sm: var(--radius-4); --color-radius-md: var(--radius-6); --color-radius-lg: var(--radius-8);
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--color-background); --color-foreground: var(--color-foreground); --color-card: var(--color-card);
+    --color-primary: var(--color-primary); --color-secondary: var(--color-secondary); --color-secondary-foreground: var(--color-secondary-foreground);
+    --color-muted: var(--color-muted); --color-muted-foreground: var(--color-muted-foreground); --color-accent: var(--color-accent);
+    --color-border: var(--color-border); --color-input: var(--color-input); --color-ring: var(--color-ring);
+    --radius-sm: var(--color-radius-sm); --radius-md: var(--color-radius-md); --radius-lg: var(--color-radius-lg);
+  }
+  @layer base { body { background: var(--color-background); color: var(--color-foreground); } }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--color-background); } .text-foreground { color: var(--color-foreground); }
+      .bg-card { background-color: var(--color-card); } .bg-primary { background-color: var(--color-primary); } .text-primary { color: var(--color-primary); }
+      .bg-secondary { background-color: var(--color-secondary); } .text-secondary { color: var(--color-secondary); }
+      .bg-muted { background-color: var(--color-muted); } .text-muted-foreground { color: var(--color-muted-foreground); }
+      .bg-accent { background-color: var(--color-accent); } .border-border { border-color: var(--color-border); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      img { display: block; }
+    </style>
+    <link rel="stylesheet" href="../assets/cocreate-layout.css">
+    <style id="page-specific">
+/* ===== Supplemental spacers used by cocreate-layout.css (not in compact head template) ===== */
+:root {
+  --spacer-2: 2px;
+  --spacer-10: 10px;
+  --spacer-20: 20px;
+}
+
+/* ===== Button base (cocreate-layout.css does not define .ds-btn) ===== */
+.ds-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--spacer-6);
+  padding: 0 var(--spacer-12);
+  height: 28px;
+  border-radius: var(--radius-4);
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  font-family: var(--body-sm-strong-font-family, "SF Pro Text");
+  font-size: var(--body-sm-strong-font-size, 11px);
+  line-height: 1;
+  font-weight: var(--body-sm-strong-font-weight, 500);
+  transition: background .12s, color .12s, border-color .12s;
+  text-decoration: none;
+}
+.ds-btn .icon { color: currentColor; }
+.ds-btn--brand { background: var(--bg-brand); color: var(--text-onbrand); border-color: var(--bg-brand); }
+.ds-btn--brand:hover { background: var(--bg-brand-hover); border-color: var(--bg-brand-hover); }
+
+/* ===== Tag base (used for "点击选择" pill) ===== */
+.ds-tag {
+  display: inline-flex; align-items: center;
+  padding: 0 var(--spacer-6);
+  height: 18px;
+  border-radius: var(--radius-2);
+  font-size: var(--body-xs-font-size);
+  line-height: 1;
+  background: var(--bg-overlay-l2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-neutral-l1);
+}
+.ds-tag--brand { background: var(--bg-brand-popup); color: var(--text-brand); border-color: transparent; }
+
+/* ===== Composer base (cocreate-layout.css only overrides inside .composer-wrap) ===== */
+.ds-composer {
+  display: flex; flex-direction: column;
+  gap: var(--spacer-8);
+  width: 100%;
+  padding: var(--spacer-12);
+  background: var(--bg-overlay-l1);
+  border: 1px solid var(--border-neutral-l2);
+  border-radius: var(--radius-10);
+}
+.ds-composer:focus-within { border-color: var(--border-brand); }
+.ds-composer__input {
+  width: 100%;
+  min-height: 40px;
+  max-height: 120px;
+  resize: vertical;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-default);
+  font-family: var(--body-base-font-family);
+  font-size: var(--body-sm-font-size);
+  line-height: 1.55;
+  font-weight: var(--body-sm-font-weight);
+}
+.ds-composer__input::placeholder { color: var(--text-tertiary); }
+.ds-composer__toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--spacer-8);
+}
+.ds-composer__tools { display: flex; align-items: center; gap: var(--spacer-4); }
+.ds-composer__model {
+  display: inline-flex; align-items: center; gap: var(--spacer-4);
+  height: 28px; padding: 0 var(--spacer-8);
+  border: 1px solid var(--border-neutral-l2);
+  border-radius: var(--radius-full);
+  background: var(--bg-overlay-l2);
+  color: var(--text-secondary);
+  font-size: var(--body-sm-font-size);
+  line-height: var(--body-sm-line-height);
+}
+.ds-composer__actions { display: flex; align-items: center; gap: var(--spacer-8); }
+.ds-composer__send {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-6);
+  background: var(--bg-brand);
+  cursor: pointer;
+}
+.ds-composer__send:hover { background: var(--bg-brand-hover); }
+.ds-composer__send img { color: var(--text-onbrand); }
+
+/* ===== Confirm bar: push brand button to the right ===== */
+.confirm-bar .ds-btn { margin-left: auto; }
+.confirm-bar .ds-btn .icon { color: var(--text-onbrand); }
+
+/* ===== Section tag pushed to the right ===== */
+.doc-section__head .ds-tag { margin-left: auto; }
+
+/* ===== Ladder select button selected state ===== */
+.ladder__row.is-selected .ladder__select-btn { background: var(--bg-brand-hover); }
+    </style>
+</head>
+<body>
+
+  <!-- ===================== TITLE BAR ===================== -->
+  <header class="titlebar">
+    <div class="titlebar__left">
+      <a class="titlebar__back" title="返回基本信息" href="theme-create.html" data-dom-id="btn-back-create">
+        <img src="../assets/icons/dl_builtin_trae/arrow-left.svg" width="18" height="18" alt="" class="icon">
+      </a>
+      <div class="titlebar__title">
+        学习阶梯<span class="sep">·</span><span class="topic">革新学习方法</span>
+      </div>
+      <div class="titlebar__stepper">
+        <span class="titlebar__step is-done"><span class="dot"></span>信息</span>
+        <span class="titlebar__step-sep">·</span>
+        <span class="titlebar__step is-active"><span class="dot"></span>阶梯</span>
+        <span class="titlebar__step-sep">·</span>
+        <span class="titlebar__step"><span class="dot"></span>资料</span>
+        <span class="titlebar__step-sep">·</span>
+        <span class="titlebar__step"><span class="dot"></span>计划</span>
+      </div>
+    </div>
+    <div class="titlebar__right"></div>
+  </header>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <!-- ============ LEFT: CHAT PANEL ============ -->
+    <section class="chat-panel">
+      <div class="chat-panel__head">
+        <img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="" class="ic icon">
+        <div>
+          <div class="chat-panel__head-title">对话共创</div>
+          <div class="chat-panel__head-sub">AI 教练 · 定位你的学习起点</div>
+        </div>
+      </div>
+
+      <div class="chat-scroll">
+
+        <!-- Turn 1: AI -->
+        <div class="msg msg--ai">
+          <div class="msg__avatar"><img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="" class="icon"></div>
+          <div class="msg__body">
+            <div class="msg__bubble">
+              主题「革新学习方法」已创建。我先帮你梳理一条从入门到内化的<span class="em">学习阶梯</span>——5 个级别，每级有明确的理解标准、核心概念和里程碑。<br><br>
+              你看看自己现在大概站在哪一级？点击右侧阶梯上的「我在这里」即可定位。
+            </div>
+            <div class="msg__meta">AI 教练 · 刚刚</div>
+          </div>
+        </div>
+
+        <!-- Turn 2: User -->
+        <div class="msg msg--user">
+          <div class="msg__avatar">我</div>
+          <div class="msg__body">
+            <div class="msg__bubble">我读过《如何阅读一本书》前三章，检视阅读用得比较多，但分析阅读还没系统练过。</div>
+            <div class="msg__meta">你 · 刚刚</div>
+          </div>
+        </div>
+
+        <!-- Turn 3: AI -->
+        <div class="msg msg--ai">
+          <div class="msg__avatar"><img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="" class="icon"></div>
+          <div class="msg__body">
+            <div class="msg__bubble">
+              听起来你在 <span class="em">Level 2（方法理解）</span>附近——已经知道检视阅读的系统步骤，但分析阅读的四问还没内化。<br><br>
+              两个问题帮我进一步聚焦：
+              <ol>
+                <li>你更想在这两周深入「检视阅读的精度」，还是直接开始练「分析阅读四问」？</li>
+                <li>你平时阅读时有没有固定的笔记习惯？（比如划线、批注、卡片）</li>
+              </ol>
+              选好右侧的当前级别后，我们就可以进入下一步筛选学习资料。
+            </div>
+            <div class="msg__meta">AI 教练 · 刚刚</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Composer -->
+      <div class="composer-wrap">
+        <div class="ds-composer">
+          <textarea class="ds-composer__input" placeholder="回答教练的问题，或直接点选右侧级别…"></textarea>
+          <div class="ds-composer__toolbar">
+            <div class="ds-composer__tools">
+              <div class="ds-composer__model">
+                <img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="12" height="12" alt="" class="icon">
+                <span>教练模式</span>
+              </div>
+            </div>
+            <div class="ds-composer__actions">
+              <button class="ds-composer__send" type="button" title="发送">
+                <img src="../assets/icons/dl_builtin_trae/send.0c0c0d.svg" width="16" height="16" alt="" class="icon">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RIGHT: LIVE DOCUMENT PANEL ============ -->
+    <section class="doc-panel">
+
+      <div class="doc-head">
+        <div class="doc-head__title">
+          <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="" class="ic icon">
+          <span>「革新学习方法」学习阶梯</span>
+        </div>
+        <div class="doc-head__hint">5 级 · 点击选择你当前所在的级别</div>
+      </div>
+
+      <div class="doc-scroll">
+        <div class="doc-inner">
+
+          <!-- ===== A. 学习阶梯定位 ===== -->
+          <section class="doc-section">
+            <div class="doc-section__head">
+              <span class="doc-section__index">A</span>
+              <h3 class="doc-section__title">
+                <img src="../assets/icons/dl_builtin_trae/layers.svg" width="14" height="14" alt="" class="ic icon">
+                学习阶梯定位
+              </h3>
+              <span class="ds-tag ds-tag--brand">点击选择</span>
+            </div>
+
+            <div class="ladder">
+
+              <!-- L1 -->
+              <div class="ladder__row" data-level="1">
+                <div class="ladder__lvl">L1</div>
+                <div>
+                  <div class="ladder__name">阅读入门</div>
+                  <div class="ladder__desc">
+                    <div class="row"><span class="k">理解：</span>知道阅读有不同层次的存在</div>
+                    <div class="row"><span class="k">掌握：</span>能说出检视阅读和分析阅读的区别</div>
+                    <div class="row"><span class="k">核心概念：</span>阅读的四个层次</div>
+                    <div class="row"><span class="k">里程碑：</span>完成第一次 15 分钟检视阅读</div>
+                    <div class="row"><span class="k">练习：</span>用检视阅读法扫读一篇文章</div>
+                    <div class="row"><span class="k">自检：</span>能否复述阅读四层次</div>
+                  </div>
+                </div>
+                <button class="ladder__select-btn" type="button">我在这里</button>
+              </div>
+
+              <!-- L2 (AI 建议当前级别，默认选中) -->
+              <div class="ladder__row is-selected" data-level="2">
+                <div class="ladder__lvl">L2</div>
+                <div>
+                  <div class="ladder__name">方法理解</div>
+                  <div class="ladder__desc">
+                    <div class="row"><span class="k">理解：</span>理解检视阅读的系统步骤与分析阅读四问</div>
+                    <div class="row"><span class="k">掌握：</span>能独立完成一次 30 分钟检视阅读</div>
+                    <div class="row"><span class="k">核心概念：</span>检视阅读六步法、分析阅读四问</div>
+                    <div class="row"><span class="k">里程碑：</span>用检视阅读完成一本书并输出结构笔记</div>
+                    <div class="row"><span class="k">练习：</span>对 3 篇文章做检视阅读对比</div>
+                    <div class="row"><span class="k">自检：</span>能否不看书复述六步法</div>
+                  </div>
+                </div>
+                <button class="ladder__select-btn" type="button">✓ 已选定</button>
+              </div>
+
+              <!-- L3 -->
+              <div class="ladder__row" data-level="3">
+                <div class="ladder__lvl">L3</div>
+                <div>
+                  <div class="ladder__name">实践应用</div>
+                  <div class="ladder__desc">
+                    <div class="row"><span class="k">理解：</span>能针对不同阅读目标选择策略</div>
+                    <div class="row"><span class="k">掌握：</span>灵活切换检视、分析、主题阅读</div>
+                    <div class="row"><span class="k">核心概念：</span>主题阅读法、阅读目标匹配</div>
+                    <div class="row"><span class="k">里程碑：</span>完成一个主题的 3 本书主题阅读</div>
+                    <div class="row"><span class="k">练习：</span>用主题阅读法分析一个具体问题</div>
+                    <div class="row"><span class="k">自检：</span>能否为不同目标设计阅读方案</div>
+                  </div>
+                </div>
+                <button class="ladder__select-btn" type="button">我在这里</button>
+              </div>
+
+              <!-- L4 -->
+              <div class="ladder__row" data-level="4">
+                <div class="ladder__lvl">L4</div>
+                <div>
+                  <div class="ladder__name">融会贯通</div>
+                  <div class="ladder__desc">
+                    <div class="row"><span class="k">理解：</span>理解阅读与刻意练习、间隔重复的关系</div>
+                    <div class="row"><span class="k">掌握：</span>能将阅读方法融入个人知识管理体系</div>
+                    <div class="row"><span class="k">核心概念：</span>阅读-笔记-复习闭环、Zettelkasten</div>
+                    <div class="row"><span class="k">里程碑：</span>建立可持续的个人阅读-笔记-复习系统</div>
+                    <div class="row"><span class="k">练习：</span>用卡片笔记法整理一个月的阅读</div>
+                    <div class="row"><span class="k">自检：</span>知识是否可被检索和复用</div>
+                  </div>
+                </div>
+                <button class="ladder__select-btn" type="button">我在这里</button>
+              </div>
+
+              <!-- L5 -->
+              <div class="ladder__row" data-level="5">
+                <div class="ladder__lvl">L5</div>
+                <div>
+                  <div class="ladder__name">方法论内化</div>
+                  <div class="ladder__desc">
+                    <div class="row"><span class="k">理解：</span>能反思并迭代自己的阅读方法论</div>
+                    <div class="row"><span class="k">掌握：</span>能教别人用这套方法</div>
+                    <div class="row"><span class="k">核心概念：</span>元认知、方法论迭代</div>
+                    <div class="row"><span class="k">里程碑：</span>教会 1 人完成从检视到分析阅读</div>
+                    <div class="row"><span class="k">练习：</span>写一篇个人阅读方法论复盘</div>
+                    <div class="row"><span class="k">自检：</span>能否发现方法论的局限并改进</div>
+                  </div>
+                </div>
+                <button class="ladder__select-btn" type="button">我在这里</button>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Confirm bar (replaces doc-foot) -->
+      <div class="confirm-bar">
+        <span class="confirm-bar__hint">选定当前级别后进入下一步 →</span>
+        <a class="ds-btn ds-btn--brand" href="theme-cocreate-resources.html" data-dom-id="btn-confirm-stage">
+          确认，进入学习资料
+          <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="12" height="12" alt="" class="icon">
+        </a>
+      </div>
+
+    </section>
+
+  </main>
+
+<script>
+(function() {
+  var rows = document.querySelectorAll('.ladder__row');
+
+  function clearAll() {
+    rows.forEach(function(r) {
+      r.classList.remove('is-selected');
+      var btn = r.querySelector('.ladder__select-btn');
+      if (btn) btn.textContent = '我在这里';
+    });
+  }
+
+  function selectRow(row) {
+    clearAll();
+    row.classList.add('is-selected');
+    var btn = row.querySelector('.ladder__select-btn');
+    if (btn) btn.textContent = '✓ 已选定';
+  }
+
+  rows.forEach(function(row) {
+    row.addEventListener('click', function() {
+      selectRow(row);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新建主题 - 可视化刻意练习系统</title>
+    <style id="theme-vars">
+:root {
+  --radius-2: 2px; --radius-4: 4px; --radius-6: 6px; --radius-8: 8px; --radius-10: 10px; --radius-full: 9999px;
+  --spacer-0: 0px; --spacer-4: 4px; --spacer-6: 6px; --spacer-8: 8px; --spacer-12: 12px; --spacer-16: 16px; --spacer-24: 24px; --spacer-32: 32px; --spacer-40: 40px;
+  --font-family-default: SF Pro Text; --font-family-heading: SF Pro; --font-family-mono: JetBrains Mono;
+  --font-weight-default: 400; --font-weight-code: 450; --font-weight-medium: 500; --font-weight-strong: 600;
+  --font-family-base: var(--font-family-default); --font-family-heading-alias: var(--font-family-heading); --font-family-mono-alias: var(--font-family-mono);
+  --body-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-xs-font-size: 10px; --body-xs-font-weight: 400; --body-xs-line-height: 14px;
+  --body-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-sm-font-size: 11px; --body-sm-font-weight: 400; --body-sm-line-height: 16px;
+  --body-sm-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-sm-strong-font-size: 11px; --body-sm-strong-font-weight: 500; --body-sm-strong-line-height: 16px;
+  --body-md-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-md-font-size: 12px; --body-md-font-weight: 400; --body-md-line-height: 18px;
+  --body-md-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-md-strong-font-size: 12px; --body-md-strong-font-weight: 500; --body-md-strong-line-height: 18px;
+  --body-base-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-base-font-size: 13px; --body-base-font-weight: 400; --body-base-line-height: 20px;
+  --body-base-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-base-strong-font-size: 13px; --body-base-strong-font-weight: 500; --body-base-strong-line-height: 20px;
+  --heading-3xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-3xs-font-size: 11px; --heading-3xs-font-weight: 600; --heading-3xs-line-height: 16px;
+  --heading-2xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-2xs-font-size: 12px; --heading-2xs-font-weight: 600; --heading-2xs-line-height: 18px;
+  --heading-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-xs-font-size: 13px; --heading-xs-font-weight: 600; --heading-xs-line-height: 20px;
+  --heading-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-sm-font-size: 16px; --heading-sm-font-weight: 600; --heading-sm-line-height: 24px;
+  --heading-md-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-md-font-size: 20px; --heading-md-font-weight: 600; --heading-md-line-height: 28px;
+  --heading-lg-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-lg-font-size: 22px; --heading-lg-font-weight: 600; --heading-lg-line-height: 30px;
+  --heading-xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-xl-font-size: 24px; --heading-xl-font-weight: 600; --heading-xl-line-height: 32px;
+  --heading-2xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-2xl-font-size: 28px; --heading-2xl-font-weight: 600; --heading-2xl-line-height: 36px;
+  --heading-3xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-3xl-font-size: 32px; --heading-3xl-font-weight: 600; --heading-3xl-line-height: 40px;
+  --code-editor-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif; --code-editor-font-size: 13px; --code-editor-font-weight: 450; --code-editor-line-height: 20px;
+  --code-terminal-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif; --code-terminal-font-size: 12px; --code-terminal-font-weight: 450; --code-terminal-line-height: 18px;
+  --bg-base-default: #1A1B1D; --bg-base-secondary: #222427; --bg-base-tertiary: #2A2D31;
+  --bg-overlay-l1: rgba(224, 226, 242, 0.04); --bg-overlay-l2: rgba(224, 226, 242, 0.06); --bg-overlay-l3: rgba(224, 226, 242, 0.08); --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+  --bg-menu: #202123; --bg-tooltip: #1A1B1D; --bg-invert: #DADDE5; --bg-invert-hover: #EDEFF2; --bg-invert-active: #979AA4; --bg-invert-disabled: rgba(224, 226, 242, 0.12);
+  --color-background: var(--bg-base-default); --color-surface: var(--bg-base-secondary); --color-surface-variant: var(--bg-base-tertiary);
+  --color-overlay-1: var(--bg-overlay-l1); --color-overlay-2: var(--bg-overlay-l2); --color-overlay-3: var(--bg-overlay-l3); --color-overlay-4: var(--bg-overlay-l4);
+  --color-card: var(--bg-base-secondary); --color-tooltip: var(--bg-tooltip); --color-menu: var(--bg-menu);
+  --bg-brand: #32F08C; --bg-brand-hover: #0FDC78; --bg-brand-disabled: rgba(50, 240, 140, 0.2); --bg-brand-popup: rgba(50, 240, 140, 0.12);
+  --color-primary: var(--bg-brand); --color-primary-hover: var(--bg-brand-hover); --color-primary-disabled: var(--bg-brand-disabled); --color-primary-soft: var(--bg-brand-popup); --color-accent: var(--bg-brand);
+  --text-default: #D1D3DB; --text-default-hover: #F5F9FE; --text-default-active: #F5F9FE; --text-secondary: #9599A6; --text-secondary-hover: #D1D3DB; --text-secondary-active: #D1D3DB;
+  --text-tertiary: #666B75; --text-disabled: #666B75; --text-onbrand: #0C0C0D; --text-onaccent: #0C0C0D;
+  --color-foreground: var(--text-default); --color-foreground-hover: var(--text-default-hover); --color-on-surface: var(--text-default); --color-on-surface-variant: var(--text-secondary);
+  --color-muted-foreground: var(--text-secondary); --color-disabled-foreground: var(--text-disabled); --color-on-primary: var(--text-onbrand);
+  --text-brand: #32F08C; --text-brand-hover: #0FDC78;
+  --icon-default: #D1D3DB; --icon-default-hover: #F5F9FE; --icon-default-active: #F5F9FE; --icon-secondary: #9599A6; --icon-secondary-hover: #D1D3DB; --icon-secondary-active: #D1D3DB;
+  --icon-tertiary: #666B75; --icon-disabled: #666B75; --icon-onbrand: #0C0C0D; --icon-onaccent: #0C0C0D; --icon-brand: #32F08C; --icon-brand-hover: #0FDC78;
+  --border-neutral-l1: rgba(224, 226, 242, 0.1); --border-neutral-l2: rgba(224, 226, 242, 0.16); --border-neutral-l3: rgba(224, 226, 242, 0.2);
+  --border-contrast: #FFFFFF; --border-brand: #32F08C;
+  --color-border: var(--border-neutral-l1); --color-border-strong: var(--border-neutral-l2); --color-border-stronger: var(--border-neutral-l3); --color-border-contrast: var(--border-contrast); --color-outline: var(--border-neutral-l1);
+  --accent-teal: #2DD288; --accent-coral: #FF9392; --accent-amber: #DCB364; --accent-lime: #8ACB3A; --accent-cyan: #04CBE5; --accent-blue: #7BB8FF; --accent-magenta: #EC93FF; --accent-violet: #BFA5FF; --accent-slate: #AFB9CF;
+  --status-primary-default: #387BFF; --status-primary-hover: #4C88FF; --status-primary-active: #1759DD;
+  --status-primary-surface-l1: rgba(53, 121, 255, 0.18); --status-primary-surface-l2: rgba(53, 121, 255, 0.28); --status-primary-surface-l3: rgba(53, 121, 255, 0.36);
+  --status-success-default: #33C192; --status-success-hover: #5ED4AD; --status-success-active: #27B082;
+  --status-success-surface-l1: rgba(0, 165, 110, 0.18); --status-success-surface-l2: rgba(0, 165, 110, 0.28); --status-success-surface-l3: rgba(0, 165, 110, 0.36);
+  --status-alert-default: #D29D00; --status-alert-hover: #DFB949; --status-alert-active: #AB8820;
+  --status-alert-surface-l1: rgba(210, 157, 0, 0.16); --status-alert-surface-l2: rgba(210, 157, 0, 0.28); --status-alert-surface-l3: rgba(210, 157, 0, 0.36);
+  --status-warning-default: #D27E24; --status-warning-hover: #D78B28; --status-warning-active: #B46510;
+  --status-warning-surface-l1: rgba(210, 126, 36, 0.16); --status-warning-surface-l2: rgba(210, 126, 36, 0.28); --status-warning-surface-l3: rgba(210, 126, 36, 0.36);
+  --status-error-default: #F65A5A; --status-error-hover: #F86262; --status-error-active: #B33636;
+  --status-error-surface-l1: rgba(246, 70, 70, 0.18); --status-error-surface-l2: rgba(246, 70, 70, 0.28); --status-error-surface-l3: rgba(246, 70, 70, 0.36);
+  --color-info: var(--status-primary-default); --color-success: var(--status-success-default); --color-warning: var(--status-warning-default); --color-error: var(--status-error-default); --color-error-soft: var(--status-error-surface-l1);
+  --brand-1: #32f08c; --brand-2: #3ee1a3; --brand-3: #60f2bd; --brand-4: #a0fde7; --site-canvas: #1A1B1D;
+  --bg-layout-1: var(--bg-base-secondary); --bg-layout-2: var(--bg-overlay-l1); --border-1: var(--border-neutral-l1);
+  --color-muted: var(--bg-base-tertiary); --color-secondary: var(--bg-base-tertiary); --color-secondary-foreground: var(--text-default);
+  --color-input: var(--border-neutral-l1); --color-ring: var(--bg-brand); --color-radius-sm: var(--radius-4); --color-radius-md: var(--radius-6); --color-radius-lg: var(--radius-8);
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--color-background); --color-foreground: var(--color-foreground); --color-card: var(--color-card);
+    --color-primary: var(--color-primary); --color-secondary: var(--color-secondary); --color-secondary-foreground: var(--color-secondary-foreground);
+    --color-muted: var(--color-muted); --color-muted-foreground: var(--color-muted-foreground); --color-accent: var(--color-accent);
+    --color-border: var(--color-border); --color-input: var(--color-input); --color-ring: var(--color-ring);
+    --radius-sm: var(--color-radius-sm); --radius-md: var(--color-radius-md); --radius-lg: var(--color-radius-lg);
+  }
+  @layer base { body { background: var(--color-background); color: var(--color-foreground); } }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--color-background); } .text-foreground { color: var(--color-foreground); }
+      .bg-card { background-color: var(--color-card); } .bg-primary { background-color: var(--color-primary); } .text-primary { color: var(--color-primary); }
+      .bg-secondary { background-color: var(--color-secondary); } .text-secondary { color: var(--color-secondary); }
+      .bg-muted { background-color: var(--color-muted); } .text-muted-foreground { color: var(--color-muted-foreground); }
+      .bg-accent { background-color: var(--color-accent); } .border-border { border-color: var(--color-border); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      img { display: block; }
+    </style>
+    <link rel="stylesheet" href="../assets/shared-components.css">
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main>
+    <div class="app-shell" data-viewport-mode="app-shell">
+
+      <!-- Window Titlebar -->
+      <div class="ds-wbtitlebar">
+        <div class="ds-wbtitlebar__left">
+          <div class="ds-wbtitlebar__lights">
+            <span class="ds-wbtitlebar__light ds-wbtitlebar__light--close"></span>
+            <span class="ds-wbtitlebar__light ds-wbtitlebar__light--min"></span>
+            <span class="ds-wbtitlebar__light ds-wbtitlebar__light--max"></span>
+          </div>
+          <span class="ds-wbtitlebar__mode-chip">刻意练习</span>
+          <div class="ds-wbtitlebar__project-selector">
+            <span>新建主题</span>
+            <img src="../assets/icons/dl_builtin_trae/chevron-down.svg" width="12" height="12" alt="" class="icon" />
+          </div>
+        </div>
+        <div class="ds-wbtitlebar__right">
+          <a class="ds-btn ds-btn--tertiary ds-btn--sm" href="home-empty.html" data-dom-id="btn-cancel-create">
+            <img src="../assets/icons/dl_builtin_trae/x.svg" width="14" height="14" alt="" class="icon" />
+            取消
+          </a>
+        </div>
+      </div>
+
+      <!-- Activity Rail -->
+      <div class="ds-activityrail">
+        <a class="ds-activityrail__btn is-active" href="home-empty.html" data-dom-id="rail-home" aria-label="今天" title="今天">
+          <img src="../assets/icons/dl_builtin_trae/home.svg" width="16" height="16" alt="" />
+        </a>
+        <a class="ds-activityrail__btn" href="#" aria-label="我的主题" title="我的主题">
+          <img src="../assets/icons/dl_builtin_trae/layers.svg" width="16" height="16" alt="" />
+        </a>
+        <a class="ds-activityrail__btn" href="#" aria-label="日历" title="日历">
+          <img src="../assets/icons/dl_builtin_trae/calendar.svg" width="16" height="16" alt="" />
+        </a>
+        <div class="ds-activityrail__divider"></div>
+        <div class="ds-activityrail__spacer"></div>
+        <a class="ds-activityrail__btn" href="#" aria-label="设置" title="设置">
+          <img src="../assets/icons/dl_builtin_trae/settings.svg" width="16" height="16" alt="" />
+        </a>
+      </div>
+
+      <!-- Main Content -->
+      <div class="app-main overflow-y-auto" data-scroll-region="primary">
+        <div class="create-page">
+
+          <!-- Lightweight Stepper -->
+          <div class="create-stepper" aria-label="创建步骤">
+            <span class="create-stepper__item is-current">信息</span>
+            <span class="create-stepper__sep">·</span>
+            <span class="create-stepper__item">阶梯</span>
+            <span class="create-stepper__sep">·</span>
+            <span class="create-stepper__item">资料</span>
+            <span class="create-stepper__sep">·</span>
+            <span class="create-stepper__item">计划</span>
+          </div>
+
+          <!-- Title -->
+          <div class="create-head">
+            <h1 class="create-title">主题信息</h1>
+            <p class="create-subtitle">给主题起个名字，选择类型，写一句话目标。接下来 AI 教练会帮你共创学习阶梯。</p>
+          </div>
+
+          <!-- Form -->
+          <form class="create-form" onsubmit="return false;">
+            <div class="form-group">
+              <label class="form-label" for="theme-name">主题名</label>
+              <input class="form-input" type="text" id="theme-name" value="革新学习方法" placeholder="例如：革新学习方法" />
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">类型</span>
+              <div class="radio-group">
+                <label class="radio-card">
+                  <input type="radio" name="theme-type" value="general" checked />
+                  <span class="radio-card__body">
+                    <span class="radio-card__title">通识主题</span>
+                    <span class="radio-card__desc">围绕书籍、文章、课程建立阅读能力与方法</span>
+                  </span>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="theme-type" value="tech" />
+                  <span class="radio-card__body">
+                    <span class="radio-card__title">技术主题</span>
+                    <span class="radio-card__desc">围绕代码、框架、工具建立可复用的工作流</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="theme-goal">一句话目标（可选）</label>
+              <input class="form-input" type="text" id="theme-goal" value="建立可持续的主题阅读方法" placeholder="例如：建立可持续的主题阅读方法" />
+            </div>
+          </form>
+
+          <!-- Bottom CTA -->
+          <div class="create-actions">
+            <a class="ds-btn ds-btn--brand ds-btn--lg" href="theme-cocreate-stage.html" data-dom-id="btn-start-cocreate">
+              <img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="14" height="14" alt="" class="icon" />
+              <span>进入学习阶梯共创</span>
+            </a>
+            <span class="create-actions__hint">下一步：AI 教练将根据主题生成 5 级学习阶梯</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+    </main>
+
+    <style id="page-specific">
+/* Theme Create Page */
+.create-page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 80px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Lightweight stepper */
+.create-stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--text-tertiary);
+}
+.create-stepper__item {
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+.create-stepper__item.is-current {
+  color: var(--text-brand);
+  font-weight: var(--font-weight-medium);
+}
+.create-stepper__sep {
+  color: var(--text-tertiary);
+  opacity: 0.7;
+}
+
+/* Title area */
+.create-head {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.create-title {
+  font-family: var(--heading-md-font-family);
+  font-size: var(--heading-md-font-size);
+  font-weight: var(--heading-md-font-weight);
+  line-height: var(--heading-md-line-height);
+  color: var(--text-default);
+  margin: 0;
+}
+.create-subtitle {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 480px;
+}
+
+/* Form */
+.create-form {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-label {
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+}
+.form-input {
+  height: 36px;
+  background: var(--bg-base-secondary);
+  border: 1px solid var(--border-neutral-l1);
+  border-radius: var(--radius-6);
+  padding: 0 12px;
+  color: var(--text-default);
+  font-family: var(--body-base-font-family);
+  font-size: 13px;
+  line-height: 20px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .12s ease, background .12s ease;
+}
+.form-input::placeholder {
+  color: var(--text-tertiary);
+}
+.form-input:focus {
+  border-color: var(--border-brand);
+  background: var(--bg-base-default);
+}
+
+/* Radio group */
+.radio-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.radio-card {
+  padding: 16px;
+  border: 1px solid var(--border-neutral-l1);
+  border-radius: var(--radius-6);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+  transition: border-color .12s ease, background .12s ease;
+}
+.radio-card:hover {
+  border-color: var(--border-neutral-l2);
+}
+.radio-card input {
+  display: none;
+}
+.radio-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.radio-card__title {
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-default);
+  transition: color .12s ease;
+}
+.radio-card__desc {
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--text-secondary);
+}
+.radio-card input:checked + .radio-card__body .radio-card__title {
+  color: var(--text-brand);
+}
+.radio-card:has(input:checked) {
+  border-color: var(--border-brand);
+  background: var(--bg-brand-popup);
+}
+
+/* Bottom CTA */
+.create-actions {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.create-actions__hint {
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--text-tertiary);
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .ds-activityrail { display: none; }
+  .create-page { padding: 48px 16px; }
+  .radio-group { grid-template-columns: 1fr; }
+  .create-actions { flex-direction: column; align-items: stretch; gap: 12px; }
+  .create-actions__hint { text-align: left; }
+}
+    </style>
+</body>
+</html>

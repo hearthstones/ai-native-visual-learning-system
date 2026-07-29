@@ -19,6 +19,10 @@
             "targetPageId": "page-new-theme-intercept"
           },
           {
+            "domId": "btn-demo-empty-create",
+            "targetPageId": "page-theme-create"
+          },
+          {
             "domId": "btn-today-task-1",
             "targetPageId": "page-theme-work"
           },
@@ -49,7 +53,7 @@
       "createdAt": 1785228800000,
       "canvasData": {
         "x": 0,
-        "y": 754,
+        "y": 4165,
         "group": 0
       },
       "devMetadata": {
@@ -98,7 +102,7 @@
       "createdAt": 1785228800000,
       "canvasData": {
         "x": 0,
-        "y": 377,
+        "y": 3788,
         "group": 0
       },
       "devMetadata": {
@@ -156,19 +160,23 @@
       "id": "page-learning-plan-cocreate",
       "type": "page",
       "title": "学习计划对话共创 · 革新学习方法",
-      "version": 1,
+      "version": 2,
       "createdAt": 1785218460000,
       "canvasData": {
         "x": 0,
-        "y": 2021,
+        "y": 2120,
         "group": 0
       },
       "devMetadata": {
         "htmlSrc": "pages/learning-plan-cocreate.html",
         "interactions": [
           {
-            "domId": "btn-back-work",
-            "targetPageId": "page-theme-work"
+            "domId": "btn-back-resources",
+            "targetPageId": "page-theme-cocreate-resources"
+          },
+          {
+            "domId": "btn-lock-plan",
+            "targetPageId": "page-theme-overview-first"
           }
         ]
       }
@@ -181,7 +189,7 @@
       "createdAt": 1753555200000,
       "canvasData": {
         "x": 0,
-        "y": 1508,
+        "y": 4919,
         "group": 0
       },
       "devMetadata": {
@@ -202,7 +210,7 @@
       "createdAt": 1785201592337,
       "canvasData": {
         "x": 0,
-        "y": 1131,
+        "y": 4542,
         "group": 0
       },
       "devMetadata": {
@@ -211,6 +219,180 @@
           {
             "domId": "btn-back-work",
             "targetPageId": "page-theme-work"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-home-empty",
+      "type": "page",
+      "title": "今天 · 空态",
+      "version": 2,
+      "createdAt": 1785289924907,
+      "canvasData": {
+        "x": 0,
+        "y": 754,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/home-empty.html",
+        "interactions": [
+          {
+            "domId": "btn-new-first-theme",
+            "targetPageId": "page-theme-create"
+          },
+          {
+            "domId": "rail-home",
+            "targetPageId": "page-home-empty"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-theme-create",
+      "type": "page",
+      "title": "新建主题 · 主题信息",
+      "version": 2,
+      "createdAt": 1785289924907,
+      "canvasData": {
+        "x": 0,
+        "y": 377,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/theme-create.html",
+        "interactions": [
+          {
+            "domId": "btn-cancel-create",
+            "targetPageId": "page-home-empty"
+          },
+          {
+            "domId": "rail-home",
+            "targetPageId": "page-home-empty"
+          },
+          {
+            "domId": "btn-start-cocreate",
+            "targetPageId": "page-theme-cocreate-stage"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-theme-cocreate-stage",
+      "type": "page",
+      "title": "学习阶梯共创 · 革新学习方法",
+      "version": 1,
+      "createdAt": 1785296400000,
+      "canvasData": {
+        "x": 0,
+        "y": 1131,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/theme-cocreate-stage.html",
+        "interactions": [
+          {
+            "domId": "btn-back-create",
+            "targetPageId": "page-theme-create"
+          },
+          {
+            "domId": "btn-confirm-stage",
+            "targetPageId": "page-theme-cocreate-resources"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-theme-cocreate-resources",
+      "type": "page",
+      "title": "学习资料共创 · 革新学习方法",
+      "version": 1,
+      "createdAt": 1785296400000,
+      "canvasData": {
+        "x": 0,
+        "y": 1517,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/theme-cocreate-resources.html",
+        "interactions": [
+          {
+            "domId": "btn-back-stage",
+            "targetPageId": "page-theme-cocreate-stage"
+          },
+          {
+            "domId": "btn-go-to-plan",
+            "targetPageId": "page-learning-plan-cocreate"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-theme-overview-first",
+      "type": "page",
+      "title": "主题看板 · 计划已锁定",
+      "version": 2,
+      "createdAt": 1785289924907,
+      "canvasData": {
+        "x": 0,
+        "y": 3034,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/theme-overview-first.html",
+        "interactions": [
+          {
+            "domId": "btn-back-home",
+            "targetPageId": "page-home-after-first"
+          },
+          {
+            "domId": "rail-home",
+            "targetPageId": "page-home-after-first"
+          },
+          {
+            "domId": "rail-work",
+            "targetPageId": "page-theme-work"
+          },
+          {
+            "domId": "btn-enter-execution",
+            "targetPageId": "page-theme-work"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-home-after-first",
+      "type": "page",
+      "title": "今天 · 建完首个主题后",
+      "version": 1,
+      "createdAt": 1785296400000,
+      "canvasData": {
+        "x": 0,
+        "y": 3411,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/home-after-first.html",
+        "interactions": [
+          {
+            "domId": "rail-home",
+            "targetPageId": "page-home-after-first"
+          },
+          {
+            "domId": "btn-new-theme",
+            "targetPageId": "page-theme-create"
+          },
+          {
+            "domId": "btn-today-task-1",
+            "targetPageId": "page-theme-work"
+          },
+          {
+            "domId": "btn-today-task-2",
+            "targetPageId": "page-theme-work"
+          },
+          {
+            "domId": "btn-theme-1",
+            "targetPageId": "page-theme-overview-first"
           }
         ]
       }

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习资料 · 革新学习方法 — 对话式共创</title>
+    <style id="theme-vars">
+:root {
+  --radius-2: 2px; --radius-4: 4px; --radius-6: 6px; --radius-8: 8px; --radius-10: 10px; --radius-full: 9999px;
+  --spacer-0: 0px; --spacer-4: 4px; --spacer-6: 6px; --spacer-8: 8px; --spacer-12: 12px; --spacer-16: 16px; --spacer-24: 24px; --spacer-32: 32px; --spacer-40: 40px;
+  --font-family-default: SF Pro Text; --font-family-heading: SF Pro; --font-family-mono: JetBrains Mono;
+  --font-weight-default: 400; --font-weight-code: 450; --font-weight-medium: 500; --font-weight-strong: 600;
+  --font-family-base: var(--font-family-default); --font-family-heading-alias: var(--font-family-heading); --font-family-mono-alias: var(--font-family-mono);
+  --body-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-xs-font-size: 10px; --body-xs-font-weight: 400; --body-xs-line-height: 14px;
+  --body-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-sm-font-size: 11px; --body-sm-font-weight: 400; --body-sm-line-height: 16px;
+  --body-sm-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-sm-strong-font-size: 11px; --body-sm-strong-font-weight: 500; --body-sm-strong-line-height: 16px;
+  --body-md-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-md-font-size: 12px; --body-md-font-weight: 400; --body-md-line-height: 18px;
+  --body-md-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-md-strong-font-size: 12px; --body-md-strong-font-weight: 500; --body-md-strong-line-height: 18px;
+  --body-base-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-base-font-size: 13px; --body-base-font-weight: 400; --body-base-line-height: 20px;
+  --body-base-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-base-strong-font-size: 13px; --body-base-strong-font-weight: 500; --body-base-strong-line-height: 20px;
+  --heading-3xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-3xs-font-size: 11px; --heading-3xs-font-weight: 600; --heading-3xs-line-height: 16px;
+  --heading-2xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-2xs-font-size: 12px; --heading-2xs-font-weight: 600; --heading-2xs-line-height: 18px;
+  --heading-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-xs-font-size: 13px; --heading-xs-font-weight: 600; --heading-xs-line-height: 20px;
+  --heading-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-sm-font-size: 16px; --heading-sm-font-weight: 600; --heading-sm-line-height: 24px;
+  --heading-md-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-md-font-size: 20px; --heading-md-font-weight: 600; --heading-md-line-height: 28px;
+  --heading-lg-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-lg-font-size: 22px; --heading-lg-font-weight: 600; --heading-lg-line-height: 30px;
+  --heading-xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-xl-font-size: 24px; --heading-xl-font-weight: 600; --heading-xl-line-height: 32px;
+  --heading-2xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-2xl-font-size: 28px; --heading-2xl-font-weight: 600; --heading-2xl-line-height: 36px;
+  --heading-3xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-3xl-font-size: 32px; --heading-3xl-font-weight: 600; --heading-3xl-line-height: 40px;
+  --code-editor-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif; --code-editor-font-size: 13px; --code-editor-font-weight: 450; --code-editor-line-height: 20px;
+  --code-terminal-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif; --code-terminal-font-size: 12px; --code-terminal-font-weight: 450; --code-terminal-line-height: 18px;
+  --bg-base-default: #1A1B1D; --bg-base-secondary: #222427; --bg-base-tertiary: #2A2D31;
+  --bg-overlay-l1: rgba(224, 226, 242, 0.04); --bg-overlay-l2: rgba(224, 226, 242, 0.06); --bg-overlay-l3: rgba(224, 226, 242, 0.08); --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+  --bg-menu: #202123; --bg-tooltip: #1A1B1D; --bg-invert: #DADDE5; --bg-invert-hover: #EDEFF2; --bg-invert-active: #979AA4; --bg-invert-disabled: rgba(224, 226, 242, 0.12);
+  --color-background: var(--bg-base-default); --color-surface: var(--bg-base-secondary); --color-surface-variant: var(--bg-base-tertiary);
+  --color-overlay-1: var(--bg-overlay-l1); --color-overlay-2: var(--bg-overlay-l2); --color-overlay-3: var(--bg-overlay-l3); --color-overlay-4: var(--bg-overlay-l4);
+  --color-card: var(--bg-base-secondary); --color-tooltip: var(--bg-tooltip); --color-menu: var(--bg-menu);
+  --bg-brand: #32F08C; --bg-brand-hover: #0FDC78; --bg-brand-disabled: rgba(50, 240, 140, 0.2); --bg-brand-popup: rgba(50, 240, 140, 0.12);
+  --color-primary: var(--bg-brand); --color-primary-hover: var(--bg-brand-hover); --color-primary-disabled: var(--bg-brand-disabled); --color-primary-soft: var(--bg-brand-popup); --color-accent: var(--bg-brand);
+  --text-default: #D1D3DB; --text-default-hover: #F5F9FE; --text-default-active: #F5F9FE; --text-secondary: #9599A6; --text-secondary-hover: #D1D3DB; --text-secondary-active: #D1D3DB;
+  --text-tertiary: #666B75; --text-disabled: #666B75; --text-onbrand: #0C0C0D; --text-onaccent: #0C0C0D;
+  --color-foreground: var(--text-default); --color-foreground-hover: var(--text-default-hover); --color-on-surface: var(--text-default); --color-on-surface-variant: var(--text-secondary);
+  --color-muted-foreground: var(--text-secondary); --color-disabled-foreground: var(--text-disabled); --color-on-primary: var(--text-onbrand);
+  --text-brand: #32F08C; --text-brand-hover: #0FDC78;
+  --icon-default: #D1D3DB; --icon-default-hover: #F5F9FE; --icon-default-active: #F5F9FE; --icon-secondary: #9599A6; --icon-secondary-hover: #D1D3DB; --icon-secondary-active: #D1D3DB;
+  --icon-tertiary: #666B75; --icon-disabled: #666B75; --icon-onbrand: #0C0C0D; --icon-onaccent: #0C0C0D; --icon-brand: #32F08C; --icon-brand-hover: #0FDC78;
+  --border-neutral-l1: rgba(224, 226, 242, 0.1); --border-neutral-l2: rgba(224, 226, 242, 0.16); --border-neutral-l3: rgba(224, 226, 242, 0.2);
+  --border-contrast: #FFFFFF; --border-brand: #32F08C;
+  --color-border: var(--border-neutral-l1); --color-border-strong: var(--border-neutral-l2); --color-border-stronger: var(--border-neutral-l3); --color-border-contrast: var(--border-contrast); --color-outline: var(--border-neutral-l1);
+  --accent-teal: #2DD288; --accent-coral: #FF9392; --accent-amber: #DCB364; --accent-lime: #8ACB3A; --accent-cyan: #04CBE5; --accent-blue: #7BB8FF; --accent-magenta: #EC93FF; --accent-violet: #BFA5FF; --accent-slate: #AFB9CF;
+  --status-primary-default: #387BFF; --status-primary-hover: #4C88FF; --status-primary-active: #1759DD;
+  --status-primary-surface-l1: rgba(53, 121, 255, 0.18); --status-primary-surface-l2: rgba(53, 121, 255, 0.28); --status-primary-surface-l3: rgba(53, 121, 255, 0.36);
+  --status-success-default: #33C192; --status-success-hover: #5ED4AD; --status-success-active: #27B082;
+  --status-success-surface-l1: rgba(0, 165, 110, 0.18); --status-success-surface-l2: rgba(0, 165, 110, 0.28); --status-success-surface-l3: rgba(0, 165, 110, 0.36);
+  --status-alert-default: #D29D00; --status-alert-hover: #DFB949; --status-alert-active: #AB8820;
+  --status-alert-surface-l1: rgba(210, 157, 0, 0.16); --status-alert-surface-l2: rgba(210, 157, 0, 0.28); --status-alert-surface-l3: rgba(210, 157, 0, 0.36);
+  --status-warning-default: #D27E24; --status-warning-hover: #D78B28; --status-warning-active: #B46510;
+  --status-warning-surface-l1: rgba(210, 126, 36, 0.16); --status-warning-surface-l2: rgba(210, 126, 36, 0.28); --status-warning-surface-l3: rgba(210, 126, 36, 0.36);
+  --status-error-default: #F65A5A; --status-error-hover: #F86262; --status-error-active: #B33636;
+  --status-error-surface-l1: rgba(246, 70, 70, 0.18); --status-error-surface-l2: rgba(246, 70, 70, 0.28); --status-error-surface-l3: rgba(246, 70, 70, 0.36);
+  --color-info: var(--status-primary-default); --color-success: var(--status-success-default); --color-warning: var(--status-warning-default); --color-error: var(--status-error-default); --color-error-soft: var(--status-error-surface-l1);
+  --brand-1: #32f08c; --brand-2: #3ee1a3; --brand-3: #60f2bd; --brand-4: #a0fde7; --site-canvas: #1A1B1D;
+  --bg-layout-1: var(--bg-base-secondary); --bg-layout-2: var(--bg-overlay-l1); --border-1: var(--border-neutral-l1);
+  --color-muted: var(--bg-base-tertiary); --color-secondary: var(--bg-base-tertiary); --color-secondary-foreground: var(--text-default);
+  --color-input: var(--border-neutral-l1); --color-ring: var(--bg-brand); --color-radius-sm: var(--radius-4); --color-radius-md: var(--radius-6); --color-radius-lg: var(--radius-8);
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--color-background); --color-foreground: var(--color-foreground); --color-card: var(--color-card);
+    --color-primary: var(--color-primary); --color-secondary: var(--color-secondary); --color-secondary-foreground: var(--color-secondary-foreground);
+    --color-muted: var(--color-muted); --color-muted-foreground: var(--color-muted-foreground); --color-accent: var(--color-accent);
+    --color-border: var(--color-border); --color-input: var(--color-input); --color-ring: var(--color-ring);
+    --radius-sm: var(--color-radius-sm); --radius-md: var(--color-radius-md); --radius-lg: var(--color-radius-lg);
+  }
+  @layer base { body { background: var(--color-background); color: var(--color-foreground); } }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--color-background); } .text-foreground { color: var(--color-foreground); }
+      .bg-card { background-color: var(--color-card); } .bg-primary { background-color: var(--color-primary); } .text-primary { color: var(--color-primary); }
+      .bg-secondary { background-color: var(--color-secondary); } .text-secondary { color: var(--color-secondary); }
+      .bg-muted { background-color: var(--color-muted); } .text-muted-foreground { color: var(--color-muted-foreground); }
+      .bg-accent { background-color: var(--color-accent); } .border-border { border-color: var(--color-border); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      img { display: block; }
+    </style>
+    <link rel="stylesheet" href="../assets/cocreate-layout.css">
+    <style>
+      /* Component styles (cocreate-layout.css does not define these) */
+      .ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--spacer-6);padding:0 var(--spacer-12);height:28px;border-radius:var(--radius-4);border:1px solid transparent;cursor:pointer;user-select:none;white-space:nowrap;font-family:var(--body-sm-strong-font-family,"SF Pro Text");font-size:var(--body-sm-strong-font-size,11px);line-height:1;font-weight:var(--body-sm-strong-font-weight,500);transition:background .12s,color .12s,border-color .12s;text-decoration:none;}
+      .ds-btn .icon{color:currentColor;}
+      .ds-btn--sm{height:24px;padding:0 var(--spacer-8);font-size:var(--body-xs-font-size,10px);}
+      .ds-btn--lg{height:32px;padding:0 var(--spacer-16);font-size:var(--body-base-font-size,13px);}
+      .ds-btn--tertiary,.ds-btn--ghost{background:transparent;color:var(--text-default);border-color:transparent;}
+      .ds-btn--tertiary:hover,.ds-btn--ghost:hover{background:var(--bg-overlay-l2);}
+      .ds-btn--brand{background:var(--bg-brand);color:var(--text-onbrand);border-color:var(--bg-brand);}
+      .ds-btn--brand:hover{background:var(--bg-brand-hover);border-color:var(--bg-brand-hover);}
+      .ds-tag{display:inline-flex;align-items:center;padding:0 var(--spacer-6);height:18px;border-radius:var(--radius-2);font-size:var(--body-xs-font-size);line-height:1;background:var(--bg-overlay-l2);color:var(--text-secondary);border:1px solid var(--border-neutral-l1);}
+      .ds-tag--brand{background:var(--bg-brand-popup);color:var(--text-brand);border-color:transparent;}
+      .ds-tag--success{background:rgba(0,165,110,0.18);color:var(--status-success-default);border-color:transparent;}
+      .ds-tag--error{background:var(--status-error-surface-l1);color:var(--status-error-default);border-color:transparent;}
+      .ds-composer{display:flex;flex-direction:column;border:1px solid var(--border-neutral-l2);border-radius:var(--radius-8);background:var(--bg-base-default);overflow:hidden;}
+      .ds-composer__input{width:100%;border:none;background:transparent;color:var(--text-default);font:inherit;font-size:var(--body-sm-font-size);line-height:1.5;padding:var(--spacer-10) var(--spacer-12);resize:none;outline:none;}
+      .ds-composer__input::placeholder{color:var(--text-tertiary);}
+      .ds-composer__toolbar{display:flex;align-items:center;justify-content:space-between;padding:var(--spacer-6) var(--spacer-8) var(--spacer-8);}
+      .ds-composer__tools{display:flex;align-items:center;gap:var(--spacer-8);}
+      .ds-composer__icon-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-6);border:none;background:transparent;cursor:pointer;color:var(--text-secondary);}
+      .ds-composer__icon-btn:hover{background:var(--bg-overlay-l2);color:var(--text-default);}
+      .ds-composer__model{display:inline-flex;align-items:center;gap:var(--spacer-4);font-size:var(--body-xs-font-size);color:var(--text-tertiary);}
+      .ds-composer__send{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--radius-6);border:none;background:var(--bg-brand);cursor:pointer;color:var(--text-onbrand);}
+      .ds-composer__send:hover{background:var(--bg-brand-hover);}
+      /* page-level small fixes */
+      .resource-card__icon img { display: block; }
+      .candidate-card__summary { font-size: var(--body-sm-font-size); line-height: 1.5; color: var(--text-default); }
+      .candidate-card__summary .k { color: var(--text-tertiary); }
+      .confirm-bar .ds-btn { margin-left: auto; }
+      .confirm-bar .ds-btn .icon { color: var(--text-onbrand); }
+      .doc-section__head .ds-tag { margin-left: auto; }
+    </style>
+</head>
+<body>
+
+  <!-- ===================== TITLEBAR ===================== -->
+  <header class="titlebar">
+    <div class="titlebar__left">
+      <a class="titlebar__back" href="theme-cocreate-stage.html" data-dom-id="btn-back-stage" title="返回学习阶梯">
+        <img src="../assets/icons/dl_builtin_trae/arrow-left.svg" width="18" height="18" alt="back" class="icon">
+      </a>
+      <div class="titlebar__title">
+        学习资料<span class="sep">·</span><span class="topic">革新学习方法</span>
+      </div>
+      <span class="titlebar__stepper">
+        <span class="titlebar__step is-done"><span class="dot"></span>信息</span>
+        <span class="titlebar__step-sep">·</span>
+        <span class="titlebar__step is-done"><span class="dot"></span>阶梯</span>
+        <span class="titlebar__step-sep">·</span>
+        <span class="titlebar__step is-active"><span class="dot"></span>资料</span>
+        <span class="titlebar__step-sep">·</span>
+        <span class="titlebar__step"><span class="dot"></span>计划</span>
+      </span>
+    </div>
+    <div class="titlebar__right"></div>
+  </header>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <!-- ============ LEFT: CHAT PANEL ============ -->
+    <section class="chat-panel">
+      <div class="chat-panel__head">
+        <img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="chat" class="ic icon">
+        <div>
+          <div class="chat-panel__head-title">对话共创</div>
+          <div class="chat-panel__head-sub">AI 教练 · 筛选高杠杆学习资料</div>
+        </div>
+      </div>
+
+      <div class="chat-scroll">
+
+        <!-- Turn 1: AI -->
+        <div class="msg msg--ai">
+          <div class="msg__avatar"><img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="ai" class="icon"></div>
+          <div class="msg__body">
+            <div class="msg__bubble">
+              根据你在 Level 2 的定位，我筛选了 5 份<span class="em">高杠杆资料</span>——每份都标注了为什么选它、适合你的阶段、以及最短阅读路径。<br><br>
+              右侧是初稿。你可以：
+              <ul>
+                <li>加范围约束（比如「只用微信读书里的书」）重新筛选</li>
+                <li>丢一个你找到的链接给我评估</li>
+                <li>直接确认进入计划共创</li>
+              </ul>
+            </div>
+            <div class="msg__meta">AI 教练 · 刚刚</div>
+          </div>
+        </div>
+
+        <!-- Turn 2: User -->
+        <div class="msg msg--user">
+          <div class="msg__avatar">我</div>
+          <div class="msg__body">
+            <div class="msg__bubble">我主要用微信读书，帮我只筛微信读书里能找到的书。</div>
+            <div class="msg__meta">你 · 刚刚</div>
+          </div>
+        </div>
+
+        <!-- Turn 3: AI -->
+        <div class="msg msg--ai">
+          <div class="msg__avatar"><img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="ai" class="icon"></div>
+          <div class="msg__body">
+            <div class="msg__bubble">
+              收到，已加约束 <span class="em">「范围：微信读书」</span>，重新筛选后保留了 4 本（替换了不在微信读书的一本）。<br><br>
+              看右侧更新——每本书都标了「微信读书可读」标签。
+            </div>
+            <div class="msg__meta">AI 教练 · 刚刚</div>
+          </div>
+        </div>
+
+        <!-- Turn 4: User -->
+        <div class="msg msg--user">
+          <div class="msg__avatar">我</div>
+          <div class="msg__body">
+            <div class="msg__bubble">我还看到一篇「如何用 30 天精通快速阅读」的文章，链接是 https://mp.weixin.qq.com/s/xxxxx，能加进来吗？</div>
+            <div class="msg__meta">你 · 刚刚</div>
+          </div>
+        </div>
+
+        <!-- Turn 5: AI -->
+        <div class="msg msg--ai">
+          <div class="msg__avatar"><img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="16" height="16" alt="ai" class="icon"></div>
+          <div class="msg__body">
+            <div class="msg__bubble">
+              我看了这个链接。<span class="em">不建议加入</span>，原因：
+              <ol>
+                <li>标题党（「30 天精通」不符合刻意练习的渐进逻辑）</li>
+                <li>内容是新闻级科普，没有可操作的框架</li>
+                <li>已有《如何阅读一本书》覆盖了更系统的检视阅读方法</li>
+              </ol>
+              如果你想要补充材料，建议从右侧已有的 5 份中选 1 份加深，而不是加浅层内容。
+            </div>
+            <div class="msg__meta">AI 教练 · 刚刚</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Composer -->
+      <div class="composer-wrap">
+        <div class="ds-composer">
+          <textarea class="ds-composer__input" placeholder="加约束、丢链接、或直接确认…（Enter 发送）"></textarea>
+          <div class="ds-composer__toolbar">
+            <div class="ds-composer__tools">
+              <button class="ds-composer__icon-btn" title="附加资源">
+                <img src="../assets/icons/dl_builtin_trae/plus.svg" width="16" height="16" alt="plus" class="icon">
+              </button>
+              <div class="ds-composer__model">
+                <img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="12" height="12" alt="model" class="icon">
+                <span>教练模式</span>
+              </div>
+            </div>
+            <div class="ds-composer__actions">
+              <button class="ds-composer__send" title="发送">
+                <img src="../assets/icons/dl_builtin_trae/send.0c0c0d.svg" width="16" height="16" alt="send" class="icon">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RIGHT: DOC PANEL ============ -->
+    <section class="doc-panel">
+      <div class="doc-head">
+        <div class="doc-head__title">
+          <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="doc" class="ic icon">
+          <span>「革新学习方法」学习资料</span>
+        </div>
+        <div class="doc-head__hint">5 份高杠杆资源 · 微信读书范围</div>
+      </div>
+
+      <div class="doc-scroll">
+        <div class="doc-inner">
+
+          <!-- ===== A. 资料范围 ===== -->
+          <section class="doc-section">
+            <div class="doc-section__head">
+              <span class="doc-section__index">A</span>
+              <h3 class="doc-section__title">资料范围</h3>
+              <span class="ds-tag ds-tag--brand" style="margin-left:auto;">微信读书</span>
+            </div>
+            <div class="constraint-tags">
+              <span class="constraint-tag">
+                微信读书
+                <img class="remove icon" src="../assets/icons/dl_builtin_trae/x.svg" width="10" height="10" alt="remove">
+              </span>
+              <span class="constraint-tag">Level 2 适用</span>
+              <span class="constraint-tag">高杠杆优先</span>
+            </div>
+          </section>
+
+          <!-- ===== B. 学习资源（5 份） ===== -->
+          <section class="doc-section">
+            <div class="doc-section__head">
+              <span class="doc-section__index">B</span>
+              <h3 class="doc-section__title">学习资源（5 份）</h3>
+              <span class="ds-tag" style="margin-left:auto;">已排序</span>
+            </div>
+            <div class="resources">
+
+              <!-- 资源 1 -->
+              <div class="resource-card is-new">
+                <div class="resource-card__head">
+                  <span class="resource-card__icon">
+                    <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="book" class="icon">
+                  </span>
+                  <div>
+                    <div class="resource-card__title">《如何阅读一本书》</div>
+                    <div class="resource-card__author">莫提默·艾德勒 / 查尔斯·范多伦</div>
+                  </div>
+                  <div class="resource-card__tags">
+                    <span class="ds-tag ds-tag--brand">核心</span>
+                    <span class="ds-tag">微信读书可读</span>
+                  </div>
+                </div>
+                <div class="resource-card__body">
+                  <div class="resource-field">
+                    <div class="resource-field__label">类型</div>
+                    <div class="resource-field__value">书籍（方法论）</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">难度</div>
+                    <div class="resource-field__value">中等（Level 2 匹配）</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">预计时长</div>
+                    <div class="resource-field__value">约 8 小时（可跳读至 4 小时）</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">关键章节</div>
+                    <div class="resource-field__value">第二篇「阅读的第三个层次：分析阅读」</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">为什么选它</div>
+                    <div class="resource-field__value">系统阐述检视/分析阅读的唯一经典，直接对应你的 Level 2 里程碑</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">最短路径</div>
+                    <div class="resource-field__value">先读第 2 章（检视阅读六步法）→ 跳到第二篇第 1 章（分析阅读四问）→ 回顾检视阅读</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 资源 2 -->
+              <div class="resource-card">
+                <div class="resource-card__head">
+                  <span class="resource-card__icon">
+                    <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="book" class="icon">
+                  </span>
+                  <div>
+                    <div class="resource-card__title">《刻意练习》</div>
+                    <div class="resource-card__author">安德斯·艾利克森</div>
+                  </div>
+                  <div class="resource-card__tags">
+                    <span class="ds-tag ds-tag--brand">核心</span>
+                    <span class="ds-tag">微信读书可读</span>
+                  </div>
+                </div>
+                <div class="resource-card__body">
+                  <div class="resource-field">
+                    <div class="resource-field__label">类型</div>
+                    <div class="resource-field__value">书籍（方法论）</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">难度</div>
+                    <div class="resource-field__value">中等</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">预计时长</div>
+                    <div class="resource-field__value">约 6 小时</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">关键章节</div>
+                    <div class="resource-field__value">第 1 章「有目的的练习」、第 5 章「刻意练习黄金标准」</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">为什么选它</div>
+                    <div class="resource-field__value">理解刻意练习三要素（专注、反馈、突破），为后续练习期打基础</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">最短路径</div>
+                    <div class="resource-field__value">读第 1、5 章即可，跳过音乐/体育案例</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 资源 3 -->
+              <div class="resource-card">
+                <div class="resource-card__head">
+                  <span class="resource-card__icon">
+                    <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="book" class="icon">
+                  </span>
+                  <div>
+                    <div class="resource-card__title">《认知天性》</div>
+                    <div class="resource-card__author">彼得·布朗</div>
+                  </div>
+                  <div class="resource-card__tags">
+                    <span class="ds-tag">补充</span>
+                    <span class="ds-tag">微信读书可读</span>
+                  </div>
+                </div>
+                <div class="resource-card__body">
+                  <div class="resource-field">
+                    <div class="resource-field__label">类型</div>
+                    <div class="resource-field__value">书籍（认知科学）</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">难度</div>
+                    <div class="resource-field__value">易</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">预计时长</div>
+                    <div class="resource-field__value">约 5 小时</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">关键章节</div>
+                    <div class="resource-field__value">第 2 章「学习的 illusion」、第 7 章「提升你的能力」</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">为什么选它</div>
+                    <div class="resource-field__value">用认知科学解释为什么主动回忆和间隔重复有效</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">最短路径</div>
+                    <div class="resource-field__value">读第 2、7 章，了解检索练习和间隔重复</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 资源 4 -->
+              <div class="resource-card">
+                <div class="resource-card__head">
+                  <span class="resource-card__icon">
+                    <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="book" class="icon">
+                  </span>
+                  <div>
+                    <div class="resource-card__title">《学习之道》</div>
+                    <div class="resource-card__author">芭芭拉·奥克利</div>
+                  </div>
+                  <div class="resource-card__tags">
+                    <span class="ds-tag">补充</span>
+                    <span class="ds-tag">微信读书可读</span>
+                  </div>
+                </div>
+                <div class="resource-card__body">
+                  <div class="resource-field">
+                    <div class="resource-field__label">类型</div>
+                    <div class="resource-field__value">书籍（学习方法）</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">难度</div>
+                    <div class="resource-field__value">易</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">预计时长</div>
+                    <div class="resource-field__value">约 4 小时</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">关键章节</div>
+                    <div class="resource-field__value">第 3 章「学习与记忆的脑科学」、第 10 章「增强记忆」</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">为什么选它</div>
+                    <div class="resource-field__value">互补《认知天性》，更偏实操的专注力和记忆技巧</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">最短路径</div>
+                    <div class="resource-field__value">读第 3、10 章，了解专注/发散模式</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 资源 5（已否决） -->
+              <div class="resource-card is-rejected">
+                <div class="resource-card__head">
+                  <span class="resource-card__icon">
+                    <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="16" height="16" alt="book" class="icon">
+                  </span>
+                  <div>
+                    <div class="resource-card__title">《费曼学习法》</div>
+                    <div class="resource-card__author">斯科特·扬（电子书）</div>
+                  </div>
+                  <div class="resource-card__tags">
+                    <span class="ds-tag ds-tag--danger">已否决</span>
+                    <span class="ds-tag">微信读书可读</span>
+                  </div>
+                </div>
+                <div class="resource-card__body">
+                  <div class="resource-field">
+                    <div class="resource-field__label">类型</div>
+                    <div class="resource-field__value">书籍（方法论）</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">难度</div>
+                    <div class="resource-field__value">易</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">预计时长</div>
+                    <div class="resource-field__value">约 2 小时</div>
+                  </div>
+                  <div class="resource-field">
+                    <div class="resource-field__label">关键章节</div>
+                    <div class="resource-field__value">全书</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">为什么选它</div>
+                    <div class="resource-field__value">费曼技巧与检视阅读互补</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">评估结论</div>
+                    <div class="resource-field__warning">⚠ 评估后否决：内容偏浅，缺少系统框架，不如直接用《如何阅读一本书》第 2 章的检视阅读法替代</div>
+                  </div>
+                  <div class="resource-field resource-field--full">
+                    <div class="resource-field__label">最短路径</div>
+                    <div class="resource-field__value">不推荐</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ===== C. 你提交的候选 ===== -->
+          <section class="doc-section">
+            <div class="doc-section__head">
+              <span class="doc-section__index">C</span>
+              <h3 class="doc-section__title">你提交的候选</h3>
+              <span class="ds-tag" style="margin-left:auto;">已评估</span>
+            </div>
+            <div class="candidate-card">
+              <div class="candidate-card__head">
+                <img src="../assets/icons/dl_builtin_trae/link.svg" width="14" height="14" alt="link" class="icon">
+                <span class="candidate-card__url">https://mp.weixin.qq.com/s/xxxxx</span>
+              </div>
+              <div class="candidate-card__summary">
+                <span class="k">内容摘要：</span>「如何用 30 天精通快速阅读」
+              </div>
+              <div class="candidate-card__verdict">
+                <span class="candidate-card__verdict-badge candidate-card__verdict-badge--reject">
+                  <img src="../assets/icons/dl_builtin_trae/x.svg" width="10" height="10" alt="reject" class="icon">
+                  否决
+                </span>
+                <span class="candidate-card__reason">标题党，新闻级科普无操作框架；已有更系统资源覆盖</span>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Confirm bar -->
+      <div class="confirm-bar">
+        <span class="confirm-bar__hint">确认资料后进入学习计划共创 →</span>
+        <a class="ds-btn ds-btn--brand" href="learning-plan-cocreate.html?from=create" data-dom-id="btn-go-to-plan" style="margin-left:auto;">
+          <span>确认，进入学习计划</span>
+          <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="arrow" class="icon">
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>

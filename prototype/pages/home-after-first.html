@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今天 - 可视化刻意练习系统</title>
+    <style id="theme-vars">
+:root {
+  --radius-2: 2px; --radius-4: 4px; --radius-6: 6px; --radius-8: 8px; --radius-10: 10px; --radius-full: 9999px;
+  --spacer-0: 0px; --spacer-4: 4px; --spacer-6: 6px; --spacer-8: 8px; --spacer-12: 12px; --spacer-16: 16px; --spacer-24: 24px; --spacer-32: 32px; --spacer-40: 40px;
+  --font-family-default: SF Pro Text; --font-family-heading: SF Pro; --font-family-mono: JetBrains Mono;
+  --font-weight-default: 400; --font-weight-code: 450; --font-weight-medium: 500; --font-weight-strong: 600;
+  --font-family-base: var(--font-family-default); --font-family-heading-alias: var(--font-family-heading); --font-family-mono-alias: var(--font-family-mono);
+  --body-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-xs-font-size: 10px; --body-xs-font-weight: 400; --body-xs-line-height: 14px;
+  --body-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-sm-font-size: 11px; --body-sm-font-weight: 400; --body-sm-line-height: 16px;
+  --body-sm-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-sm-strong-font-size: 11px; --body-sm-strong-font-weight: 500; --body-sm-strong-line-height: 16px;
+  --body-md-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-md-font-size: 12px; --body-md-font-weight: 400; --body-md-line-height: 18px;
+  --body-md-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-md-strong-font-size: 12px; --body-md-strong-font-weight: 500; --body-md-strong-line-height: 18px;
+  --body-base-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-base-font-size: 13px; --body-base-font-weight: 400; --body-base-line-height: 20px;
+  --body-base-strong-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --body-base-strong-font-size: 13px; --body-base-strong-font-weight: 500; --body-base-strong-line-height: 20px;
+  --heading-3xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-3xs-font-size: 11px; --heading-3xs-font-weight: 600; --heading-3xs-line-height: 16px;
+  --heading-2xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-2xs-font-size: 12px; --heading-2xs-font-weight: 600; --heading-2xs-line-height: 18px;
+  --heading-xs-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-xs-font-size: 13px; --heading-xs-font-weight: 600; --heading-xs-line-height: 20px;
+  --heading-sm-font-family: "SF Pro Text", system-ui, -apple-system, sans-serif; --heading-sm-font-size: 16px; --heading-sm-font-weight: 600; --heading-sm-line-height: 24px;
+  --heading-md-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-md-font-size: 20px; --heading-md-font-weight: 600; --heading-md-line-height: 28px;
+  --heading-lg-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-lg-font-size: 22px; --heading-lg-font-weight: 600; --heading-lg-line-height: 30px;
+  --heading-xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-xl-font-size: 24px; --heading-xl-font-weight: 600; --heading-xl-line-height: 32px;
+  --heading-2xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-2xl-font-size: 28px; --heading-2xl-font-weight: 600; --heading-2xl-line-height: 36px;
+  --heading-3xl-font-family: "SF Pro", system-ui, -apple-system, sans-serif; --heading-3xl-font-size: 32px; --heading-3xl-font-weight: 600; --heading-3xl-line-height: 40px;
+  --code-editor-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif; --code-editor-font-size: 13px; --code-editor-font-weight: 450; --code-editor-line-height: 20px;
+  --code-terminal-font-family: "JetBrains Mono", system-ui, -apple-system, sans-serif; --code-terminal-font-size: 12px; --code-terminal-font-weight: 450; --code-terminal-line-height: 18px;
+  --bg-base-default: #1A1B1D; --bg-base-secondary: #222427; --bg-base-tertiary: #2A2D31;
+  --bg-overlay-l1: rgba(224, 226, 242, 0.04); --bg-overlay-l2: rgba(224, 226, 242, 0.06); --bg-overlay-l3: rgba(224, 226, 242, 0.08); --bg-overlay-l4: rgba(224, 226, 242, 0.12);
+  --bg-menu: #202123; --bg-tooltip: #1A1B1D; --bg-invert: #DADDE5; --bg-invert-hover: #EDEFF2; --bg-invert-active: #979AA4; --bg-invert-disabled: rgba(224, 226, 242, 0.12);
+  --color-background: var(--bg-base-default); --color-surface: var(--bg-base-secondary); --color-surface-variant: var(--bg-base-tertiary);
+  --color-overlay-1: var(--bg-overlay-l1); --color-overlay-2: var(--bg-overlay-l2); --color-overlay-3: var(--bg-overlay-l3); --color-overlay-4: var(--bg-overlay-l4);
+  --color-card: var(--bg-base-secondary); --color-tooltip: var(--bg-tooltip); --color-menu: var(--bg-menu);
+  --bg-brand: #32F08C; --bg-brand-hover: #0FDC78; --bg-brand-disabled: rgba(50, 240, 140, 0.2); --bg-brand-popup: rgba(50, 240, 140, 0.12);
+  --color-primary: var(--bg-brand); --color-primary-hover: var(--bg-brand-hover); --color-primary-disabled: var(--bg-brand-disabled); --color-primary-soft: var(--bg-brand-popup); --color-accent: var(--bg-brand);
+  --text-default: #D1D3DB; --text-default-hover: #F5F9FE; --text-default-active: #F5F9FE; --text-secondary: #9599A6; --text-secondary-hover: #D1D3DB; --text-secondary-active: #D1D3DB;
+  --text-tertiary: #666B75; --text-disabled: #666B75; --text-onbrand: #0C0C0D; --text-onaccent: #0C0C0D;
+  --color-foreground: var(--text-default); --color-foreground-hover: var(--text-default-hover); --color-on-surface: var(--text-default); --color-on-surface-variant: var(--text-secondary);
+  --color-muted-foreground: var(--text-secondary); --color-disabled-foreground: var(--text-disabled); --color-on-primary: var(--text-onbrand);
+  --text-brand: #32F08C; --text-brand-hover: #0FDC78;
+  --icon-default: #D1D3DB; --icon-default-hover: #F5F9FE; --icon-default-active: #F5F9FE; --icon-secondary: #9599A6; --icon-secondary-hover: #D1D3DB; --icon-secondary-active: #D1D3DB;
+  --icon-tertiary: #666B75; --icon-disabled: #666B75; --icon-onbrand: #0C0C0D; --icon-onaccent: #0C0C0D; --icon-brand: #32F08C; --icon-brand-hover: #0FDC78;
+  --border-neutral-l1: rgba(224, 226, 242, 0.1); --border-neutral-l2: rgba(224, 226, 242, 0.16); --border-neutral-l3: rgba(224, 226, 242, 0.2);
+  --border-contrast: #FFFFFF; --border-brand: #32F08C;
+  --color-border: var(--border-neutral-l1); --color-border-strong: var(--border-neutral-l2); --color-border-stronger: var(--border-neutral-l3); --color-border-contrast: var(--border-contrast); --color-outline: var(--border-neutral-l1);
+  --accent-teal: #2DD288; --accent-coral: #FF9392; --accent-amber: #DCB364; --accent-lime: #8ACB3A; --accent-cyan: #04CBE5; --accent-blue: #7BB8FF; --accent-magenta: #EC93FF; --accent-violet: #BFA5FF; --accent-slate: #AFB9CF;
+  --status-primary-default: #387BFF; --status-primary-hover: #4C88FF; --status-primary-active: #1759DD;
+  --status-primary-surface-l1: rgba(53, 121, 255, 0.18); --status-primary-surface-l2: rgba(53, 121, 255, 0.28); --status-primary-surface-l3: rgba(53, 121, 255, 0.36);
+  --status-success-default: #33C192; --status-success-hover: #5ED4AD; --status-success-active: #27B082;
+  --status-success-surface-l1: rgba(0, 165, 110, 0.18); --status-success-surface-l2: rgba(0, 165, 110, 0.28); --status-success-surface-l3: rgba(0, 165, 110, 0.36);
+  --status-alert-default: #D29D00; --status-alert-hover: #DFB949; --status-alert-active: #AB8820;
+  --status-alert-surface-l1: rgba(210, 157, 0, 0.16); --status-alert-surface-l2: rgba(210, 157, 0, 0.28); --status-alert-surface-l3: rgba(210, 157, 0, 0.36);
+  --status-warning-default: #D27E24; --status-warning-hover: #D78B28; --status-warning-active: #B46510;
+  --status-warning-surface-l1: rgba(210, 126, 36, 0.16); --status-warning-surface-l2: rgba(210, 126, 36, 0.28); --status-warning-surface-l3: rgba(210, 126, 36, 0.36);
+  --status-error-default: #F65A5A; --status-error-hover: #F86262; --status-error-active: #B33636;
+  --status-error-surface-l1: rgba(246, 70, 70, 0.18); --status-error-surface-l2: rgba(246, 70, 70, 0.28); --status-error-surface-l3: rgba(246, 70, 70, 0.36);
+  --color-info: var(--status-primary-default); --color-success: var(--status-success-default); --color-warning: var(--status-warning-default); --color-error: var(--status-error-default); --color-error-soft: var(--status-error-surface-l1);
+  --brand-1: #32f08c; --brand-2: #3ee1a3; --brand-3: #60f2bd; --brand-4: #a0fde7; --site-canvas: #1A1B1D;
+  --bg-layout-1: var(--bg-base-secondary); --bg-layout-2: var(--bg-overlay-l1); --border-1: var(--border-neutral-l1);
+  --color-muted: var(--bg-base-tertiary); --color-secondary: var(--bg-base-tertiary); --color-secondary-foreground: var(--text-default);
+  --color-input: var(--border-neutral-l1); --color-ring: var(--bg-brand); --color-radius-sm: var(--radius-4); --color-radius-md: var(--radius-6); --color-radius-lg: var(--radius-8);
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--color-background); --color-foreground: var(--color-foreground); --color-card: var(--color-card);
+    --color-primary: var(--color-primary); --color-secondary: var(--color-secondary); --color-secondary-foreground: var(--color-secondary-foreground);
+    --color-muted: var(--color-muted); --color-muted-foreground: var(--color-muted-foreground); --color-accent: var(--color-accent);
+    --color-border: var(--color-border); --color-input: var(--color-input); --color-ring: var(--color-ring);
+    --radius-sm: var(--color-radius-sm); --radius-md: var(--color-radius-md); --radius-lg: var(--color-radius-lg);
+  }
+  @layer base { body { background: var(--color-background); color: var(--color-foreground); } }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--color-background); } .text-foreground { color: var(--color-foreground); }
+      .bg-card { background-color: var(--color-card); } .bg-primary { background-color: var(--color-primary); } .text-primary { color: var(--color-primary); }
+      .bg-secondary { background-color: var(--color-secondary); } .text-secondary { color: var(--color-secondary); }
+      .bg-muted { background-color: var(--color-muted); } .text-muted-foreground { color: var(--color-muted-foreground); }
+      .bg-accent { background-color: var(--color-accent); } .border-border { border-color: var(--color-border); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      img { display: block; }
+    </style>
+    <link rel="stylesheet" href="../assets/shared-components.css">
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main>
+    <div class="app-shell" data-viewport-mode="app-shell">
+
+      <!-- Window Titlebar -->
+      <div class="ds-wbtitlebar">
+        <div class="ds-wbtitlebar__left">
+          <div class="ds-wbtitlebar__lights">
+            <span class="ds-wbtitlebar__light ds-wbtitlebar__light--close"></span>
+            <span class="ds-wbtitlebar__light ds-wbtitlebar__light--min"></span>
+            <span class="ds-wbtitlebar__light ds-wbtitlebar__light--max"></span>
+          </div>
+          <span class="ds-wbtitlebar__mode-chip">刻意练习</span>
+          <div class="ds-wbtitlebar__project-selector">
+            <span>2026-07-29 · W1 Day 1</span>
+            <img src="../assets/icons/dl_builtin_trae/chevron-down.svg" width="12" height="12" alt="" class="icon" />
+          </div>
+        </div>
+        <div class="ds-wbtitlebar__right">
+          <button class="ds-wbtitlebar__iconbtn" type="button" aria-label="搜索">
+            <img src="../assets/icons/dl_builtin_trae/search.svg" width="16" height="16" alt="" class="icon" />
+          </button>
+          <button class="ds-wbtitlebar__iconbtn" type="button" aria-label="通知">
+            <img src="../assets/icons/dl_builtin_trae/bell.svg" width="16" height="16" alt="" class="icon" />
+          </button>
+          <button class="ds-wbtitlebar__iconbtn" type="button" aria-label="设置">
+            <img src="../assets/icons/dl_builtin_trae/settings.svg" width="16" height="16" alt="" class="icon" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Activity Rail -->
+      <div class="ds-activityrail">
+        <a class="ds-activityrail__btn is-active" href="home-after-first.html" data-dom-id="rail-home" aria-label="今天" title="今天">
+          <img src="../assets/icons/dl_builtin_trae/home.svg" width="16" height="16" alt="" />
+        </a>
+        <a class="ds-activityrail__btn" href="#" aria-label="我的主题" title="我的主题">
+          <img src="../assets/icons/dl_builtin_trae/layers.svg" width="16" height="16" alt="" />
+        </a>
+        <a class="ds-activityrail__btn" href="#" aria-label="日历" title="日历">
+          <img src="../assets/icons/dl_builtin_trae/calendar.svg" width="16" height="16" alt="" />
+        </a>
+        <div class="ds-activityrail__divider"></div>
+        <div class="ds-activityrail__spacer"></div>
+        <a class="ds-activityrail__btn" href="#" aria-label="设置" title="设置">
+          <img src="../assets/icons/dl_builtin_trae/settings.svg" width="16" height="16" alt="" />
+        </a>
+      </div>
+
+      <!-- Main Content -->
+      <div class="app-main overflow-y-auto" data-scroll-region="primary">
+        <div class="home-page">
+
+          <!-- Page Header -->
+          <div class="home-header">
+            <div class="home-header__title-group">
+              <div class="home-header__title">今天</div>
+              <div class="home-header__subtitle">2026-07-29（周二）· W1 Day 1</div>
+            </div>
+            <a class="ds-btn ds-btn--tertiary" href="theme-create.html" data-dom-id="btn-new-theme">
+              <img src="../assets/icons/dl_builtin_trae/plus.svg" width="14" height="14" alt="" class="icon" />
+              <span>新建主题</span>
+            </a>
+          </div>
+
+          <!-- Section 1: 今日任务 -->
+          <div class="home-section">
+            <div class="home-section__label">今日任务</div>
+            <div class="today-list">
+              <a class="today-item" href="theme-work.html" data-dom-id="btn-today-task-1">
+                <span class="today-item__dot today-item__dot--teal"></span>
+                <span class="ds-tag today-item__topic-tag">革新学习方法</span>
+                <span class="today-item__text">检视阅读《如何阅读一本书》第 1 章（约 15 分钟）</span>
+                <span class="today-item__enter">
+                  <span>进入</span>
+                  <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="" class="icon" />
+                </span>
+              </a>
+              <a class="today-item" href="theme-work.html" data-dom-id="btn-today-task-2">
+                <span class="today-item__dot today-item__dot--teal"></span>
+                <span class="ds-tag today-item__topic-tag">革新学习方法</span>
+                <span class="today-item__text">用费曼法复述「阅读四层次」（约 15 分钟）</span>
+                <span class="today-item__enter">
+                  <span>进入</span>
+                  <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="" class="icon" />
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Section 2: 我的主题 -->
+          <div class="home-section">
+            <div class="home-section__label">我的主题</div>
+            <div class="theme-grid">
+              <div class="theme-card">
+                <div class="theme-card__head">
+                  <div class="theme-card__name">革新学习方法</div>
+                  <span class="ds-tag ds-tag--brand">学习期</span>
+                </div>
+                <div class="theme-card__status">主焦点，正在建立阅读方法论框架</div>
+                <div class="theme-card__footer">
+                  <div class="theme-card__task-hint">今日 2 项任务</div>
+                  <a class="theme-card__enter" href="theme-overview-first.html" data-dom-id="btn-theme-1">
+                    <span>进入看板</span>
+                    <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" class="icon" />
+                  </a>
+                </div>
+                <div class="slot-bar">
+                  <span class="slot-bar__label">阶段槽位</span>
+                  <span class="slot-bar__item">学 1/1</span>
+                  <span class="slot-bar__item">练 0/3</span>
+                  <span class="slot-bar__item">用 0/5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+    </main>
+
+    <style id="page-specific">
+.home-page { max-width: 960px; margin: 0 auto; padding: 40px 32px 32px; }
+.home-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 40px; }
+.home-header__title-group { display: flex; flex-direction: column; gap: 4px; }
+.home-header__title { font-family: var(--heading-sm-font-family); font-size: var(--heading-sm-font-size); font-weight: var(--heading-sm-font-weight); line-height: var(--heading-sm-line-height); color: var(--text-default); }
+.home-header__subtitle { font-size: var(--body-sm-font-size); line-height: var(--body-sm-line-height); color: var(--text-tertiary); }
+.home-section { margin-bottom: 32px; }
+.home-section__label { font-size: var(--body-xs-font-size); font-weight: var(--font-weight-medium); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+.today-list { display: flex; flex-direction: column; gap: 4px; }
+.today-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg-base-secondary); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-6); text-decoration: none; color: var(--text-default); transition: background .12s ease, border-color .12s ease; }
+.today-item:hover { background: var(--bg-overlay-l2); border-color: var(--border-neutral-l2); }
+.today-item__dot { width: 8px; height: 8px; border-radius: var(--radius-full); flex-shrink: 0; }
+.today-item__dot--teal { background: var(--accent-teal); }
+.today-item__topic-tag { flex-shrink: 0; }
+.today-item__text { flex: 1; font-size: var(--body-base-font-size); line-height: var(--body-base-line-height); color: var(--text-default); min-width: 0; }
+.today-item__enter { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; font-size: var(--body-sm-font-size); color: var(--text-secondary); transition: color .12s ease; }
+.today-item:hover .today-item__enter { color: var(--text-brand); }
+.today-item__enter img { display: block; transition: transform .12s ease; }
+.today-item:hover .today-item__enter img { transform: translateX(2px); }
+.theme-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.theme-card { display: flex; flex-direction: column; gap: 12px; padding: 24px; background: var(--bg-base-secondary); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-6); transition: background .12s ease, border-color .12s ease; }
+.theme-card:hover { border-color: var(--border-neutral-l2); }
+.theme-card__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.theme-card__name { font-family: var(--heading-xs-font-family); font-size: var(--heading-xs-font-size); font-weight: var(--heading-xs-font-weight); line-height: var(--heading-xs-line-height); color: var(--text-default); }
+.theme-card__status { font-size: var(--body-sm-font-size); line-height: var(--body-sm-line-height); color: var(--text-secondary); }
+.theme-card__footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.theme-card__task-hint { font-size: var(--body-sm-font-size); line-height: var(--body-sm-line-height); color: var(--text-tertiary); }
+.theme-card__enter { display: inline-flex; align-items: center; gap: 4px; font-size: var(--body-sm-font-size); font-weight: var(--font-weight-medium); color: var(--text-secondary); text-decoration: none; transition: color .12s ease; }
+.theme-card__enter:hover { color: var(--text-brand); }
+.theme-card__enter img { display: block; }
+.slot-bar { display: flex; align-items: center; justify-content: center; gap: 16px; padding-top: 16px; margin-top: 8px; border-top: 1px solid var(--border-neutral-l1); }
+.slot-bar__item { font-family: var(--code-editor-font-family); font-size: var(--body-xs-font-size); color: var(--text-tertiary); }
+.slot-bar__label { color: var(--text-tertiary); font-size: var(--body-xs-font-size); }
+@media (max-width: 720px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .ds-activityrail { display: none; }
+  .home-page { padding: 24px 16px; }
+}
+    </style>
+</body>
+</html>

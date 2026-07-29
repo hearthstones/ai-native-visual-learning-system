@@ -501,7 +501,7 @@
     <main>
     <div class="app-shell" data-viewport-mode="app-shell">
 
-      <!-- ═══ Window Titlebar ═══ -->
+      <!-- Window Titlebar -->
       <div class="ds-wbtitlebar">
         <div class="ds-wbtitlebar__left">
           <div class="ds-wbtitlebar__lights">
@@ -511,7 +511,7 @@
           </div>
           <span class="ds-wbtitlebar__mode-chip">刻意练习</span>
           <div class="ds-wbtitlebar__project-selector">
-            <span>2026-07-28 · W1 Day 3</span>
+            <span>2026-07-29 · 新起点</span>
             <img src="../assets/icons/dl_builtin_trae/chevron-down.svg" width="12" height="12" alt="" class="icon" />
           </div>
         </div>
@@ -528,9 +528,9 @@
         </div>
       </div>
 
-      <!-- ═══ Activity Rail ═══ -->
+      <!-- Activity Rail -->
       <div class="ds-activityrail">
-        <a class="ds-activityrail__btn is-active" href="home.html" data-dom-id="rail-home" aria-label="今天" title="今天">
+        <a class="ds-activityrail__btn is-active" href="home-empty.html" data-dom-id="rail-home" aria-label="今天" title="今天">
           <img src="../assets/icons/dl_builtin_trae/home.svg" width="16" height="16" alt="" />
         </a>
         <a class="ds-activityrail__btn" href="#" data-dom-id="rail-themes" aria-label="我的主题" title="我的主题">
@@ -546,323 +546,107 @@
         </a>
       </div>
 
-      <!-- ═══ Main Content ═══ -->
+      <!-- Main Content -->
       <div class="app-main overflow-y-auto" data-scroll-region="primary">
-        <div class="home-page">
+        <div class="home-empty-page">
 
-          <!-- ── Page Header ── -->
-          <div class="home-header">
-            <div class="home-header__title-group">
-              <div class="home-header__title">今天</div>
-              <div class="home-header__subtitle">2026-07-28（周二）&middot; W1 Day 3</div>
-            </div>
-            <a class="ds-btn ds-btn--tertiary" href="new-theme-intercept.html" data-dom-id="btn-new-theme">
-              <img src="../assets/icons/dl_builtin_trae/plus.svg" width="14" height="14" alt="" class="icon" />
-              <span>新建主题</span>
-            </a>
-            <a class="ds-btn ds-btn--tertiary ds-btn--sm" href="theme-create.html" data-dom-id="btn-demo-empty-create" style="margin-left: var(--spacer-8);">
-              演示空槽创建
-            </a>
+          <div class="home-empty__icon">
+            <img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="28" height="28" alt="" />
           </div>
 
-          <!-- ── Today Section ── -->
-          <section class="home-section">
-            <div class="home-section__label">今日任务</div>
-            <div class="today-list">
-
-              <!-- Task 1: 革新学习方法 -->
-              <a class="today-item" href="theme-work.html" data-dom-id="btn-today-task-1">
-                <span class="today-item__dot today-item__dot--teal"></span>
-                <span class="ds-tag today-item__topic-tag">革新学习方法</span>
-                <span class="today-item__text">检视阅读《如何阅读一本书》第 2 章（约 15 分钟）</span>
-                <span class="today-item__enter">
-                  <span>进入</span>
-                  <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="" />
-                </span>
-              </a>
-
-              <!-- Task 2: 革新学习方法 -->
-              <a class="today-item" href="theme-work.html" data-dom-id="btn-today-task-2">
-                <span class="today-item__dot today-item__dot--teal"></span>
-                <span class="ds-tag today-item__topic-tag">革新学习方法</span>
-                <span class="today-item__text">用费曼法复述「检视阅读 vs 分析阅读」（约 15 分钟）</span>
-                <span class="today-item__enter">
-                  <span>进入</span>
-                  <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="" />
-                </span>
-              </a>
-
-              <!-- Task 3: 矛盾论 -->
-              <a class="today-item" href="theme-work.html" data-dom-id="btn-today-task-3">
-                <span class="today-item__dot today-item__dot--amber"></span>
-                <span class="ds-tag today-item__topic-tag">矛盾论</span>
-                <span class="today-item__text">用矛盾论分析一篇时事评论（约 15 分钟）</span>
-                <span class="today-item__enter">
-                  <span>进入</span>
-                  <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="" />
-                </span>
-              </a>
-
+          <div class="home-empty__title-group">
+            <div class="home-empty__title">从第一个主题开始</div>
+            <div class="home-empty__subtitle">
+              AI 教练帮你共创学习阶梯、筛选高杠杆资料、制定学练用三阶段计划。每天约 30 分钟。
             </div>
-          </section>
+          </div>
 
-          <!-- ── My Themes Section ── -->
-          <section class="home-section">
-            <div class="home-section__label">我的主题</div>
-            <div class="theme-grid">
+          <div class="home-empty__actions">
+            <a class="ds-btn ds-btn--brand ds-btn--lg" href="theme-create.html" data-dom-id="btn-new-first-theme">
+              <img src="../assets/icons/dl_builtin_trae/plus.svg" width="14" height="14" alt="" class="icon" />
+              <span>新建第一个主题</span>
+            </a>
 
-              <!-- Theme Card 1: 革新学习方法 -->
-              <div class="theme-card">
-                <div class="theme-card__head">
-                  <span class="theme-card__name">革新学习方法</span>
-                  <span class="ds-tag ds-tag--brand">学习期</span>
-                </div>
-                <div class="theme-card__status">主焦点之一，正在建立阅读方法论框架</div>
-                <div class="theme-card__footer">
-                  <span class="theme-card__task-hint">今日 2 项任务</span>
-                  <a class="theme-card__enter" href="theme-overview.html" data-dom-id="btn-theme-1">
-                    <span>进入看板</span>
-                    <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" />
-                  </a>
-                </div>
-              </div>
-
-              <!-- Theme Card 2: 矛盾论 -->
-              <div class="theme-card">
-                <div class="theme-card__head">
-                  <span class="theme-card__name">矛盾论</span>
-                  <span class="ds-tag ds-tag--warning">练习期</span>
-                </div>
-                <div class="theme-card__status">第二主焦点，练习期续跑中</div>
-                <div class="theme-card__footer">
-                  <span class="theme-card__task-hint">今日 1 项任务</span>
-                  <a class="theme-card__enter" href="theme-overview.html" data-dom-id="btn-theme-2">
-                    <span>进入看板</span>
-                    <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" />
-                  </a>
-                </div>
-              </div>
-
+            <div class="home-empty__slots">
+              <span class="home-empty__slots-label">阶段槽位</span>
+              <span>学 0/1</span>
+              <span>练 0/3</span>
+              <span>用 0/5</span>
             </div>
+          </div>
 
-            <!-- Slot occupancy bar -->
-            <div class="slot-bar">
-              <span class="slot-bar__label">阶段槽位</span>
-              <span class="slot-bar__item">学 1/1</span>
-              <span class="slot-bar__item">练 1/3</span>
-              <span class="slot-bar__item">用 0/5</span>
-            </div>
-          </section>
+        </div>
+      </div>
 
-        </div><!-- /home-page -->
-      </div><!-- /app-main -->
-
-    </div><!-- /app-shell -->
+    </div>
     </main>
 
     <style id="page-specific">
-/* ═══════════════════════════════════════════════════════════════
-   Home Page (L1) — Layout & Component Styles
-   ═══════════════════════════════════════════════════════════════ */
-
-/* ── Page Container ──────────────────────────────────────── */
-.home-page {
-  max-width: 960px;
+/* Empty Home Page */
+.home-empty-page {
+  max-width: 560px;
   margin: 0 auto;
-  padding: var(--spacer-40) var(--spacer-32) var(--spacer-32);
-}
-
-/* ── Page Header ──────────────────────────────────────────── */
-.home-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--spacer-16);
-  margin-bottom: var(--spacer-40);
-}
-.home-header__title-group {
+  padding: 120px var(--spacer-32) var(--spacer-32);
   display: flex;
   flex-direction: column;
-  gap: var(--spacer-4);
-}
-.home-header__title {
-  font-family: var(--heading-sm-font-family);
-  font-size: var(--heading-sm-font-size);
-  font-weight: var(--heading-sm-font-weight);
-  line-height: var(--heading-sm-line-height);
-  color: var(--text-default);
-}
-.home-header__subtitle {
-  font-size: var(--body-sm-font-size);
-  line-height: var(--body-sm-line-height);
-  color: var(--text-tertiary);
-}
-
-/* ── Section ──────────────────────────────────────────────── */
-.home-section {
-  margin-bottom: var(--spacer-32);
-}
-.home-section__label {
-  font-size: var(--body-xs-font-size);
-  font-weight: var(--font-weight-medium);
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: var(--spacer-12);
-}
-
-/* ── Today Task List ──────────────────────────────────────── */
-.today-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacer-4);
-}
-.today-item {
-  display: flex;
   align-items: center;
-  gap: var(--spacer-12);
-  padding: var(--spacer-12) var(--spacer-16);
-  background: var(--bg-base-secondary);
-  border: 1px solid var(--border-neutral-l1);
-  border-radius: var(--radius-6);
-  text-decoration: none;
-  color: var(--text-default);
-  transition: background .12s ease, border-color .12s ease;
+  text-align: center;
+  gap: var(--spacer-32);
 }
-.today-item:hover {
-  background: var(--bg-overlay-l2);
-  border-color: var(--border-neutral-l2);
-}
-.today-item__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  flex-shrink: 0;
-}
-.today-item__dot--teal { background: var(--accent-teal); }
-.today-item__dot--amber { background: var(--accent-amber); }
-
-.today-item__topic-tag {
-  flex-shrink: 0;
-}
-.today-item__text {
-  flex: 1;
-  font-size: var(--body-base-font-size);
-  line-height: var(--body-base-line-height);
-  color: var(--text-default);
-  min-width: 0;
-}
-.today-item__enter {
+.home-empty__icon {
   display: inline-flex;
-  align-items: center;
-  gap: var(--spacer-4);
-  flex-shrink: 0;
-  font-size: var(--body-sm-font-size);
-  color: var(--text-secondary);
-  transition: color .12s ease;
-}
-.today-item:hover .today-item__enter {
-  color: var(--text-brand);
-}
-.today-item__enter img {
-  display: block;
-  transition: transform .12s ease;
-}
-.today-item:hover .today-item__enter img {
-  transform: translateX(2px);
-}
-
-/* ── Theme Card Grid ───────────────────────────────────────── */
-.theme-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--spacer-16);
-}
-.theme-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacer-12);
-  padding: var(--spacer-24);
-  background: var(--bg-base-secondary);
-  border: 1px solid var(--border-neutral-l1);
-  border-radius: var(--radius-6);
-  transition: background .12s ease, border-color .12s ease;
-}
-.theme-card:hover {
-  border-color: var(--border-neutral-l2);
-}
-.theme-card__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacer-8);
-}
-.theme-card__name {
-  font-family: var(--heading-xs-font-family);
-  font-size: var(--heading-xs-font-size);
-  font-weight: var(--heading-xs-font-weight);
-  line-height: var(--heading-xs-line-height);
-  color: var(--text-default);
-}
-.theme-card__status {
-  font-size: var(--body-sm-font-size);
-  line-height: var(--body-sm-line-height);
-  color: var(--text-secondary);
-}
-.theme-card__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: var(--spacer-8);
-}
-.theme-card__task-hint {
-  font-size: var(--body-sm-font-size);
-  line-height: var(--body-sm-line-height);
-  color: var(--text-tertiary);
-}
-.theme-card__enter {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacer-4);
-  font-size: var(--body-sm-font-size);
-  font-weight: var(--font-weight-medium);
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color .12s ease;
-}
-.theme-card__enter:hover {
-  color: var(--text-brand);
-}
-.theme-card__enter img {
-  display: block;
-}
-
-/* ── Slot Occupancy ───────────────────────────────────────── */
-.slot-bar {
-  display: flex;
   align-items: center;
   justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-8);
+  background: var(--bg-overlay-l2);
+  border: 1px solid var(--border-neutral-l1);
+}
+.home-empty__icon img {
+  display: block;
+  opacity: 0.7;
+}
+.home-empty__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-12);
+}
+.home-empty__title {
+  font-family: var(--heading-md-font-family);
+  font-size: var(--heading-md-font-size);
+  font-weight: var(--heading-md-font-weight);
+  line-height: var(--heading-md-line-height);
+  color: var(--text-default);
+}
+.home-empty__subtitle {
+  font-size: var(--body-base-font-size);
+  line-height: var(--body-base-line-height);
+  color: var(--text-secondary);
+  max-width: 420px;
+}
+.home-empty__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: var(--spacer-16);
-  padding-top: var(--spacer-16);
-  margin-top: var(--spacer-8);
-  border-top: 1px solid var(--border-neutral-l1);
 }
-.slot-bar__item {
+.home-empty__slots {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-16);
   font-family: var(--code-editor-font-family);
-  font-size: var(--body-xs-font-size);
+  font-size: var(--body-sm-font-size);
   color: var(--text-tertiary);
 }
-.slot-bar__label {
+.home-empty__slots-label {
   color: var(--text-tertiary);
-  font-size: var(--body-xs-font-size);
 }
 
-/* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 720px) {
   .app-shell { grid-template-columns: 1fr; }
   .ds-activityrail { display: none; }
-  .theme-grid { grid-template-columns: 1fr; }
-  .home-page { padding: var(--spacer-24) var(--spacer-16); }
+  .home-empty-page { padding: 80px var(--spacer-16) var(--spacer-24); }
 }
     </style>
 </body>

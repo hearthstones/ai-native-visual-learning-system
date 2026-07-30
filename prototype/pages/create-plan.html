@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学习计划 · 革新学习方法 — 对话式共创</title>
+    <title>创建主题 · 学习计划锁定</title>
     <style id="theme-vars">
 :root {
   --radius-2: 2px; --radius-4: 4px; --radius-6: 6px; --radius-8: 8px; --radius-10: 10px; --radius-full: 9999px;
@@ -165,7 +165,7 @@
   <!-- ===================== TITLEBAR ===================== -->
   <header class="titlebar">
     <div class="titlebar__left">
-      <a class="titlebar__back" href="theme-cocreate-resources.html" data-dom-id="btn-back-resources" title="返回学习资料">
+      <a class="titlebar__back" href="create-resources.html" data-dom-id="btn-back-resources" title="返回学习资料">
         <img src="../assets/icons/dl_builtin_trae/arrow-left.svg" width="18" height="18" alt="back" class="icon">
       </a>
       <div class="titlebar__title">
@@ -542,7 +542,7 @@
     var backBtn = document.querySelector('[data-dom-id="btn-back-resources"]');
     if (backBtn) {
       backBtn.href = params.get('from') === 'create'
-        ? 'theme-cocreate-resources.html'
+        ? 'create-resources.html'
         : 'theme-work.html';
     }
 
@@ -618,7 +618,7 @@
         lockVisualTimer = setTimeout(applyLockedVisual, 450);
         // 模拟锁定后分流：1.5s 后跳转
         redirectTimer = setTimeout(function () {
-          window.location.href = 'theme-overview-first.html';
+          window.location.href = 'create-summary.html';
         }, 1500);
       });
     }

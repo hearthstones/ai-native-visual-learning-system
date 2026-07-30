@@ -3,19 +3,19 @@
     {
       "id": "page-home",
       "type": "page",
-      "title": "首页 · 今天与我的主题",
+      "title": "今天 · 我的主题",
       "version": 2,
       "createdAt": 1785228800000,
       "canvasData": {
         "x": 620,
         "y": 0,
-        "group": 0,
+        "group": 1,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-e9c76880",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-461556bf",
+          "measuredAt": 1785384554578
         }
       },
       "devMetadata": {
@@ -23,11 +23,11 @@
         "interactions": [
           {
             "domId": "btn-new-theme",
-            "targetPageId": "page-new-theme-intercept"
+            "targetPageId": "page-create-intercept"
           },
           {
             "domId": "btn-demo-empty-create",
-            "targetPageId": "page-theme-create"
+            "targetPageId": "page-create-info"
           },
           {
             "domId": "btn-today-task-1",
@@ -55,19 +55,19 @@
     {
       "id": "page-theme-overview",
       "type": "page",
-      "title": "主题概览 · 革新学习方法（学习期）",
+      "title": "主题概览 · 学习期",
       "version": 2,
       "createdAt": 1785228800000,
       "canvasData": {
         "x": 0,
         "y": 4165,
-        "group": 0,
+        "group": 3,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-18302b6a",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-f7ef45bb",
+          "measuredAt": 1785384554578
         }
       },
       "devMetadata": {
@@ -91,19 +91,19 @@
           },
           {
             "domId": "btn-plan",
-            "targetPageId": "page-theme-plan-phases"
+            "targetPageId": "page-theme-plan"
           },
           {
             "domId": "btn-review",
-            "targetPageId": "page-weekly-review"
+            "targetPageId": "page-review-weekly"
           },
           {
             "domId": "btn-demo-practice",
-            "targetPageId": "page-theme-overview-practice"
+            "targetPageId": "page-theme-practice"
           },
           {
             "domId": "btn-view-drift",
-            "targetPageId": "page-theme-plan-phases"
+            "targetPageId": "page-theme-plan"
           },
           {
             "domId": "btn-mode-execute",
@@ -111,35 +111,35 @@
           },
           {
             "domId": "btn-mode-plan",
-            "targetPageId": "page-theme-plan-phases"
+            "targetPageId": "page-theme-plan"
           },
           {
             "domId": "btn-mode-review",
-            "targetPageId": "page-weekly-review"
+            "targetPageId": "page-review-weekly"
           }
         ]
       }
     },
     {
-      "id": "page-theme-overview-practice",
+      "id": "page-theme-practice",
       "type": "page",
-      "title": "主题概览 · 革新学习方法（练习期演示）",
+      "title": "主题概览 · 练习期",
       "version": 2,
       "createdAt": 1785312596000,
       "canvasData": {
         "x": 0,
         "y": 5432,
-        "group": 0,
+        "group": 3,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-290ed6e1",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-ed5832f4",
+          "measuredAt": 1785384554578
         }
       },
       "devMetadata": {
-        "htmlSrc": "pages/theme-overview-practice.html",
+        "htmlSrc": "pages/theme-practice.html",
         "interactions": [
           {
             "domId": "btn-back-home",
@@ -159,11 +159,11 @@
           },
           {
             "domId": "btn-plan",
-            "targetPageId": "page-theme-plan-phases"
+            "targetPageId": "page-theme-plan"
           },
           {
             "domId": "btn-review",
-            "targetPageId": "page-weekly-review"
+            "targetPageId": "page-review-weekly"
           },
           {
             "domId": "btn-demo-learning",
@@ -175,19 +175,19 @@
     {
       "id": "page-theme-work",
       "type": "page",
-      "title": "作业面 · 革新学习方法",
+      "title": "主题作业面",
       "version": 2,
       "createdAt": 1785228800000,
       "canvasData": {
         "x": 0,
         "y": 3788,
-        "group": 0,
+        "group": 3,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-288bab0c",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-df93825d",
+          "measuredAt": 1785390497577
         }
       },
       "devMetadata": {
@@ -207,39 +207,39 @@
           },
           {
             "domId": "btn-open-cocreate",
-            "targetPageId": "page-learning-plan-cocreate"
+            "targetPageId": "page-create-plan"
           },
           {
             "domId": "btn-open-phases",
-            "targetPageId": "page-theme-plan-phases"
+            "targetPageId": "page-theme-plan"
           },
           {
             "domId": "btn-open-full-review",
-            "targetPageId": "page-weekly-review"
+            "targetPageId": "page-review-weekly"
           }
         ]
       }
     },
     {
-      "id": "page-new-theme-intercept",
+      "id": "page-create-intercept",
       "type": "page",
-      "title": "新建主题拦截",
+      "title": "创建主题 · 入口",
       "version": 2,
       "createdAt": 1753555200000,
       "canvasData": {
         "x": 0,
         "y": 0,
-        "group": 0,
+        "group": 2,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-c56cc8da",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-59486958",
+          "measuredAt": 1785390497577
         }
       },
       "devMetadata": {
-        "htmlSrc": "pages/new-theme-intercept.html",
+        "htmlSrc": "pages/create-intercept.html",
         "interactions": [
           {
             "domId": "btn-back-home",
@@ -249,57 +249,57 @@
       }
     },
     {
-      "id": "page-learning-plan-cocreate",
+      "id": "page-create-plan",
       "type": "page",
-      "title": "学习计划对话共创 · 革新学习方法",
+      "title": "创建主题 · 学习计划锁定",
       "version": 2,
       "createdAt": 1785218460000,
       "canvasData": {
         "x": 0,
         "y": 2120,
-        "group": 0,
+        "group": 2,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 2743,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-60cfe4be",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-57a886fa",
+          "measuredAt": 1785390497577
         }
       },
       "devMetadata": {
-        "htmlSrc": "pages/learning-plan-cocreate.html",
+        "htmlSrc": "pages/create-plan.html",
         "interactions": [
           {
             "domId": "btn-back-resources",
-            "targetPageId": "page-theme-cocreate-resources"
+            "targetPageId": "page-create-resources"
           },
           {
             "domId": "btn-lock-plan",
-            "targetPageId": "page-theme-overview-first"
+            "targetPageId": "page-create-summary"
           }
         ]
       }
     },
     {
-      "id": "page-weekly-review",
+      "id": "page-review-weekly",
       "type": "page",
-      "title": "周复盘 W1 · 革新学习方法",
+      "title": "周复盘",
       "version": 2,
       "createdAt": 1753555200000,
       "canvasData": {
         "x": 0,
         "y": 4919,
-        "group": 0,
+        "group": 4,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 1369,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-41b01c6f",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-8beb9592",
+          "measuredAt": 1785390497577
         }
       },
       "devMetadata": {
-        "htmlSrc": "pages/weekly-review.html",
+        "htmlSrc": "pages/review-weekly.html",
         "interactions": [
           {
             "domId": "btn-back-work",
@@ -309,25 +309,25 @@
       }
     },
     {
-      "id": "page-theme-plan-phases",
+      "id": "page-theme-plan",
       "type": "page",
-      "title": "主题计划 · 阶段切换与并发",
+      "title": "主题阶段计划",
       "version": 2,
       "createdAt": 1785201592337,
       "canvasData": {
         "x": 0,
         "y": 4542,
-        "group": 0,
+        "group": 3,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-ff230c4d",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-6eeb5dee",
+          "measuredAt": 1785384554578
         }
       },
       "devMetadata": {
-        "htmlSrc": "pages/theme-plan-phases.html",
+        "htmlSrc": "pages/theme-plan.html",
         "interactions": [
           {
             "domId": "btn-back-work",
@@ -345,13 +345,13 @@
       "canvasData": {
         "x": 0,
         "y": 754,
-        "group": 0,
+        "group": 1,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-06eaed14",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-b04d5e3e",
+          "measuredAt": 1785384554578
         }
       },
       "devMetadata": {
@@ -359,7 +359,7 @@
         "interactions": [
           {
             "domId": "btn-new-first-theme",
-            "targetPageId": "page-theme-create"
+            "targetPageId": "page-create-info"
           },
           {
             "domId": "rail-home",
@@ -369,25 +369,25 @@
       }
     },
     {
-      "id": "page-theme-create",
+      "id": "page-create-info",
       "type": "page",
-      "title": "新建主题 · 主题信息",
+      "title": "创建主题 · 主题信息",
       "version": 2,
       "createdAt": 1785289924907,
       "canvasData": {
         "x": 0,
         "y": 377,
-        "group": 0,
+        "group": 2,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-26e10182",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-5103e7da",
+          "measuredAt": 1785384554578
         }
       },
       "devMetadata": {
-        "htmlSrc": "pages/theme-create.html",
+        "htmlSrc": "pages/create-info.html",
         "interactions": [
           {
             "domId": "btn-cancel-create",
@@ -399,103 +399,103 @@
           },
           {
             "domId": "btn-start-cocreate",
-            "targetPageId": "page-theme-cocreate-stage"
+            "targetPageId": "page-create-stage"
           }
         ]
       }
     },
     {
-      "id": "page-theme-cocreate-stage",
+      "id": "page-create-stage",
       "type": "page",
-      "title": "学习阶梯共创 · 革新学习方法",
+      "title": "创建主题 · 学习阶梯共创",
       "version": 1,
       "createdAt": 1785296400000,
       "canvasData": {
         "x": 0,
         "y": 1131,
-        "group": 0,
+        "group": 2,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 933,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-572ed224",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-9bb00ef5",
+          "measuredAt": 1785390497577
         }
       },
       "devMetadata": {
-        "htmlSrc": "pages/theme-cocreate-stage.html",
+        "htmlSrc": "pages/create-stage.html",
         "interactions": [
           {
             "domId": "btn-back-create",
-            "targetPageId": "page-theme-create"
+            "targetPageId": "page-create-info"
           },
           {
             "domId": "btn-confirm-stage",
-            "targetPageId": "page-theme-cocreate-resources"
+            "targetPageId": "page-create-resources"
           }
         ]
       }
     },
     {
-      "id": "page-theme-cocreate-resources",
+      "id": "page-create-resources",
       "type": "page",
-      "title": "学习资料共创 · 革新学习方法",
+      "title": "创建主题 · 学习资料共创",
       "version": 1,
       "createdAt": 1785296400000,
       "canvasData": {
         "x": 0,
         "y": 1517,
-        "group": 0,
+        "group": 2,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 1676,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-85772100",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-1bf8ab39",
+          "measuredAt": 1785390497577
         }
       },
       "devMetadata": {
-        "htmlSrc": "pages/theme-cocreate-resources.html",
+        "htmlSrc": "pages/create-resources.html",
         "interactions": [
           {
             "domId": "btn-back-stage",
-            "targetPageId": "page-theme-cocreate-stage"
+            "targetPageId": "page-create-stage"
           },
           {
             "domId": "btn-go-to-plan",
-            "targetPageId": "page-learning-plan-cocreate"
+            "targetPageId": "page-create-plan"
           }
         ]
       }
     },
     {
-      "id": "page-theme-overview-first",
+      "id": "page-create-summary",
       "type": "page",
-      "title": "主题看板 · 计划已锁定",
+      "title": "创建主题 · 计划已锁定",
       "version": 2,
       "createdAt": 1785289924907,
       "canvasData": {
         "x": 0,
         "y": 3034,
-        "group": 0,
+        "group": 2,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-a5097b6e",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-17160776",
+          "measuredAt": 1785390497577
         }
       },
       "devMetadata": {
-        "htmlSrc": "pages/theme-overview-first.html",
+        "htmlSrc": "pages/create-summary.html",
         "interactions": [
           {
             "domId": "btn-back-home",
-            "targetPageId": "page-home-after-first"
+            "targetPageId": "page-home-first"
           },
           {
             "domId": "rail-home",
-            "targetPageId": "page-home-after-first"
+            "targetPageId": "page-home-first"
           },
           {
             "domId": "rail-work",
@@ -513,33 +513,33 @@
       }
     },
     {
-      "id": "page-home-after-first",
+      "id": "page-home-first",
       "type": "page",
-      "title": "今天 · 建完首个主题后",
+      "title": "今天 · 首个主题已创建",
       "version": 1,
       "createdAt": 1785296400000,
       "canvasData": {
         "x": 0,
         "y": 3411,
-        "group": 0,
+        "group": 1,
         "layoutSnapshot": {
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-48a85b44",
-          "measuredAt": 1785382436844
+          "sourceHash": "fnv1a-90074c78",
+          "measuredAt": 1785384554578
         }
       },
       "devMetadata": {
-        "htmlSrc": "pages/home-after-first.html",
+        "htmlSrc": "pages/home-first.html",
         "interactions": [
           {
             "domId": "rail-home",
-            "targetPageId": "page-home-after-first"
+            "targetPageId": "page-home-first"
           },
           {
             "domId": "btn-new-theme",
-            "targetPageId": "page-theme-create"
+            "targetPageId": "page-create-info"
           },
           {
             "domId": "btn-today-task-1",
@@ -551,7 +551,7 @@
           },
           {
             "domId": "btn-theme-1",
-            "targetPageId": "page-theme-overview-first"
+            "targetPageId": "page-create-summary"
           }
         ]
       }

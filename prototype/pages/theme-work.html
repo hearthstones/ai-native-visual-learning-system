@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>作业面 · 革新学习方法</title>
+    <title>主题作业面</title>
     <style id="theme-vars">
 /**
  * Trae design library tokens + semantic aliases for apply-html-head-contract
@@ -677,11 +677,11 @@
               <p class="text-tertiary" style="font-size:var(--body-sm-font-size);margin:0;">检视阅读与分析阅读</p>
             </div>
             <div class="plan-actions">
-              <a href="theme-plan-phases.html" data-dom-id="btn-open-phases" class="ds-btn ds-btn--secondary ds-btn--sm">
+              <a href="theme-plan.html" data-dom-id="btn-open-phases" class="ds-btn ds-btn--secondary ds-btn--sm">
                 <img src="../assets/icons/dl_builtin_trae/layout.svg" width="12" height="12" alt="" class="icon">
                 阶段管理
               </a>
-              <a href="learning-plan-cocreate.html" data-dom-id="btn-open-cocreate" class="ds-btn ds-btn--brand ds-btn--sm">
+              <a href="create-plan.html" data-dom-id="btn-open-cocreate" class="ds-btn ds-btn--brand ds-btn--sm">
                 <img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="12" height="12" alt="" class="icon">
                 打开共创
               </a>
@@ -711,7 +711,7 @@
               <div class="progress-bar__fill" style="width:43%;"></div>
             </div>
           </div>
-          <a href="theme-plan-phases.html" data-dom-id="btn-open-phases" class="ds-btn ds-btn--tertiary ds-btn--sm">
+          <a href="theme-plan.html" data-dom-id="btn-open-phases" class="ds-btn ds-btn--tertiary ds-btn--sm">
             <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="12" height="12" alt="" class="icon">
             阶段管理
           </a>
@@ -782,7 +782,7 @@
         <!-- Review Footer -->
         <div class="review-footer">
           <span class="text-tertiary" style="font-size:var(--body-xs-font-size);">采纳建议将融入下一阶段学习切片</span>
-          <a href="weekly-review.html" data-dom-id="btn-open-full-review" class="ds-btn ds-btn--secondary ds-btn--sm">
+          <a href="review-weekly.html" data-dom-id="btn-open-full-review" class="ds-btn ds-btn--secondary ds-btn--sm">
             <img src="../assets/icons/dl_builtin_trae/file-text.svg" width="12" height="12" alt="" class="icon">
             进入完整复盘
           </a>
@@ -839,9 +839,11 @@ function updateTaskProgress() {
   var params = new URLSearchParams(window.location.search);
   if (params.get('from') === 'first') {
     var backLink = document.getElementById('top-back-overview');
-    if (backLink) backLink.href = 'theme-overview-first.html';
+    if (backLink) backLink.href = 'create-summary.html';
     var breadcrumbBack = document.getElementById('breadcrumb-back-overview');
-    if (breadcrumbBack) breadcrumbBack.href = 'theme-overview-first.html';
+    if (breadcrumbBack) breadcrumbBack.href = 'create-summary.html';
+    var railHome = document.querySelector('[data-dom-id="rail-home"]');
+    if (railHome) railHome.href = 'home-first.html';
   }
 })();
 

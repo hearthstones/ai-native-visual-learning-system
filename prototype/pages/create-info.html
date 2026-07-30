@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>今天 - 可视化刻意练习系统</title>
+    <title>创建主题 · 主题信息</title>
     <style id="theme-vars">
 :root {
   --radius-2: 2px; --radius-4: 4px; --radius-6: 6px; --radius-8: 8px; --radius-10: 10px; --radius-full: 9999px;
@@ -103,26 +103,21 @@
           </div>
           <span class="ds-wbtitlebar__mode-chip">刻意练习</span>
           <div class="ds-wbtitlebar__project-selector">
-            <span>2026-07-29 · W1 Day 1</span>
+            <span>新建主题</span>
             <img src="../assets/icons/dl_builtin_trae/chevron-down.svg" width="12" height="12" alt="" class="icon" />
           </div>
         </div>
         <div class="ds-wbtitlebar__right">
-          <button class="ds-wbtitlebar__iconbtn" type="button" aria-label="搜索">
-            <img src="../assets/icons/dl_builtin_trae/search.svg" width="16" height="16" alt="" class="icon" />
-          </button>
-          <button class="ds-wbtitlebar__iconbtn" type="button" aria-label="通知">
-            <img src="../assets/icons/dl_builtin_trae/bell.svg" width="16" height="16" alt="" class="icon" />
-          </button>
-          <button class="ds-wbtitlebar__iconbtn" type="button" aria-label="设置">
-            <img src="../assets/icons/dl_builtin_trae/settings.svg" width="16" height="16" alt="" class="icon" />
-          </button>
+          <a class="ds-btn ds-btn--tertiary ds-btn--sm" href="home-empty.html" data-dom-id="btn-cancel-create">
+            <img src="../assets/icons/dl_builtin_trae/x.svg" width="14" height="14" alt="" class="icon" />
+            取消
+          </a>
         </div>
       </div>
 
       <!-- Activity Rail -->
       <div class="ds-activityrail">
-        <a class="ds-activityrail__btn is-active" href="home-after-first.html" data-dom-id="rail-home" aria-label="今天" title="今天">
+        <a class="ds-activityrail__btn is-active" href="home-empty.html" data-dom-id="rail-home" aria-label="今天" title="今天">
           <img src="../assets/icons/dl_builtin_trae/home.svg" width="16" height="16" alt="" />
         </a>
         <a class="ds-activityrail__btn" href="#" aria-label="我的主题" title="我的主题">
@@ -140,70 +135,65 @@
 
       <!-- Main Content -->
       <div class="app-main overflow-y-auto" data-scroll-region="primary">
-        <div class="home-page">
+        <div class="create-page">
 
-          <!-- Page Header -->
-          <div class="home-header">
-            <div class="home-header__title-group">
-              <div class="home-header__title">今天</div>
-              <div class="home-header__subtitle">2026-07-29（周二）· W1 Day 1</div>
-            </div>
-            <a class="ds-btn ds-btn--tertiary" href="theme-create.html" data-dom-id="btn-new-theme">
-              <img src="../assets/icons/dl_builtin_trae/plus.svg" width="14" height="14" alt="" class="icon" />
-              <span>新建主题</span>
-            </a>
+          <!-- Lightweight Stepper -->
+          <div class="create-stepper" aria-label="创建步骤">
+            <span class="create-stepper__item is-current">信息</span>
+            <span class="create-stepper__sep">·</span>
+            <span class="create-stepper__item">阶梯</span>
+            <span class="create-stepper__sep">·</span>
+            <span class="create-stepper__item">资料</span>
+            <span class="create-stepper__sep">·</span>
+            <span class="create-stepper__item">计划</span>
           </div>
 
-          <!-- Section 1: 今日任务 -->
-          <div class="home-section">
-            <div class="home-section__label">今日任务</div>
-            <div class="today-list">
-              <a class="today-item" href="theme-work.html" data-dom-id="btn-today-task-1">
-                <span class="today-item__dot today-item__dot--teal"></span>
-                <span class="ds-tag today-item__topic-tag">革新学习方法</span>
-                <span class="today-item__text">检视阅读《如何阅读一本书》第 1 章（约 15 分钟）</span>
-                <span class="today-item__enter">
-                  <span>进入</span>
-                  <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="" class="icon" />
-                </span>
-              </a>
-              <a class="today-item" href="theme-work.html" data-dom-id="btn-today-task-2">
-                <span class="today-item__dot today-item__dot--teal"></span>
-                <span class="ds-tag today-item__topic-tag">革新学习方法</span>
-                <span class="today-item__text">用费曼法复述「阅读四层次」（约 15 分钟）</span>
-                <span class="today-item__enter">
-                  <span>进入</span>
-                  <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="14" height="14" alt="" class="icon" />
-                </span>
-              </a>
-            </div>
+          <!-- Title -->
+          <div class="create-head">
+            <h1 class="create-title">主题信息</h1>
+            <p class="create-subtitle">给主题起个名字，选择类型，写一句话目标。接下来 AI 教练会帮你共创学习阶梯。</p>
           </div>
 
-          <!-- Section 2: 我的主题 -->
-          <div class="home-section">
-            <div class="home-section__label">我的主题</div>
-            <div class="theme-grid">
-              <div class="theme-card">
-                <div class="theme-card__head">
-                  <div class="theme-card__name">革新学习方法</div>
-                  <span class="ds-tag ds-tag--brand">学习期</span>
-                </div>
-                <div class="theme-card__status">主焦点，正在建立阅读方法论框架</div>
-                <div class="theme-card__footer">
-                  <div class="theme-card__task-hint">今日 2 项任务</div>
-                  <a class="theme-card__enter" href="theme-overview.html" data-dom-id="btn-theme-1">
-                    <span>进入概览</span>
-                    <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="14" height="14" alt="" class="icon" />
-                  </a>
-                </div>
-                <div class="slot-bar">
-                  <span class="slot-bar__label">阶段槽位</span>
-                  <span class="slot-bar__item">学 1/1</span>
-                  <span class="slot-bar__item">练 0/3</span>
-                  <span class="slot-bar__item">用 0/5</span>
-                </div>
+          <!-- Form -->
+          <form class="create-form" onsubmit="return false;">
+            <div class="form-group">
+              <label class="form-label" for="theme-name">主题名</label>
+              <input class="form-input" type="text" id="theme-name" value="革新学习方法" placeholder="例如：革新学习方法" />
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">类型</span>
+              <div class="radio-group">
+                <label class="radio-card">
+                  <input type="radio" name="theme-type" value="general" checked />
+                  <span class="radio-card__body">
+                    <span class="radio-card__title">通识主题</span>
+                    <span class="radio-card__desc">围绕书籍、文章、课程建立阅读能力与方法</span>
+                  </span>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="theme-type" value="tech" />
+                  <span class="radio-card__body">
+                    <span class="radio-card__title">技术主题</span>
+                    <span class="radio-card__desc">围绕代码、框架、工具建立可复用的工作流</span>
+                  </span>
+                </label>
               </div>
             </div>
+
+            <div class="form-group">
+              <label class="form-label" for="theme-goal">一句话目标（可选）</label>
+              <input class="form-input" type="text" id="theme-goal" value="建立可持续的主题阅读方法" placeholder="例如：建立可持续的主题阅读方法" />
+            </div>
+          </form>
+
+          <!-- Bottom CTA -->
+          <div class="create-actions">
+            <a class="ds-btn ds-btn--brand ds-btn--lg" href="create-stage.html" data-dom-id="btn-start-cocreate">
+              <img src="../assets/icons/dl_builtin_trae/sparkles.svg" width="14" height="14" alt="" class="icon" />
+              <span>进入学习阶梯共创</span>
+            </a>
+            <span class="create-actions__hint">下一步：AI 教练将根据主题生成 5 级学习阶梯</span>
           </div>
 
         </div>
@@ -213,42 +203,168 @@
     </main>
 
     <style id="page-specific">
-.home-page { max-width: 960px; margin: 0 auto; padding: 40px 32px 32px; }
-.home-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 40px; }
-.home-header__title-group { display: flex; flex-direction: column; gap: 4px; }
-.home-header__title { font-family: var(--heading-sm-font-family); font-size: var(--heading-sm-font-size); font-weight: var(--heading-sm-font-weight); line-height: var(--heading-sm-line-height); color: var(--text-default); }
-.home-header__subtitle { font-size: var(--body-sm-font-size); line-height: var(--body-sm-line-height); color: var(--text-tertiary); }
-.home-section { margin-bottom: 32px; }
-.home-section__label { font-size: var(--body-xs-font-size); font-weight: var(--font-weight-medium); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
-.today-list { display: flex; flex-direction: column; gap: 4px; }
-.today-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg-base-secondary); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-6); text-decoration: none; color: var(--text-default); transition: background .12s ease, border-color .12s ease; }
-.today-item:hover { background: var(--bg-overlay-l2); border-color: var(--border-neutral-l2); }
-.today-item__dot { width: 8px; height: 8px; border-radius: var(--radius-full); flex-shrink: 0; }
-.today-item__dot--teal { background: var(--accent-teal); }
-.today-item__topic-tag { flex-shrink: 0; }
-.today-item__text { flex: 1; font-size: var(--body-base-font-size); line-height: var(--body-base-line-height); color: var(--text-default); min-width: 0; }
-.today-item__enter { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; font-size: var(--body-sm-font-size); color: var(--text-secondary); transition: color .12s ease; }
-.today-item:hover .today-item__enter { color: var(--text-brand); }
-.today-item__enter img { display: block; transition: transform .12s ease; }
-.today-item:hover .today-item__enter img { transform: translateX(2px); }
-.theme-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-.theme-card { display: flex; flex-direction: column; gap: 12px; padding: 24px; background: var(--bg-base-secondary); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-6); transition: background .12s ease, border-color .12s ease; }
-.theme-card:hover { border-color: var(--border-neutral-l2); }
-.theme-card__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.theme-card__name { font-family: var(--heading-xs-font-family); font-size: var(--heading-xs-font-size); font-weight: var(--heading-xs-font-weight); line-height: var(--heading-xs-line-height); color: var(--text-default); }
-.theme-card__status { font-size: var(--body-sm-font-size); line-height: var(--body-sm-line-height); color: var(--text-secondary); }
-.theme-card__footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
-.theme-card__task-hint { font-size: var(--body-sm-font-size); line-height: var(--body-sm-line-height); color: var(--text-tertiary); }
-.theme-card__enter { display: inline-flex; align-items: center; gap: 4px; font-size: var(--body-sm-font-size); font-weight: var(--font-weight-medium); color: var(--text-secondary); text-decoration: none; transition: color .12s ease; }
-.theme-card__enter:hover { color: var(--text-brand); }
-.theme-card__enter img { display: block; }
-.slot-bar { display: flex; align-items: center; justify-content: center; gap: 16px; padding-top: 16px; margin-top: 8px; border-top: 1px solid var(--border-neutral-l1); }
-.slot-bar__item { font-family: var(--code-editor-font-family); font-size: var(--body-xs-font-size); color: var(--text-tertiary); }
-.slot-bar__label { color: var(--text-tertiary); font-size: var(--body-xs-font-size); }
+/* Theme Create Page */
+.create-page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 80px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Lightweight stepper */
+.create-stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--text-tertiary);
+}
+.create-stepper__item {
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+.create-stepper__item.is-current {
+  color: var(--text-brand);
+  font-weight: var(--font-weight-medium);
+}
+.create-stepper__sep {
+  color: var(--text-tertiary);
+  opacity: 0.7;
+}
+
+/* Title area */
+.create-head {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.create-title {
+  font-family: var(--heading-md-font-family);
+  font-size: var(--heading-md-font-size);
+  font-weight: var(--heading-md-font-weight);
+  line-height: var(--heading-md-line-height);
+  color: var(--text-default);
+  margin: 0;
+}
+.create-subtitle {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 480px;
+}
+
+/* Form */
+.create-form {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-label {
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+}
+.form-input {
+  height: 36px;
+  background: var(--bg-base-secondary);
+  border: 1px solid var(--border-neutral-l1);
+  border-radius: var(--radius-6);
+  padding: 0 12px;
+  color: var(--text-default);
+  font-family: var(--body-base-font-family);
+  font-size: 13px;
+  line-height: 20px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .12s ease, background .12s ease;
+}
+.form-input::placeholder {
+  color: var(--text-tertiary);
+}
+.form-input:focus {
+  border-color: var(--border-brand);
+  background: var(--bg-base-default);
+}
+
+/* Radio group */
+.radio-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.radio-card {
+  padding: 16px;
+  border: 1px solid var(--border-neutral-l1);
+  border-radius: var(--radius-6);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+  transition: border-color .12s ease, background .12s ease;
+}
+.radio-card:hover {
+  border-color: var(--border-neutral-l2);
+}
+.radio-card input {
+  display: none;
+}
+.radio-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.radio-card__title {
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-default);
+  transition: color .12s ease;
+}
+.radio-card__desc {
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--text-secondary);
+}
+.radio-card input:checked + .radio-card__body .radio-card__title {
+  color: var(--text-brand);
+}
+.radio-card:has(input:checked) {
+  border-color: var(--border-brand);
+  background: var(--bg-brand-popup);
+}
+
+/* Bottom CTA */
+.create-actions {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.create-actions__hint {
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--text-tertiary);
+  text-align: right;
+}
+
 @media (max-width: 720px) {
   .app-shell { grid-template-columns: 1fr; }
   .ds-activityrail { display: none; }
-  .home-page { padding: 24px 16px; }
+  .create-page { padding: 48px 16px; }
+  .radio-group { grid-template-columns: 1fr; }
+  .create-actions { flex-direction: column; align-items: stretch; gap: 12px; }
+  .create-actions__hint { text-align: left; }
 }
     </style>
 </body>

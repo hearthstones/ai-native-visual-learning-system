@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>革新学习方法 · 主题概览</title>
+    <title>革新学习方法 · 主题概览 · 练习期</title>
     <style id="theme-vars">
 /**
  * Trae design library tokens + semantic aliases for apply-html-head-contract
@@ -510,7 +510,7 @@
                 </div>
                 <span class="ds-wbtitlebar__mode-chip">刻意练习</span>
                 <span class="ds-wbtitlebar__project-selector">
-                    革新学习方法 · 学习期
+                    革新学习方法 · 练习期
                     <img src="../assets/icons/dl_builtin_trae/chevron-down.svg" width="12" height="12" alt="">
                 </span>
             </div>
@@ -533,7 +533,7 @@
             <a href="home.html" class="ds-activityrail__btn" data-dom-id="rail-home" aria-label="今天">
                 <img src="../assets/icons/dl_builtin_trae/home.svg" width="18" height="18" alt="" style="filter: brightness(0.6);">
             </a>
-            <a href="theme-overview.html" class="ds-activityrail__btn is-active" aria-label="主题">
+            <a href="theme-overview-practice.html" class="ds-activityrail__btn is-active" aria-label="主题">
                 <img src="../assets/icons/dl_builtin_trae/layers.svg" width="18" height="18" alt="">
             </a>
             <a href="theme-work.html" class="ds-activityrail__btn" data-dom-id="rail-work" aria-label="作业">
@@ -555,37 +555,35 @@
                 <header class="ov-identity">
                     <h1 class="ov-identity__title">革新学习方法</h1>
                     <div class="ov-identity__meta">
-                        <span class="ds-tag ds-tag--brand">学习期</span>
-                        <span class="ov-identity__goal">建立阅读方法论框架</span>
+                        <span class="ds-tag ds-tag--brand">练习期</span>
+                        <span class="ov-identity__goal">在真实场景中刻意练习</span>
                     </div>
                 </header>
 
                 <!-- B. 整体进度 -->
                 <section class="ov-progress">
                     <div class="ov-progress__track">
-                        <div class="ov-progress__fill" style="width: 43%;"></div>
+                        <div class="ov-progress__fill" style="width: 50%;"></div>
                     </div>
                     <div class="ov-progress__meta">
-                        <span>第 <span class="mono">3/7</span> 天</span>
+                        <span>练习期</span>
                         <span class="ov-sep">·</span>
-                        <span>每天约 30 分钟</span>
+                        <span>第 <span class="mono">2/4</span> 周</span>
                         <span class="ov-sep">·</span>
-                        <span>核心 <span class="mono">3/5</span></span>
+                        <span>已完成学习期</span>
+                        <span class="ov-sep">·</span>
+                        <span>核心 <span class="mono">4/5</span></span>
                     </div>
                 </section>
 
                 <!-- C. 唯一主行动 -->
                 <section class="ov-cta">
                     <div class="ov-cta__body">
-                        <div class="ov-cta__label">今日任务 · 2 项</div>
+                        <div class="ov-cta__label">今日任务 · 1 项</div>
                         <div class="ov-cta__tasks">
                             <div class="ov-cta__task">
                                 <span class="ov-cta__idx mono">01</span>
-                                <span>检视阅读《如何阅读一本书》第 2 章</span>
-                            </div>
-                            <div class="ov-cta__task">
-                                <span class="ov-cta__idx mono">02</span>
-                                <span>用费曼法复述「检视阅读 vs 分析阅读」</span>
+                                <span>用费曼法向同事讲解阅读四问（约 20 分钟）</span>
                             </div>
                         </div>
                     </div>
@@ -595,67 +593,84 @@
                     </a>
                 </section>
 
-                <!-- D. 本阶段主地图 · 学习期 = 核心掌握清单 -->
+                <!-- D. 本阶段主地图 · 练习期 = 三阶段路径（学→练→用） -->
                 <section class="ov-map">
                     <div class="ov-map__head">
-                        <span class="ov-map__title">核心掌握</span>
-                        <span class="ov-map__count mono">3/5</span>
+                        <span class="ov-map__title">学习路径</span>
                     </div>
-                    <div class="ov-map__bar">
-                        <div class="ov-map__seg ov-map__seg--done"></div>
-                        <div class="ov-map__seg ov-map__seg--good"></div>
-                        <div class="ov-map__seg ov-map__seg--done"></div>
-                        <div class="ov-map__seg ov-map__seg--weak"></div>
-                        <div class="ov-map__seg ov-map__seg--weak"></div>
+                    <div class="ov-path">
+                        <!-- Stage 1 · 学（已完成，dimmed） -->
+                        <div class="ov-path__stage ov-path__stage--done">
+                            <div class="ov-path__stage-head">
+                                <img src="../assets/icons/dl_builtin_trae/check-circle.svg" width="16" height="16" alt="" style="filter: brightness(0.6);">
+                                <span class="ov-path__stage-name">学</span>
+                            </div>
+                            <div class="ov-path__stage-label">学习期</div>
+                            <div class="ov-path__stage-meta">已完成</div>
+                        </div>
+                        <div class="ov-path__connector">
+                            <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="12" height="12" alt="">
+                        </div>
+                        <!-- Stage 2 · 练（当前，brand-highlighted） -->
+                        <div class="ov-path__stage ov-path__stage--current">
+                            <div class="ov-path__stage-head">
+                                <span class="ov-path__stage-dot"></span>
+                                <span class="ov-path__stage-name">练</span>
+                            </div>
+                            <div class="ov-path__stage-label">练习期</div>
+                            <div class="ov-path__stage-meta">当前 · 第 <span class="mono">2/4</span> 周</div>
+                        </div>
+                        <div class="ov-path__connector">
+                            <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="12" height="12" alt="">
+                        </div>
+                        <!-- Stage 3 · 用（未开始，muted） -->
+                        <div class="ov-path__stage ov-path__stage--upcoming">
+                            <div class="ov-path__stage-head">
+                                <span class="ov-path__stage-dot ov-path__stage-dot--hollow"></span>
+                                <span class="ov-path__stage-name">用</span>
+                            </div>
+                            <div class="ov-path__stage-label">应用期</div>
+                            <div class="ov-path__stage-meta">未开始</div>
+                        </div>
                     </div>
-                    <ul class="ov-core-list">
-                        <li class="ov-core ov-core--done">
-                            <span class="ov-core__dot"></span>
-                            <span class="ov-core__name">主动阅读四问</span>
-                            <span class="ov-core__label ov-core__label--done">已掌握</span>
-                        </li>
-                        <li class="ov-core ov-core--good ov-core--current">
-                            <span class="ov-core__dot"></span>
-                            <span class="ov-core__name">检视阅读 vs 分析阅读</span>
-                            <span class="ov-core__label ov-core__label--good">良好</span>
-                        </li>
-                        <li class="ov-core ov-core--done">
-                            <span class="ov-core__dot"></span>
-                            <span class="ov-core__name">刻意练习三要素</span>
-                            <span class="ov-core__label ov-core__label--done">已掌握</span>
-                        </li>
-                        <li class="ov-core ov-core--weak">
-                            <span class="ov-core__dot"></span>
-                            <span class="ov-core__name">费曼学习法</span>
-                            <span class="ov-core__label ov-core__label--weak">待加强</span>
-                        </li>
-                        <li class="ov-core ov-core--weak">
-                            <span class="ov-core__dot"></span>
-                            <span class="ov-core__name">间隔重复与主动回忆</span>
-                            <span class="ov-core__label ov-core__label--weak">待加强</span>
-                        </li>
-                    </ul>
-                    <div class="ov-map__hint">今日任务关联「检视阅读 vs 分析阅读」</div>
+                    <div class="ov-map__hint">练习期 · 每周 1-2 次刻意练习，巩固核心方法</div>
                 </section>
 
-                <!-- E. 辅地图 · 学习期辅 = 三阶段路径条 -->
+                <!-- E. 辅地图 · 练习期辅 = 核心掌握（一行可展开） -->
                 <section class="ov-aux">
-                    <div class="ov-stepper">
-                        <div class="ov-step ov-step--active">
-                            <span class="ov-step__dot"></span>
-                            <span class="ov-step__label">学</span>
-                        </div>
-                        <div class="ov-step__line"></div>
-                        <div class="ov-step">
-                            <span class="ov-step__dot"></span>
-                            <span class="ov-step__label">练</span>
-                        </div>
-                        <div class="ov-step__line"></div>
-                        <div class="ov-step">
-                            <span class="ov-step__dot"></span>
-                            <span class="ov-step__label">用</span>
-                        </div>
-                    </div>
+                    <details class="ov-aux-core">
+                        <summary>
+                            <span class="ov-aux-core__label">核心掌握 <span class="mono">4/5</span></span>
+                            <img src="../assets/icons/dl_builtin_trae/chevron-right.svg" width="12" height="12" alt="" class="ov-aux-core__chevron">
+                        </summary>
+                        <ul class="ov-core-list">
+                            <li class="ov-core ov-core--done">
+                                <span class="ov-core__dot"></span>
+                                <span class="ov-core__name">主动阅读四问</span>
+                                <span class="ov-core__label ov-core__label--done">已掌握</span>
+                            </li>
+                            <li class="ov-core ov-core--done">
+                                <span class="ov-core__dot"></span>
+                                <span class="ov-core__name">检视阅读 vs 分析阅读</span>
+                                <span class="ov-core__label ov-core__label--done">已掌握</span>
+                            </li>
+                            <li class="ov-core ov-core--done">
+                                <span class="ov-core__dot"></span>
+                                <span class="ov-core__name">刻意练习三要素</span>
+                                <span class="ov-core__label ov-core__label--done">已掌握</span>
+                            </li>
+                            <li class="ov-core ov-core--done">
+                                <span class="ov-core__dot"></span>
+                                <span class="ov-core__name">费曼学习法</span>
+                                <span class="ov-core__label ov-core__label--done">已掌握</span>
+                            </li>
+                            <li class="ov-core ov-core--weak">
+                                <span class="ov-core__dot"></span>
+                                <span class="ov-core__name">间隔重复与主动回忆</span>
+                                <span class="ov-core__label ov-core__label--weak">待加强</span>
+                            </li>
+                        </ul>
+                    </details>
                 </section>
 
                 <!-- F. 次要入口（弱） -->
@@ -673,8 +688,8 @@
 
                 <!-- 演示控件（仅原型演示） -->
                 <div class="ov-demo">
-                    <a href="theme-overview-practice.html" class="ov-demo__link" data-dom-id="btn-demo-practice">
-                        演示：切换到练习期
+                    <a href="theme-overview.html" class="ov-demo__link" data-dom-id="btn-demo-learning">
+                        演示：切换到学习期
                         <img src="../assets/icons/dl_builtin_trae/arrow-right.svg" width="12" height="12" alt="">
                     </a>
                 </div>
@@ -684,7 +699,7 @@
     </div>
 
     <style id="page-specific">
-/* === L2 主题概览 · 单栏叙事 === */
+/* === L2 主题概览 · 练习期 · 单栏叙事 === */
 
 /* Page container — 限宽居中，留白充足 */
 .ov-page {
@@ -794,7 +809,7 @@
   flex-shrink: 0;
 }
 
-/* ── D. 本阶段主地图 · 核心掌握 ──────── */
+/* ── D. 本阶段主地图 · 三阶段路径（学→练→用） ──── */
 .ov-map {
   padding: var(--spacer-16) var(--spacer-24);
   background: var(--bg-base-secondary);
@@ -805,7 +820,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--spacer-12);
+  margin-bottom: var(--spacer-16);
 }
 .ov-map__title {
   font-family: var(--heading-xs-font-family);
@@ -814,25 +829,144 @@
   line-height: var(--heading-xs-line-height);
   color: var(--text-default);
 }
-.ov-map__count {
-  font-size: var(--body-sm-font-size);
-  font-weight: var(--font-weight-medium);
-  color: var(--text-secondary);
-}
-.ov-map__bar {
+.ov-map__hint {
+  margin-top: var(--spacer-12);
+  padding-top: var(--spacer-8);
+  border-top: 1px solid var(--border-neutral-l1);
+  font-size: var(--body-xs-font-size);
+  color: var(--text-tertiary);
   display: flex;
+  align-items: center;
+  gap: var(--spacer-4);
+}
+
+/* Three-stage path (main map for practice phase) */
+.ov-path {
+  display: flex;
+  align-items: stretch;
   gap: var(--spacer-4);
   margin-bottom: var(--spacer-16);
 }
-.ov-map__seg {
+.ov-path__stage {
   flex: 1;
-  height: 4px;
-  border-radius: var(--radius-full);
-  background: var(--bg-overlay-l3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacer-6);
+  padding: var(--spacer-16) var(--spacer-8);
+  background: var(--bg-overlay-l1);
+  border: 1px solid var(--border-neutral-l1);
+  border-radius: var(--radius-6);
+  text-align: center;
 }
-.ov-map__seg--done { background: var(--status-success-default); }
-.ov-map__seg--good { background: var(--bg-brand); }
-.ov-map__seg--weak { background: var(--status-warning-surface-l2); }
+.ov-path__stage--done {
+  opacity: 0.55;
+}
+.ov-path__stage--current {
+  flex: 1.3;
+  background: var(--bg-brand-popup);
+  border: 1px solid var(--bg-brand);
+  opacity: 1;
+}
+.ov-path__stage--upcoming {
+  opacity: 0.7;
+}
+.ov-path__stage-head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-6);
+}
+.ov-path__stage-name {
+  font-family: var(--heading-sm-font-family);
+  font-size: var(--heading-sm-font-size);
+  font-weight: var(--heading-sm-font-weight);
+  color: var(--text-default);
+}
+.ov-path__stage--done .ov-path__stage-name {
+  color: var(--text-secondary);
+}
+.ov-path__stage--upcoming .ov-path__stage-name {
+  color: var(--text-secondary);
+}
+.ov-path__stage-label {
+  font-size: var(--body-xs-font-size);
+  color: var(--text-tertiary);
+}
+.ov-path__stage--current .ov-path__stage-label {
+  color: var(--text-brand);
+}
+.ov-path__stage-meta {
+  font-size: var(--body-xs-font-size);
+  color: var(--text-tertiary);
+}
+/* Stage indicator dots */
+.ov-path__stage-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--bg-brand);
+  box-shadow: 0 0 0 3px var(--bg-brand-popup);
+  flex-shrink: 0;
+}
+.ov-path__stage-dot--hollow {
+  background: transparent;
+  border: 1.5px solid var(--text-tertiary);
+  box-shadow: none;
+}
+.ov-path__connector {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.ov-path__connector img {
+  filter: brightness(0.4);
+}
+
+/* ── E. 辅地图 · 核心掌握（一行可展开） ─────────── */
+.ov-aux {
+  display: block;
+}
+/* Expandable core (auxiliary map for practice phase) */
+.ov-aux-core {
+  background: var(--bg-base-secondary);
+  border: 1px solid var(--border-neutral-l1);
+  border-radius: var(--radius-6);
+  overflow: hidden;
+}
+.ov-aux-core summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacer-12) var(--spacer-16);
+  cursor: pointer;
+  font-size: var(--body-sm-font-size);
+  color: var(--text-secondary);
+  list-style: none;
+  transition: background .12s, color .12s;
+}
+.ov-aux-core summary:hover {
+  background: var(--bg-overlay-l2);
+  color: var(--text-default);
+}
+.ov-aux-core summary::-webkit-details-marker {
+  display: none;
+}
+.ov-aux-core[open] .ov-aux-core__chevron {
+  transform: rotate(90deg);
+}
+.ov-aux-core__chevron {
+  transition: transform .15s ease;
+}
+.ov-aux-core__label {
+  font-size: var(--body-sm-font-size);
+  color: var(--text-secondary);
+}
+.ov-aux-core .ov-core-list {
+  padding: 0 var(--spacer-16) var(--spacer-12);
+}
+.ov-aux-core .ov-core:first-child {
+  border-top: 1px solid var(--border-neutral-l1);
+}
 
 /* Core mastery list */
 .ov-core-list {
@@ -851,15 +985,6 @@
 .ov-core:last-child {
   border-bottom: none;
 }
-/* Current core highlight */
-.ov-core--current {
-  background: var(--bg-overlay-l2);
-  margin: 0 calc(-1 * var(--spacer-4));
-  padding-left: var(--spacer-12);
-  padding-right: var(--spacer-4);
-  border-left: 2px solid var(--bg-brand);
-  border-radius: 0 var(--radius-4) var(--radius-4) 0;
-}
 .ov-core__dot {
   width: 8px;
   height: 8px;
@@ -867,7 +992,6 @@
   flex-shrink: 0;
 }
 .ov-core--done .ov-core__dot { background: var(--status-success-default); }
-.ov-core--good .ov-core__dot { background: var(--bg-brand); }
 .ov-core--weak .ov-core__dot {
   background: transparent;
   border: 1.5px solid var(--status-warning-default);
@@ -877,10 +1001,6 @@
   font-size: var(--body-base-font-size);
   color: var(--text-default);
   line-height: var(--body-base-line-height);
-}
-.ov-core--current .ov-core__name {
-  color: var(--text-default);
-  font-weight: var(--font-weight-medium);
 }
 .ov-core__label {
   font-size: var(--body-xs-font-size);
@@ -896,67 +1016,9 @@
   background: var(--status-success-surface-l1);
   color: var(--status-success-default);
 }
-.ov-core__label--good {
-  background: var(--bg-brand-popup);
-  color: var(--text-brand);
-}
 .ov-core__label--weak {
   background: var(--status-warning-surface-l1);
   color: var(--status-warning-default);
-}
-.ov-map__hint {
-  margin-top: var(--spacer-12);
-  padding-top: var(--spacer-8);
-  border-top: 1px solid var(--border-neutral-l1);
-  font-size: var(--body-xs-font-size);
-  color: var(--text-tertiary);
-  display: flex;
-  align-items: center;
-  gap: var(--spacer-4);
-}
-
-/* ── E. 辅地图 · 三阶段路径条 ─────────── */
-.ov-aux {
-  display: flex;
-  justify-content: center;
-}
-.ov-stepper {
-  display: flex;
-  align-items: center;
-  gap: var(--spacer-8);
-}
-.ov-step {
-  display: flex;
-  align-items: center;
-  gap: var(--spacer-6);
-}
-.ov-step__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  background: var(--bg-overlay-l4);
-  border: 1.5px solid var(--text-tertiary);
-  flex-shrink: 0;
-  transition: all .12s;
-}
-.ov-step__label {
-  font-size: var(--body-sm-font-size);
-  color: var(--text-tertiary);
-}
-/* Active step */
-.ov-step--active .ov-step__dot {
-  background: var(--bg-brand);
-  border-color: var(--bg-brand);
-  box-shadow: 0 0 0 3px var(--bg-brand-popup);
-}
-.ov-step--active .ov-step__label {
-  color: var(--text-default);
-  font-weight: var(--font-weight-medium);
-}
-.ov-step__line {
-  width: 32px;
-  height: 1px;
-  background: var(--border-neutral-l2);
 }
 
 /* ── F. 次要入口 ──────────────────────── */
@@ -1025,6 +1087,9 @@
   .ov-cta .ds-btn {
     align-self: stretch;
   }
+  .ov-path { flex-wrap: wrap; }
+  .ov-path__connector { display: none; }
+  .ov-path__stage { flex: 1 1 100%; }
 }
 
 /* ── Utility ──────────────────────────── */

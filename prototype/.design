@@ -9,7 +9,14 @@
       "canvasData": {
         "x": 620,
         "y": 0,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-e9c76880",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/home.html",
@@ -48,13 +55,20 @@
     {
       "id": "page-theme-overview",
       "type": "page",
-      "title": "主题看板 · 革新学习方法",
+      "title": "主题概览 · 革新学习方法（学习期）",
       "version": 2,
       "createdAt": 1785228800000,
       "canvasData": {
         "x": 0,
         "y": 4165,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-18302b6a",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/theme-overview.html",
@@ -76,6 +90,18 @@
             "targetPageId": "page-theme-work"
           },
           {
+            "domId": "btn-plan",
+            "targetPageId": "page-theme-plan-phases"
+          },
+          {
+            "domId": "btn-review",
+            "targetPageId": "page-weekly-review"
+          },
+          {
+            "domId": "btn-demo-practice",
+            "targetPageId": "page-theme-overview-practice"
+          },
+          {
             "domId": "btn-view-drift",
             "targetPageId": "page-theme-plan-phases"
           },
@@ -95,6 +121,58 @@
       }
     },
     {
+      "id": "page-theme-overview-practice",
+      "type": "page",
+      "title": "主题概览 · 革新学习方法（练习期演示）",
+      "version": 2,
+      "createdAt": 1785312596000,
+      "canvasData": {
+        "x": 0,
+        "y": 5432,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-290ed6e1",
+          "measuredAt": 1785382436844
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/theme-overview-practice.html",
+        "interactions": [
+          {
+            "domId": "btn-back-home",
+            "targetPageId": "page-home"
+          },
+          {
+            "domId": "rail-home",
+            "targetPageId": "page-home"
+          },
+          {
+            "domId": "rail-work",
+            "targetPageId": "page-theme-work"
+          },
+          {
+            "domId": "btn-enter-execution",
+            "targetPageId": "page-theme-work"
+          },
+          {
+            "domId": "btn-plan",
+            "targetPageId": "page-theme-plan-phases"
+          },
+          {
+            "domId": "btn-review",
+            "targetPageId": "page-weekly-review"
+          },
+          {
+            "domId": "btn-demo-learning",
+            "targetPageId": "page-theme-overview"
+          }
+        ]
+      }
+    },
+    {
       "id": "page-theme-work",
       "type": "page",
       "title": "作业面 · 革新学习方法",
@@ -103,7 +181,14 @@
       "canvasData": {
         "x": 0,
         "y": 3788,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-288bab0c",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/theme-work.html",
@@ -144,7 +229,14 @@
       "canvasData": {
         "x": 0,
         "y": 0,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-c56cc8da",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/new-theme-intercept.html",
@@ -165,7 +257,14 @@
       "canvasData": {
         "x": 0,
         "y": 2120,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 2743,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-60cfe4be",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/learning-plan-cocreate.html",
@@ -190,7 +289,14 @@
       "canvasData": {
         "x": 0,
         "y": 4919,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1369,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-41b01c6f",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/weekly-review.html",
@@ -211,7 +317,14 @@
       "canvasData": {
         "x": 0,
         "y": 4542,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-ff230c4d",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/theme-plan-phases.html",
@@ -232,7 +345,14 @@
       "canvasData": {
         "x": 0,
         "y": 754,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-06eaed14",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/home-empty.html",
@@ -257,7 +377,14 @@
       "canvasData": {
         "x": 0,
         "y": 377,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-26e10182",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/theme-create.html",
@@ -286,7 +413,14 @@
       "canvasData": {
         "x": 0,
         "y": 1131,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 933,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-572ed224",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/theme-cocreate-stage.html",
@@ -311,7 +445,14 @@
       "canvasData": {
         "x": 0,
         "y": 1517,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1676,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-85772100",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/theme-cocreate-resources.html",
@@ -336,7 +477,14 @@
       "canvasData": {
         "x": 0,
         "y": 3034,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-a5097b6e",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/theme-overview-first.html",
@@ -356,6 +504,10 @@
           {
             "domId": "btn-enter-execution",
             "targetPageId": "page-theme-work"
+          },
+          {
+            "domId": "btn-view-overview",
+            "targetPageId": "page-theme-overview"
           }
         ]
       }
@@ -369,7 +521,14 @@
       "canvasData": {
         "x": 0,
         "y": 3411,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-48a85b44",
+          "measuredAt": 1785382436844
+        }
       },
       "devMetadata": {
         "htmlSrc": "pages/home-after-first.html",

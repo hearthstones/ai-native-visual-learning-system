@@ -74,6 +74,7 @@ def toggle_task(
         raise HTTPException(404, "任务不存在")
     task.done = body.done
     session.add(task)
+    domain_svc.sync_activity_done(session, task, body.done)
     session.commit()
     session.refresh(task)
     return task

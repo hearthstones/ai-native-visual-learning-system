@@ -6,7 +6,7 @@ from sqlmodel import Session, select
 
 from app.config import Settings, get_settings
 from app.db import get_session
-from app.models import CocreateKind, CocreateSession, Theme, ThemeStatus
+from app.models import CocreateKind, CocreateSession, Theme
 from app.schemas import (
     CocreateConfirmIn,
     CocreateMessageIn,
@@ -207,9 +207,6 @@ def confirm_cocreate(
     elif kind == CocreateKind.resources:
         theme.resources_doc = live_doc
     elif kind == CocreateKind.plan:
-        if theme.status == ThemeStatus.active and theme.locked_at:
-            # allow re-confirm only updates draft docs; locking again regenerates
-            pass
         try:
             domain_svc.lock_theme_plan(session, theme, live_doc)
         except ValueError as e:

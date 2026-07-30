@@ -44,6 +44,10 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
         let s: CocreateSession
         try {
           s = await api.getCocreate(themeId, kind)
+          // 已确认的会话不可再发消息；重开共创时新建一轮
+          if (s.confirmed) {
+            s = await api.startCocreate(themeId, kind)
+          }
         } catch {
           s = await api.startCocreate(themeId, kind)
         }

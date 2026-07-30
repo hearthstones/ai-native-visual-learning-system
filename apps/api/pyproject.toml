@@ -14,3 +14,10 @@ dependencies = [
     "sse-starlette>=3.4.6",
     "uvicorn[standard]>=0.52.0",
 ]
+
+[dependency-groups]
+dev = ["pytest>=8.0.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

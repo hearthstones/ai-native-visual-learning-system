@@ -20,19 +20,31 @@ from app.models import (
 )
 
 
-def count_active_in_phase(session: Session, phase: ThemePhase) -> int:
+def count_active_in_phase(
+    session: Session,
+    phase: ThemePhase,
+    *,
+    exclude_theme_id: str | None = None,
+) -> int:
     rows = session.exec(
         select(Theme).where(
             Theme.status == ThemeStatus.active,
             Theme.phase == phase,
         )
     ).all()
+    if exclude_theme_id:
+        rows = [r for r in rows if r.id != exclude_theme_id]
     return len(rows)
 
 
-def assert_slot_available(session: Session, phase: ThemePhase) -> None:
+def assert_slot_available(
+    session: Session,
+    phase: ThemePhase,
+    *,
+    exclude_theme_id: str | None = None,
+) -> None:
     limit = PHASE_SLOT_LIMITS[phase]
-    used = count_active_in_phase(session, phase)
+    used = count_active_in_phase(session, phase, exclude_theme_id=exclude_theme_id)
     if used >= limit:
         raise ValueError(f"{phase.value} 槽位已满（{used}/{limit}），请先推进/休眠/废弃腾槽。")
 
@@ -50,10 +62,11 @@ def count_focus(session: Session) -> int:
 def set_focus(session: Session, theme: Theme, is_focus: bool) -> DriftEvent | None:
     if is_focus:
         current = count_focus(session)
-        # counting self if already focus
         if not theme.is_focus and current >= MAX_FOCUS:
             raise ValueError(f"主焦点已达上限 {MAX_FOCUS}")
         theme.is_focus = True
+        session.add(theme)
+        session.flush()
         after = count_focus(session)
         if after > 1:
             ev = DriftEvent(
@@ -65,6 +78,7 @@ def set_focus(session: Session, theme: Theme, is_focus: bool) -> DriftEvent | No
             return ev
     else:
         theme.is_focus = False
+        session.add(theme)
     return None
 
 
@@ -77,16 +91,45 @@ def get_active_slice(session: Session, theme_id: str) -> PlanSlice | None:
     ).first()
 
 
+def clear_today_tasks(session: Session, theme_id: str) -> None:
+    today = date.today().isoformat()
+    existing = session.exec(
+        select(DailyTask).where(
+            DailyTask.theme_id == theme_id,
+            DailyTask.task_date == today,
+        )
+    ).all()
+    for task in existing:
+        session.delete(task)
+    if existing:
+        session.flush()
+
+
+def purge_theme_plan_data(session: Session, theme_id: str) -> None:
+    """Remove slices, activities, and daily tasks for a theme (used on re-lock)."""
+    slices = session.exec(select(PlanSlice).where(PlanSlice.theme_id == theme_id)).all()
+    slice_ids = {s.id for s in slices}
+    if slice_ids:
+        activities = session.exec(select(Activity).where(col(Activity.slice_id).in_(slice_ids))).all()
+        for act in activities:
+            session.delete(act)
+    for s in slices:
+        session.delete(s)
+    tasks = session.exec(select(DailyTask).where(DailyTask.theme_id == theme_id)).all()
+    for task in tasks:
+        session.delete(task)
+    session.flush()
+
+
 def lock_theme_plan(
     session: Session,
     theme: Theme,
     plan_doc: dict[str, Any],
 ) -> PlanSlice:
-    assert_slot_available(session, ThemePhase.learning)
-    # archive any existing slices
-    existing = session.exec(select(PlanSlice).where(PlanSlice.theme_id == theme.id)).all()
-    for s in existing:
-        session.delete(s)
+    # Re-lock must not count this theme against the learning slot it already occupies
+    # (or will occupy after resetting phase back to learning).
+    assert_slot_available(session, ThemePhase.learning, exclude_theme_id=theme.id)
+    purge_theme_plan_data(session, theme.id)
 
     phases = plan_doc.get("phases") or {}
     learning = phases.get("learning") or {}
@@ -116,11 +159,18 @@ def lock_theme_plan(
 
     theme.status = ThemeStatus.active
     theme.phase = ThemePhase.learning
-    theme.is_focus = True
     theme.locked_at = datetime.utcnow()
     theme.updated_at = datetime.utcnow()
+    session.add(theme)
+    session.flush()
 
-    # store practice/application skeletons as draft slices (not active)
+    if not theme.is_focus:
+        set_focus(session, theme, True)
+    else:
+        # Keep focus; still flush so counts stay consistent
+        session.add(theme)
+        session.flush()
+
     for phase in (ThemePhase.practice, ThemePhase.application):
         pdata = phases.get(phase.value) or {}
         if not pdata:
@@ -132,11 +182,17 @@ def lock_theme_plan(
                 slice_status=SliceStatus.draft,
                 title=pdata.get("title") or phase.value,
                 core_points=[],
-                doc={"phase_doc": pdata, "parent_plan": {"goal": plan_doc.get("goal"), "core_20": plan_doc.get("core_20")}},
+                doc={
+                    "phase_doc": pdata,
+                    "parent_plan": {
+                        "goal": plan_doc.get("goal"),
+                        "core_20": plan_doc.get("core_20"),
+                    },
+                },
             )
         )
 
-    ensure_today_tasks(session, theme)
+    ensure_today_tasks(session, theme, replace=True)
     return slice_row
 
 
@@ -149,8 +205,27 @@ def _parse_activity_type(value: Any) -> ActivityType | None:
         return None
 
 
-def ensure_today_tasks(session: Session, theme: Theme, limit: int = 3) -> list[DailyTask]:
+def sync_activity_done(session: Session, task: DailyTask, done: bool) -> None:
+    if not task.activity_id:
+        return
+    act = session.get(Activity, task.activity_id)
+    if not act:
+        return
+    act.done = done
+    session.add(act)
+
+
+def ensure_today_tasks(
+    session: Session,
+    theme: Theme,
+    limit: int = 3,
+    *,
+    replace: bool = False,
+) -> list[DailyTask]:
     today = date.today().isoformat()
+    if replace:
+        clear_today_tasks(session, theme.id)
+
     existing = session.exec(
         select(DailyTask).where(
             DailyTask.theme_id == theme.id,
@@ -158,7 +233,22 @@ def ensure_today_tasks(session: Session, theme: Theme, limit: int = 3) -> list[D
         )
     ).all()
     if existing:
-        return list(existing)
+        # If tasks still point at the current active slice, keep them;
+        # otherwise regenerate (stale after phase change / re-lock without replace).
+        slice_row = get_active_slice(session, theme.id)
+        if slice_row:
+            activity_ids = {
+                a.id
+                for a in session.exec(
+                    select(Activity).where(Activity.slice_id == slice_row.id)
+                ).all()
+            }
+            stale = any(
+                t.activity_id and t.activity_id not in activity_ids for t in existing
+            )
+            if not stale:
+                return list(existing)
+        clear_today_tasks(session, theme.id)
 
     slice_row = get_active_slice(session, theme.id)
     if not slice_row:
@@ -197,6 +287,7 @@ def advance_phase(session: Session, theme: Theme) -> PlanSlice:
     if current:
         current.slice_status = SliceStatus.completed
         current.completed_at = datetime.utcnow()
+        session.add(current)
 
     draft = session.exec(
         select(PlanSlice).where(
@@ -208,7 +299,6 @@ def advance_phase(session: Session, theme: Theme) -> PlanSlice:
 
     if draft:
         draft.slice_status = SliceStatus.active
-        # materialize activities if only phase_doc present
         phase_doc = (draft.doc or {}).get("phase_doc") or draft.doc or {}
         activities_raw = phase_doc.get("activities") or []
         existing_acts = session.exec(select(Activity).where(Activity.slice_id == draft.id)).all()
@@ -224,6 +314,7 @@ def advance_phase(session: Session, theme: Theme) -> PlanSlice:
                         sort_order=i,
                     )
                 )
+        session.add(draft)
         active_slice = draft
     else:
         active_slice = PlanSlice(
@@ -237,7 +328,9 @@ def advance_phase(session: Session, theme: Theme) -> PlanSlice:
 
     theme.phase = next_phase
     theme.updated_at = datetime.utcnow()
-    ensure_today_tasks(session, theme)
+    session.add(theme)
+    session.flush()
+    ensure_today_tasks(session, theme, replace=True)
     return active_slice
 
 

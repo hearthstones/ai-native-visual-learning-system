@@ -1,0 +1,11 @@
+/* from prototype/pages/review-weekly.html (critical-layout) */
+body { background: var(--bg-base-default); }
+.review-wrap { max-width: 880px; margin: 0 auto; padding: var(--spacer-32) var(--spacer-24); }
+.review-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacer-24); }
+.kpi-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--spacer-12); margin-bottom: var(--spacer-24); }
+.mastery-row { display: grid; grid-template-columns: 1fr 2fr auto; gap: var(--spacer-16); align-items: center; padding: var(--spacer-12) 0; border-bottom: 1px solid var(--border-neutral-l1); }
+.mastery-row:last-child { border-bottom: none; }
+.question-block { margin-bottom: var(--spacer-24); }
+.question-label { display: block; margin-bottom: var(--spacer-8); font-weight: 500; }
+.char-count { text-align: right; margin-top: var(--spacer-4); }
+@media (max-width: 720px) { .kpi-grid { grid-template-columns: 1fr; } .mastery-row { grid-template-columns: 1fr; gap: var(--spacer-8); } }

@@ -5,10 +5,12 @@ import { api } from './lib/api'
 import { CocreatePage } from './pages/CocreatePage'
 import { CreateInfoPage } from './pages/CreateInfoPage'
 import { CreateInterceptPage } from './pages/CreateInterceptPage'
+import { CreateSummaryPage } from './pages/CreateSummaryPage'
 import { HomePage } from './pages/HomePage'
 import { ReviewPage } from './pages/ReviewPage'
 import { ThemeOverviewPage } from './pages/ThemeOverviewPage'
 import { ThemePlanPage } from './pages/ThemePlanPage'
+import { ThemePracticePage } from './pages/ThemePracticePage'
 import { ThemeWorkPage } from './pages/ThemeWorkPage'
 
 function ShellLayout() {
@@ -34,8 +36,10 @@ export default function App() {
           <Route path="create/:themeId/resources" element={<CocreatePage kind="resources" />} />
           <Route path="create/:themeId/plan" element={<CocreatePage kind="plan" />} />
           <Route path="themes/:themeId" element={<ThemeOverviewPage />} />
+          <Route path="themes/:themeId/summary" element={<CreateSummaryPage />} />
           <Route path="themes/:themeId/work" element={<ThemeWorkPage />} />
           <Route path="themes/:themeId/plan" element={<ThemePlanPage />} />
+          <Route path="themes/:themeId/practice" element={<ThemePracticePage />} />
           <Route path="review" element={<ReviewPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

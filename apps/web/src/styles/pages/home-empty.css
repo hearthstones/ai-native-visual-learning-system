@@ -1,0 +1,67 @@
+/* from prototype/pages/home-empty.html (page-specific) */
+/* Empty Home Page */
+.home-empty-page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 120px var(--spacer-32) var(--spacer-32);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacer-32);
+}
+.home-empty__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-8);
+  background: var(--bg-overlay-l2);
+  border: 1px solid var(--border-neutral-l1);
+}
+.home-empty__icon img {
+  display: block;
+  opacity: 0.7;
+}
+.home-empty__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-12);
+}
+.home-empty__title {
+  font-family: var(--heading-md-font-family);
+  font-size: var(--heading-md-font-size);
+  font-weight: var(--heading-md-font-weight);
+  line-height: var(--heading-md-line-height);
+  color: var(--text-default);
+}
+.home-empty__subtitle {
+  font-size: var(--body-base-font-size);
+  line-height: var(--body-base-line-height);
+  color: var(--text-secondary);
+  max-width: 420px;
+}
+.home-empty__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacer-16);
+}
+.home-empty__slots {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-16);
+  font-family: var(--code-editor-font-family);
+  font-size: var(--body-sm-font-size);
+  color: var(--text-tertiary);
+}
+.home-empty__slots-label {
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 720px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .ds-activityrail { display: none; }
+  .home-empty-page { padding: 80px var(--spacer-16) var(--spacer-24); }
+}

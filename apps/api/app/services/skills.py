@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from app.config import SKILLS_DIR
 
 
@@ -52,15 +50,18 @@ STAGE_EXTRA = """
 """
 
 RESOURCES_EXTRA = """
-产品适配：
-- 默认产出约 5 个高杠杆资源；若用户（含启动参数或对话）明确要求 N 个，必须严格产出 N 个，不得擅自截断或补回 5。
-- order 长度必须与 resources 长度一致（0..N-1 的推荐阅读顺序）。
-- 给出与资料配套的短路径摘要（默认可按约 7 天写 path_7d；若用户改了节奏，摘要跟着改）。
-- 若用户限定「微信读书」，优先推荐微信读书可读的书籍，并在每项加 weread_readable: true/false 与可选 book_hint。
+产品适配（两步共创）：
+1) 首轮：根据主题、目标、当前阶梯，直接推荐一套均衡资料方案，不要先追问用户要几份。
+   - 「约 5 份高杠杆资料」是综合较均衡的默认（信号够、噪音少）；除非上下文强烈需要，否则首轮以约 5 份为主。
+   - assistant_message 用 1–2 句说明为何这样配，并邀请用户提意见。
+2) 其后：用户意见优先。例如「想要更多参考」「精简聚焦」「只要微信读书」「再硬核」——严格按最新意见更新 resources / order / target_count / path_7d；指定 N 份就必须恰好 N 份。
+- order 长度必须与 resources 一致。
+- 若用户限定「微信读书」，优先可读书籍，并加 weread_readable 与可选 book_hint。
 - live_doc 结构：
   {
     "constraints": ["..."],
     "target_count": 5,
+    "rationale": "一句话：为何这份清单适合当前阶梯与目标",
     "resources": [
       {
         "name": "...",
@@ -75,50 +76,58 @@ RESOURCES_EXTRA = """
         "book_hint": ""
       }
     ],
-    "order": [0, 1, 2],
+    "order": [0, 1, 2, 3, 4],
     "path_7d": "..."
   }
 """
 
 PLAN_EXTRA = """
-产品适配（重要：不要照搬原 SKILL 的「10节×2小时」唯一形态）：
-- 每天投入以用户指定的 daily_minutes 为准（默认 30）。
-- 三阶段时长以用户指定为准，写入各 phase 的 duration 字段，并按该时长规划 activities 数量与节奏。
-  常见默认：学习期约 7 天、练习期约 4 周、应用期长尾——但用户另选时必须服从用户。
-- 产出主题生命周期三阶段计划：learning / practice / application。
-- 保留「约 20% 核心」精神。
+产品适配（两步共创）：
+1) 首轮：根据主题、目标、阶梯级别、资料清单推荐计划；节奏锚点如下（除非用户另有要求，否则首轮按此均衡方案）：
+   - 学习期：约 10 节 × 每节 2 小时（承接原 Skill「20 小时 / 二八法则」总量；activities 约 10 条，activity_type=learn）
+   - 练习期：约 4 周，每天约 30 分钟（activities 按周密度排，activity_type=practice）
+   - 应用期：长尾，每天约 30 分钟（骨架即可，activity_type=apply）
+   - assistant_message 说明推荐理由，并邀请用户提意见。
+2) 其后：用户意见优先（更早练习、缩短学期、每天更少时间等）——同步改 durations、phase_minutes、各 phase.duration 与 activities。
+- 产出三阶段 learning / practice / application；保留约 20% 核心。
 - live_doc 结构：
   {
     "goal": "...",
     "core_20": ["..."],
-    "daily_minutes": 30,
+    "rationale": "一句话：为何这套节奏适合当前上下文",
     "durations": {
-      "learning": "约 7 天",
+      "learning": "10 节 × 2 小时",
       "practice": "约 4 周",
       "application": "长尾"
     },
+    "phase_minutes": {
+      "learning": 120,
+      "practice": 30,
+      "application": 30
+    },
+    "daily_minutes": 30,
     "phases": {
       "learning": {
         "title": "学习期",
-        "duration": "约 7 天",
+        "duration": "10 节 × 2 小时",
         "summary": "...",
-        "activities": [{"title":"...","description":"...","activity_type":"learn"}]
+        "activities": [{"title":"...","description":"...","activity_type":"learn","minutes":120}]
       },
       "practice": {
         "title": "练习期",
         "duration": "约 4 周",
         "summary": "...",
-        "activities": [{"title":"...","description":"...","activity_type":"practice"}]
+        "activities": [{"title":"...","description":"...","activity_type":"practice","minutes":30}]
       },
       "application": {
         "title": "应用期",
         "duration": "长尾",
         "summary": "...",
-        "activities": [{"title":"...","description":"...","activity_type":"apply"}]
+        "activities": [{"title":"...","description":"...","activity_type":"apply","minutes":30}]
       }
     }
   }
-- 冷启动锁定时：仅将 learning 阶段设为当前可执行；practice/application 先作为骨架保留。
+- 冷启动锁定时：仅 learning 可执行；practice/application 先作骨架。
 """
 
 

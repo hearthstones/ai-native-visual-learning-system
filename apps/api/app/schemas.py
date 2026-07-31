@@ -47,7 +47,7 @@ class ThemeOut(BaseModel):
 class PlanPrefs(BaseModel):
     """User-chosen durations before plan generation."""
 
-    learning_duration: str = "约 7 天"
+    learning_duration: str = "10 节 × 2 小时"
     practice_duration: str = "约 4 周"
     application_duration: str = "长尾"
     daily_minutes: int = Field(default=30, ge=10, le=180)

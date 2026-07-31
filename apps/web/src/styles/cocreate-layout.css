@@ -811,26 +811,21 @@ img { display: block; }
 }
 .pref-chip:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.pref-bar {
+.suggest-chips {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 10px;
-  padding: 10px 12px;
-  background: var(--bg-overlay-l1);
-  border: 1px solid var(--border-neutral-l1);
-  border-radius: var(--radius-8);
 }
-.pref-bar .pref-chips { margin-bottom: 0; flex: 1; }
-.pref-bar--plan {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 10px;
-}
-.pref-bar__cta {
-  align-self: flex-end;
-  height: 28px;
+.suggest-chips .pref-chip {
+  max-width: 100%;
+  height: auto;
+  min-height: 26px;
+  padding: 4px 10px;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
 }
 
 .plan-setup {

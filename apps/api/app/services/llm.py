@@ -87,6 +87,15 @@ def normalize_cocreate_result(kind: str, result: dict[str, Any]) -> dict[str, An
                 phase = phases.get(key)
                 if isinstance(phase, dict) and phase.get("duration") and key not in durations:
                     durations[key] = phase["duration"]
+        if not durations:
+            durations = {
+                "learning": "10 节 × 2 小时",
+                "practice": "约 4 周",
+                "application": "长尾",
+            }
+        phase_minutes = result.get("phase_minutes") or {}
+        if not isinstance(phase_minutes, dict) or not phase_minutes:
+            phase_minutes = {"learning": 120, "practice": 30, "application": 30}
         return {
             "assistant_message": assistant or "已生成学/练/用三阶段计划初稿。",
             "live_doc": {
@@ -94,6 +103,8 @@ def normalize_cocreate_result(kind: str, result: dict[str, Any]) -> dict[str, An
                 "core_20": result.get("core_20") or [],
                 "phases": phases,
                 "durations": durations,
+                "phase_minutes": phase_minutes,
+                "rationale": result.get("rationale") or "",
                 "daily_minutes": result.get("daily_minutes") or 30,
             },
         }

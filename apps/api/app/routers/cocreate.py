@@ -85,8 +85,8 @@ def start_cocreate(
         )
 
     if body.kind == CocreateKind.resources:
-        count = body.resource_count or 5
-        live_doc.setdefault("target_count", count)
+        if body.resource_count:
+            live_doc.setdefault("target_count", body.resource_count)
         live_doc = _maybe_enrich_weread(settings, live_doc)
     elif body.kind == CocreateKind.plan and body.plan_prefs:
         live_doc = _apply_plan_prefs(live_doc, body.plan_prefs)
@@ -255,23 +255,40 @@ def _seed_user_message(
     if kind == CocreateKind.resources:
         ladder = theme.ladder_doc or {}
         level = theme.current_ladder_level
-        count = resource_count or 5
+        weread = "优先考虑微信读书可读书籍。" if theme.theme_type.value == "general" else ""
+        if resource_count:
+            return (
+                f"{base}\n当前阶梯级别：{level}\n阶梯摘要：{ladder}\n"
+                f"请按用户要求筛选恰好 {resource_count} 个高杠杆学习资料。"
+                + weread
+            )
         return (
             f"{base}\n当前阶梯级别：{level}\n阶梯摘要：{ladder}\n"
-            f"请筛选 {count} 个高杠杆学习资料初稿。"
-            "若后续对话要求增减数量，以最新要求为准，不要锁死在默认值。"
-            + ("优先考虑微信读书可读书籍。" if theme.theme_type.value == "general" else "")
+            "请根据主题、目标与当前阶梯，推荐一套均衡的高杠杆资料初稿。"
+            "默认约 5 份（综合较均衡）；仅当上下文明显需要时再增减。"
+            "在 assistant_message 里简要说明推荐理由，并邀请我提意见。"
+            + weread
         )
-    prefs = plan_prefs or PlanPrefs()
+    if plan_prefs is not None:
+        return (
+            f"{base}\n当前阶梯级别：{theme.current_ladder_level}\n"
+            f"资料清单：{theme.resources_doc}\n"
+            "请按以下用户指定节奏生成学/练/用三阶段计划：\n"
+            f"- 学习期：{plan_prefs.learning_duration}\n"
+            f"- 练习期：{plan_prefs.practice_duration}\n"
+            f"- 应用期：{plan_prefs.application_duration}\n"
+            f"- 练/用每天约 {plan_prefs.daily_minutes} 分钟（学习期若为「10 节 × 2 小时」则按每节 120 分钟）\n"
+            "activities 数量与摘要必须匹配上述时长。"
+        )
     return (
         f"{base}\n当前阶梯级别：{theme.current_ladder_level}\n"
         f"资料清单：{theme.resources_doc}\n"
-        "请按以下用户选定的节奏生成学/练/用三阶段计划初稿：\n"
-        f"- 学习期：{prefs.learning_duration}\n"
-        f"- 练习期：{prefs.practice_duration}\n"
-        f"- 应用期：{prefs.application_duration}\n"
-        f"- 每天约 {prefs.daily_minutes} 分钟\n"
-        "activities 数量与摘要必须匹配上述时长。"
+        "请根据主题、目标、阶梯与资料，推荐学/练/用三阶段计划初稿。\n"
+        "首轮节奏锚点（除非上下文强烈需要微调，否则按此）：\n"
+        "- 学习期：约 10 节 × 每节 2 小时\n"
+        "- 练习期：约 4 周，每天约 30 分钟\n"
+        "- 应用期：长尾，每天约 30 分钟\n"
+        "在 assistant_message 里说明推荐理由，并邀请我提意见。"
     )
 
 
@@ -282,6 +299,12 @@ def _apply_plan_prefs(live_doc: dict[str, Any], prefs: PlanPrefs) -> dict[str, A
         "learning": prefs.learning_duration,
         "practice": prefs.practice_duration,
         "application": prefs.application_duration,
+    }
+    learning_minutes = 120 if "2 小时" in prefs.learning_duration or "2小时" in prefs.learning_duration else prefs.daily_minutes
+    out["phase_minutes"] = {
+        "learning": learning_minutes,
+        "practice": prefs.daily_minutes,
+        "application": prefs.daily_minutes,
     }
     phases = out.get("phases")
     if isinstance(phases, dict):

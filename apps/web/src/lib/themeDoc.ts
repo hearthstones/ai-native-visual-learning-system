@@ -1,4 +1,4 @@
-import type { Theme, ThemePhase } from './api'
+import type { ActiveSlice, Theme, ThemePhase } from './api'
 
 export interface LadderLevel {
   level: number
@@ -59,43 +59,29 @@ export function getCurrentLevel(theme: Theme | null | undefined): LadderLevel | 
   return levels.find((l) => l.level === selected) || levels[0] || null
 }
 
-/** 计划切片条目：来自当前级别的练习 / 里程碑 / 概念 */
+/** 计划切片条目：优先用锁定后的活动列表 */
 export function getSliceItems(
-  theme: Theme | null | undefined,
-): Array<{ id: string; label: string; desc: string }> {
-  const level = getCurrentLevel(theme)
-  if (!level) {
-    return theme?.goal
-      ? [{ id: 'goal', label: theme.goal, desc: '主题目标' }]
-      : []
+  slice: ActiveSlice | null | undefined,
+  theme?: Theme | null,
+): Array<{ id: string; label: string; desc: string; done?: boolean; activityId?: string }> {
+  if (slice?.activities?.length) {
+    return slice.activities.map((a) => ({
+      id: a.id,
+      activityId: a.id,
+      label: a.title,
+      desc: a.description || (a.activity_type ? `活动 · ${a.activity_type}` : slice.title || '计划活动'),
+      done: a.done,
+    }))
   }
-  const items: Array<{ id: string; label: string; desc: string }> = []
-  if (level.exercise) {
-    items.push({ id: 'exercise', label: level.exercise, desc: `L${level.level} · 练习` })
+  if (slice?.core_points?.length) {
+    return slice.core_points.map((p, i) => ({
+      id: `core-${i}`,
+      label: typeof p === 'string' ? p : JSON.stringify(p),
+      desc: '核心要点',
+    }))
   }
-  if (level.milestone) {
-    items.push({ id: 'milestone', label: level.milestone, desc: `L${level.level} · 里程碑` })
-  }
-  for (const [i, c] of (level.concepts || []).entries()) {
-    items.push({ id: `c-${i}`, label: c, desc: `L${level.level} · 核心概念` })
-  }
-  if (!items.length && level.name) {
-    items.push({
-      id: 'level',
-      label: level.name,
-      desc: level.understand || `L${level.level}`,
-    })
-  }
-  return items
-}
-
-export function coreStatus(index: number, total: number, selectedLevel: number | null) {
-  // 无掌握度 API：按已选定级别粗分状态，仅供展示
-  const progress = selectedLevel ? Math.min(selectedLevel / Math.max(total, 1), 1) : 0.4
-  const doneUntil = Math.floor(total * progress)
-  if (index < doneUntil - 1) return { status: 'done' as const, label: '已掌握' }
-  if (index === doneUntil - 1 || index === doneUntil) {
-    return { status: 'good' as const, label: '良好', current: index === doneUntil }
-  }
-  return { status: 'weak' as const, label: '待加强' }
+  // 尚未锁定计划时，仅回退主题目标，不再用阶梯条目冒充计划
+  return theme?.goal
+    ? [{ id: 'goal', label: theme.goal, desc: '主题目标（计划未锁定）' }]
+    : []
 }

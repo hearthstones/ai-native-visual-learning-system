@@ -2,13 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type DailyTask, type Theme } from '../lib/api'
-import {
-  coreStatus,
-  getCoreConcepts,
-  getCurrentLevel,
-  getSelectedLevel,
-  phaseZh,
-} from '../lib/themeDoc'
+import { getCoreConcepts, getCurrentLevel, phaseZh } from '../lib/themeDoc'
 import '../styles/pages/theme-practice.css'
 
 export function ThemePracticePage() {
@@ -29,15 +23,7 @@ export function ThemePracticePage() {
     })()
   }, [themeId])
 
-  const cores = useMemo(() => {
-    if (!theme) return []
-    const concepts = getCoreConcepts(theme, 5)
-    const selected = getSelectedLevel(theme)
-    return concepts.map((name, i) => ({
-      name,
-      ...coreStatus(i, concepts.length, selected),
-    }))
-  }, [theme])
+  const cores = useMemo(() => (theme ? getCoreConcepts(theme, 5) : []), [theme])
 
   if (error) {
     return (
@@ -56,13 +42,8 @@ export function ThemePracticePage() {
 
   const phaseLabel = phaseZh[theme.phase]
   const level = getCurrentLevel(theme)
-  const doneCores = cores.filter((c) => c.status === 'done' || c.status === 'good').length
-  const displayTasks =
-    tasks.length > 0
-      ? tasks
-      : level?.exercise
-        ? [{ id: 'ex', title: level.exercise }]
-        : [{ id: 'empty', title: `继续推进「${theme.title}」的练习` }]
+  const doneTasks = tasks.filter((t) => t.done).length
+  const taskProgress = tasks.length ? Math.round((doneTasks / tasks.length) * 100) : 0
 
   return (
     <div className="ov-page">
@@ -76,12 +57,7 @@ export function ThemePracticePage() {
 
       <section className="ov-progress">
         <div className="ov-progress__track">
-          <div
-            className="ov-progress__fill"
-            style={{
-              width: `${cores.length ? Math.round((doneCores / cores.length) * 100) : 40}%`,
-            }}
-          />
+          <div className="ov-progress__fill" style={{ width: `${taskProgress}%` }} />
         </div>
         <div className="ov-progress__meta">
           <span>{phaseLabel}</span>
@@ -95,9 +71,9 @@ export function ThemePracticePage() {
           ) : null}
           <span className="ov-sep">·</span>
           <span>
-            核心{' '}
+            今日{' '}
             <span className="mono">
-              {doneCores}/{cores.length || 0}
+              {doneTasks}/{tasks.length}
             </span>
           </span>
         </div>
@@ -105,14 +81,21 @@ export function ThemePracticePage() {
 
       <section className="ov-cta">
         <div className="ov-cta__body">
-          <div className="ov-cta__label">今日任务 · {displayTasks.length} 项</div>
+          <div className="ov-cta__label">今日任务 · {tasks.length} 项</div>
           <div className="ov-cta__tasks">
-            {displayTasks.map((task, i) => (
-              <div key={task.id} className="ov-cta__task">
-                <span className="ov-cta__idx mono">{String(i + 1).padStart(2, '0')}</span>
-                <span>{task.title}</span>
+            {tasks.length === 0 ? (
+              <div className="ov-cta__task">
+                <span className="ov-cta__idx mono">—</span>
+                <span>今天还没有该主题任务</span>
               </div>
-            ))}
+            ) : (
+              tasks.map((task, i) => (
+                <div key={task.id} className="ov-cta__task">
+                  <span className="ov-cta__idx mono">{String(i + 1).padStart(2, '0')}</span>
+                  <span>{task.title}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
         <Link
@@ -191,10 +174,7 @@ export function ThemePracticePage() {
         <details className="ov-aux-core" open>
           <summary>
             <span className="ov-aux-core__label">
-              核心掌握{' '}
-              <span className="mono">
-                {doneCores}/{cores.length || 0}
-              </span>
+              核心概念 <span className="mono">{cores.length}</span>
             </span>
             <Icon name="chevron-right" size={12} className="ov-aux-core__chevron" />
           </summary>
@@ -204,11 +184,11 @@ export function ThemePracticePage() {
                 <span className="ov-core__name text-tertiary">暂无核心概念数据</span>
               </li>
             ) : (
-              cores.map((item) => (
-                <li key={item.name} className={`ov-core ov-core--${item.status}`}>
+              cores.map((name) => (
+                <li key={name} className="ov-core">
                   <span className="ov-core__dot" />
-                  <span className="ov-core__name">{item.name}</span>
-                  <span className={`ov-core__label ov-core__label--${item.status}`}>{item.label}</span>
+                  <span className="ov-core__name">{name}</span>
+                  <span className="ov-core__label">待复盘评估</span>
                 </li>
               ))
             )}

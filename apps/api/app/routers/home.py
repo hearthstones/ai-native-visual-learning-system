@@ -6,7 +6,14 @@ from sqlmodel import Session, col, select
 from app.config import Settings, get_settings
 from app.db import get_session
 from app.models import DailyTask, DriftEvent, Theme, ThemeStatus, WeeklyReview
-from app.schemas import DailyTaskOut, HomeOut, TaskToggle, ThemeOut, WeeklyReviewOut
+from app.schemas import (
+    DailyTaskOut,
+    HomeOut,
+    TaskToggle,
+    ThemeOut,
+    WeeklyReviewIn,
+    WeeklyReviewOut,
+)
 from app.services import domain as domain_svc
 from app.services.llm import chat_json
 from app.services.skills import system_prompt_for
@@ -82,6 +89,7 @@ def toggle_task(
 
 @router.post("/reviews/weekly", response_model=WeeklyReviewOut)
 def create_weekly_review(
+    body: WeeklyReviewIn = WeeklyReviewIn(),
     session: Session = Depends(get_session),
     settings: Settings = Depends(get_settings),
 ) -> WeeklyReview:
@@ -104,6 +112,9 @@ def create_weekly_review(
             {"title": t.title, "done": t.done, "date": t.task_date, "theme_id": t.theme_id}
             for t in tasks
         ],
+        "user_answers": [a for a in body.answers if a and str(a).strip()],
+        "mastery": body.mastery,
+        "draft_notes": body.draft_notes,
     }
     try:
         result = chat_json(
@@ -112,12 +123,28 @@ def create_weekly_review(
             messages=[
                 {
                     "role": "user",
-                    "content": f"请基于本周数据生成复盘 JSON：{payload}",
+                    "content": (
+                        "请基于本周数据与用户填写的复盘内容，生成复盘 JSON。"
+                        "必须输出："
+                        '{"summary":"...","wins":["..."],"issues":["..."],"adjustments":["..."]}。'
+                        f"数据：{payload}"
+                    ),
                 }
             ],
+            kind="weekly_review",
         )
     except Exception as e:
         raise HTTPException(502, f"LLM 调用失败: {e}") from e
+
+    # Tolerate mistaken cocreate-shaped responses
+    if not result.get("summary") and isinstance(result.get("live_doc"), dict):
+        live = result["live_doc"]
+        result = {
+            "summary": live.get("summary") or result.get("assistant_message") or "",
+            "wins": live.get("wins") or [],
+            "issues": live.get("issues") or [],
+            "adjustments": live.get("adjustments") or [],
+        }
 
     row = WeeklyReview(
         week_start=week_start.isoformat(),
@@ -125,7 +152,7 @@ def create_weekly_review(
         wins=result.get("wins") or [],
         issues=result.get("issues") or [],
         adjustments=result.get("adjustments") or [],
-        raw=result,
+        raw={**result, "user_input": body.model_dump()},
     )
     session.add(row)
     session.commit()

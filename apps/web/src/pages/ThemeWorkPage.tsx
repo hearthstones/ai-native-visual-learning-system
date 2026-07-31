@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
-import { api, type DailyTask, type Theme } from '../lib/api'
+import { api, type ActiveSlice, type DailyTask, type Theme } from '../lib/api'
 import { getCoreConcepts, getCurrentLevel, getSliceItems, phaseZh } from '../lib/themeDoc'
 import '../styles/pages/theme-work.css'
 
@@ -11,15 +11,24 @@ export function ThemeWorkPage() {
   const { themeId = '' } = useParams()
   const [mode, setMode] = useState<Mode>('execute')
   const [theme, setTheme] = useState<Theme | null>(null)
+  const [slice, setSlice] = useState<ActiveSlice | null>(null)
   const [tasks, setTasks] = useState<DailyTask[]>([])
   const [error, setError] = useState('')
+  const [note, setNote] = useState('')
 
   useEffect(() => {
     void (async () => {
       try {
-        const [t, home] = await Promise.all([api.getTheme(themeId), api.home()])
+        const [t, home, active] = await Promise.all([
+          api.getTheme(themeId),
+          api.home(),
+          api.getActiveSlice(themeId).catch(() => null),
+        ])
         setTheme(t)
         setTasks(home.today_tasks.filter((x) => x.theme_id === themeId))
+        setSlice(active)
+        const key = `work-note:${themeId}`
+        setNote(localStorage.getItem(key) || '')
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e))
       }
@@ -27,24 +36,8 @@ export function ThemeWorkPage() {
   }, [themeId])
 
   const level = useMemo(() => getCurrentLevel(theme), [theme])
-  const sliceItems = useMemo(() => getSliceItems(theme), [theme])
+  const sliceItems = useMemo(() => getSliceItems(slice, theme), [slice, theme])
   const concepts = useMemo(() => getCoreConcepts(theme, 3), [theme])
-  const suggestions = useMemo(() => {
-    if (!theme) return []
-    const base = concepts.length ? concepts : [theme.title]
-    return base.slice(0, 3).map((c, i) => ({
-      id: `s-${i}`,
-      text: i === 0 ? `把「${c}」做成可复述要点` : i === 1 ? `下次练习前先写下与「${c}」相关的 3 个问题` : `用费曼法讲解「${c}」并录音回放`,
-      adopted: i === 1,
-    }))
-  }, [theme, concepts])
-  const [adopted, setAdopted] = useState<Record<string, boolean>>({})
-
-  useEffect(() => {
-    const init: Record<string, boolean> = {}
-    for (const s of suggestions) init[s.id] = s.adopted
-    setAdopted(init)
-  }, [suggestions])
 
   if (error) {
     return (
@@ -65,7 +58,7 @@ export function ThemeWorkPage() {
   const doneCount = tasks.filter((t) => t.done).length
   const totalCount = tasks.length
   const progressPct = totalCount > 0 ? (doneCount / totalCount) * 100 : 0
-  const sliceTitle = level ? `L${level.level} · ${level.name}` : theme.title
+  const sliceTitle = slice?.title || (level ? `L${level.level} · ${level.name}` : theme.title)
 
   return (
     <div className="work-page">
@@ -88,7 +81,7 @@ export function ThemeWorkPage() {
           {level ? (
             <span className="page-header__meta-item">
               <Icon name="layers" size={14} />
-              {sliceTitle}
+              {`L${level.level} · ${level.name}`}
             </span>
           ) : null}
           <span className="page-header__meta-item">
@@ -257,7 +250,7 @@ export function ThemeWorkPage() {
                   margin: '0 0 var(--spacer-4) 0',
                 }}
               >
-                当前学习切片
+                当前计划切片
               </h2>
               <p className="text-tertiary" style={{ fontSize: 'var(--body-sm-font-size)', margin: 0 }}>
                 {sliceTitle}
@@ -285,7 +278,7 @@ export function ThemeWorkPage() {
           <div className="slice-card__body">
             {sliceItems.length === 0 ? (
               <p className="text-tertiary" style={{ fontSize: 'var(--body-sm-font-size)' }}>
-                暂无切片条目，可先完成阶梯/计划共创。
+                暂无切片活动，请先完成计划共创并锁定。
               </p>
             ) : (
               sliceItems.map((item, i) => (
@@ -294,7 +287,7 @@ export function ThemeWorkPage() {
                   <span>
                     {item.label}
                     <span className="text-tertiary" style={{ marginLeft: 8, fontSize: 11 }}>
-                      {item.desc}
+                      {item.done ? '已完成' : item.desc}
                     </span>
                   </span>
                 </div>
@@ -339,45 +332,28 @@ export function ThemeWorkPage() {
               margin: 0,
             }}
           >
-            改进建议
+            今日笔记
           </h2>
           <span className="ds-tag ds-tag--brand">围绕「{theme.title}」</span>
         </div>
-        <div className="suggestion-list">
-          {suggestions.map((s) => {
-            const isAdopted = adopted[s.id] ?? s.adopted
-            return (
-              <div key={s.id} className={`suggestion-item${isAdopted ? ' is-adopted' : ''}`} id={s.id}>
-                <label className="ds-check suggestion-item__check">
-                  <input
-                    type="checkbox"
-                    checked={isAdopted}
-                    onChange={(e) => {
-                      setAdopted((prev) => ({ ...prev, [s.id]: e.target.checked }))
-                    }}
-                  />
-                  <span className="ds-check__box" />
-                </label>
-                <div className="suggestion-item__body">
-                  <p className="suggestion-item__text">{s.text}</p>
-                  <span className="suggestion-item__source">
-                    <Icon name="sparkles" size={12} />
-                    基于当前阶梯核心
-                  </span>
-                </div>
-                <div className="suggestion-item__status">
-                  <span className={`ds-tag${isAdopted ? ' ds-tag--success' : ''}`}>
-                    {isAdopted ? '已采纳' : '待采纳'}
-                  </span>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        <textarea
+          className="ds-textarea"
+          style={{ minHeight: 120, width: '100%' }}
+          placeholder="记录卡点、收获或想带去周复盘的问题…"
+          value={note}
+          onChange={(e) => {
+            const v = e.target.value
+            setNote(v)
+            localStorage.setItem(`work-note:${theme.id}`, v)
+          }}
+        />
+        <p className="text-tertiary" style={{ fontSize: 'var(--body-xs-font-size)', marginTop: 8 }}>
+          笔记仅保存在本机。系统改进建议请在周复盘中生成。
+        </p>
 
         <div className="review-footer">
           <span className="text-tertiary" style={{ fontSize: 'var(--body-xs-font-size)' }}>
-            采纳建议将融入下一阶段学习切片
+            {concepts.length ? `核心：${concepts.join(' · ')}` : '完成阶梯共创后可见核心概念'}
           </span>
           <Link to="/review" data-dom-id="btn-open-full-review" className="ds-btn ds-btn--secondary ds-btn--sm">
             <Icon name="file-text" size={12} className="icon" />

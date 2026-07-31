@@ -6,6 +6,8 @@ import { getCoreConcepts, phaseZh } from '../lib/themeDoc'
 import '../styles/components.css'
 import '../styles/pages/review-weekly.css'
 
+const DRAFT_KEY = 'weekly-review-draft'
+
 function masteryTag(score: number) {
   if (score >= 5) return { label: '已掌握', className: 'ds-tag ds-tag--success' }
   if (score >= 4) return { label: '良好', className: 'ds-tag ds-tag--brand' }
@@ -27,11 +29,12 @@ function weekRangeLabel(weekStart?: string) {
       `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
     return `${fmt(start)} → ${fmt(end)}`
   }
-  const start = new Date(weekStart)
+  const [y, m, d] = weekStart.split('-').map(Number)
+  const start = new Date(y, (m || 1) - 1, d || 1)
   const end = new Date(start)
   end.setDate(start.getDate() + 6)
-  const fmt = (d: Date) =>
-    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  const fmt = (dt: Date) =>
+    `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
   return `${fmt(start)} → ${fmt(end)}`
 }
 
@@ -40,6 +43,7 @@ export function ReviewPage() {
   const [focusTheme, setFocusTheme] = useState<Theme | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [savedHint, setSavedHint] = useState('')
   const [scores, setScores] = useState<number[]>([])
   const [q1, setQ1] = useState('')
   const [q2, setQ2] = useState('')
@@ -59,7 +63,28 @@ export function ReviewPage() {
           null
         setFocusTheme(focus)
         const cores = getCoreConcepts(focus, 5)
-        setScores(cores.map((_, i) => Math.max(0, 5 - i)))
+
+        let draft: {
+          scores?: number[]
+          q1?: string
+          q2?: string
+          q3?: string
+          themeId?: string
+        } | null = null
+        try {
+          draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null')
+        } catch {
+          draft = null
+        }
+
+        if (draft && draft.themeId === focus?.id) {
+          setScores(cores.map((_, i) => draft!.scores?.[i] ?? 0))
+          setQ1(draft.q1 || '')
+          setQ2(draft.q2 || '')
+          setQ3(draft.q3 || '')
+        } else {
+          setScores(cores.map(() => 0))
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e))
       }
@@ -74,12 +99,33 @@ export function ReviewPage() {
     [review],
   )
 
+  function saveDraft() {
+    localStorage.setItem(
+      DRAFT_KEY,
+      JSON.stringify({
+        themeId: focusTheme?.id || null,
+        scores,
+        q1,
+        q2,
+        q3,
+        savedAt: new Date().toISOString(),
+      }),
+    )
+    setSavedHint('草稿已保存到本机')
+    window.setTimeout(() => setSavedHint(''), 2000)
+  }
+
   async function generate() {
     setBusy(true)
     setError('')
     try {
-      const r = await api.createWeeklyReview()
+      const r = await api.createWeeklyReview({
+        answers: [q1, q2, q3].filter((x) => x.trim()),
+        mastery: cores.map((name, i) => ({ name, score: scores[i] ?? 0 })),
+        draft_notes: [q1, q2, q3].filter(Boolean).join('\n'),
+      })
       setReview(r)
+      localStorage.removeItem(DRAFT_KEY)
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
     } finally {
@@ -88,7 +134,7 @@ export function ReviewPage() {
   }
 
   const mastered = scores.filter((s) => s >= 4).length
-  const weak = scores.filter((s) => s < 3).length
+  const weak = scores.filter((s) => s < 3 && s > 0).length
   const subtitle = focusTheme
     ? `${focusTheme.title} · ${phaseZh[focusTheme.phase]}`
     : review?.summary || '低成本检查与改进：系统起草，你只需确认或改一句。'
@@ -118,6 +164,7 @@ export function ReviewPage() {
       </div>
 
       {error ? <div className="error-banner">{error}</div> : null}
+      {savedHint ? <div className="ds-alert ds-alert--info" style={{ marginBottom: 12 }}>{savedHint}</div> : null}
 
       <div className="kpi-grid">
         <div className="ds-statcard">
@@ -131,13 +178,13 @@ export function ReviewPage() {
           </div>
         </div>
         <div className="ds-statcard">
-          <div className="ds-statcard__label">核心掌握</div>
+          <div className="ds-statcard__label">自评掌握</div>
           <div className="ds-statcard__value">
             {mastered}/{Math.max(scores.length, 1)}
           </div>
           <div className="ds-statcard__delta" style={{ color: 'var(--status-warning-default)' }}>
             <Icon name="alert-triangle" size={14} />
-            <span>{weak} 项待加强</span>
+            <span>{weak} 项待加强（来自下方滑块）</span>
           </div>
         </div>
         <div className="ds-statcard">
@@ -163,10 +210,10 @@ export function ReviewPage() {
 
       <div className="ds-card" style={{ marginBottom: 'var(--spacer-24)' }}>
         <div style={{ marginBottom: 'var(--spacer-16)' }}>
-          <div className="h3" style={{ marginBottom: 'var(--spacer-4)' }}>核心掌握度</div>
+          <div className="h3" style={{ marginBottom: 'var(--spacer-4)' }}>核心掌握度（自评）</div>
           <div className="ds-card__desc">
             {focusTheme
-              ? `围绕「${focusTheme.title}」拖动滑块校验掌握程度`
+              ? `围绕「${focusTheme.title}」拖动滑块；生成改进建议时会一并提交给 AI`
               : '拖动滑块校验每条核心的掌握程度'}
           </div>
         </div>
@@ -233,7 +280,7 @@ export function ReviewPage() {
       <div className="ds-card">
         <div style={{ marginBottom: 'var(--spacer-24)' }}>
           <div className="h3" style={{ marginBottom: 'var(--spacer-4)' }}>3 问复盘</div>
-          <div className="ds-card__desc">每问不超过 50 字，聚焦可执行改进</div>
+          <div className="ds-card__desc">每问不超过 50 字，聚焦可执行改进；会随「生成改进建议」提交</div>
         </div>
 
         <div className="question-block">
@@ -325,7 +372,7 @@ export function ReviewPage() {
           marginTop: 'var(--spacer-24)',
         }}
       >
-        <button className="ds-btn ds-btn--secondary" type="button" onClick={() => {}}>
+        <button className="ds-btn ds-btn--secondary" type="button" onClick={saveDraft}>
           保存草稿
         </button>
         <button

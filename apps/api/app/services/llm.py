@@ -107,7 +107,11 @@ def chat_json(
     kind: str | None = None,
 ) -> dict[str, Any]:
     client = get_llm_client(settings)
-    system_full = f"{system}\n\n{OUTPUT_CONTRACT}"
+    # weekly_review 有独立 JSON 契约，不要叠共创的 assistant_message/live_doc 约束
+    if kind in (None, "weekly_review"):
+        system_full = system
+    else:
+        system_full = f"{system}\n\n{OUTPUT_CONTRACT}"
     payload = [{"role": "system", "content": system_full}, *messages]
     kwargs: dict[str, Any] = {
         "model": settings.deepseek_model,

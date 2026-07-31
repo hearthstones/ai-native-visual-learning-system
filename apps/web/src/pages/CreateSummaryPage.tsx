@@ -61,10 +61,7 @@ export function CreateSummaryPage() {
   }
 
   const phaseLabel = phaseZh[theme.phase]
-  const displayTasks: Array<{ id: string; title: string }> = tasks.length
-    ? tasks
-    : [{ id: '1', title: `开始「${theme.title}」今日第一项任务` }]
-
+  const displayTasks = tasks
   const concepts = getCoreConcepts(theme)
   const conceptLine = concepts.length ? concepts.join(' · ') : theme.goal || '计划已就绪'
 
@@ -84,12 +81,19 @@ export function CreateSummaryPage() {
         <div className="first-cta-card__left">
           <div className="first-cta-card__label">今日任务 · {displayTasks.length} 项</div>
           <div className="first-cta-card__tasks">
-            {displayTasks.slice(0, 4).map((task, i) => (
-              <div key={task.id} className="first-cta-card__task">
-                <span className="first-cta-card__task-index">{String(i + 1).padStart(2, '0')}</span>
-                <span>{task.title}</span>
+            {displayTasks.length === 0 ? (
+              <div className="first-cta-card__task">
+                <span className="first-cta-card__task-index">—</span>
+                <span>暂无今日任务（计划活动可能为空，可稍后在作业面查看）</span>
               </div>
-            ))}
+            ) : (
+              displayTasks.slice(0, 4).map((task, i) => (
+                <div key={task.id} className="first-cta-card__task">
+                  <span className="first-cta-card__task-index">{String(i + 1).padStart(2, '0')}</span>
+                  <span>{task.title}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
         <div className="first-cta-card__action">

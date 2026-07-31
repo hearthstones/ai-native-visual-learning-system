@@ -62,6 +62,30 @@ export interface WeeklyReview {
   adjustments: unknown[]
 }
 
+export interface SliceActivity {
+  id: string
+  title: string
+  description: string
+  activity_type: string | null
+  done: boolean
+  sort_order: number
+}
+
+export interface ActiveSlice {
+  id: string | null
+  theme_id: string
+  phase: ThemePhase | null
+  title: string
+  core_points: unknown[]
+  activities: SliceActivity[]
+}
+
+export interface WeeklyReviewInput {
+  answers?: string[]
+  mastery?: Array<{ name: string; score: number }>
+  draft_notes?: string
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
     headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
@@ -120,7 +144,17 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ done }),
     }),
-  createWeeklyReview: () =>
-    request<WeeklyReview>('/api/reviews/weekly', { method: 'POST' }),
+  getActiveSlice: (themeId: string) =>
+    request<ActiveSlice>(`/api/themes/${themeId}/active-slice`),
+  toggleActivity: (activityId: string, done: boolean) =>
+    request<SliceActivity>(`/api/themes/activities/${activityId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ done }),
+    }),
+  createWeeklyReview: (body: WeeklyReviewInput = {}) =>
+    request<WeeklyReview>('/api/reviews/weekly', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
   latestWeeklyReview: () => request<WeeklyReview | null>('/api/reviews/weekly/latest'),
 }

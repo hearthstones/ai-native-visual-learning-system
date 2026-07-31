@@ -95,6 +95,12 @@ class HomeOut(BaseModel):
     drift_events: list[dict[str, Any]]
 
 
+class WeeklyReviewIn(BaseModel):
+    answers: list[str] = Field(default_factory=list)
+    mastery: list[dict[str, Any]] = Field(default_factory=list)
+    draft_notes: str = ""
+
+
 class WeeklyReviewOut(BaseModel):
     id: str
     week_start: str
@@ -105,6 +111,31 @@ class WeeklyReviewOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ActivityOut(BaseModel):
+    id: str
+    title: str
+    description: str
+    activity_type: Optional[str] = None
+    done: bool
+    sort_order: int
+
+    class Config:
+        from_attributes = True
+
+
+class ActiveSliceOut(BaseModel):
+    id: Optional[str] = None
+    theme_id: str
+    phase: Optional[ThemePhase] = None
+    title: str = ""
+    core_points: list[Any] = Field(default_factory=list)
+    activities: list[ActivityOut] = Field(default_factory=list)
+
+
+class ActivityToggle(BaseModel):
+    done: bool
 
 
 class WereadSearchOut(BaseModel):

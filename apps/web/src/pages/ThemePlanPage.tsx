@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
-import { api, type Theme, type ThemePhase } from '../lib/api'
+import { api, type ActiveSlice, type Theme, type ThemePhase } from '../lib/api'
 import { getCurrentLevel, getSliceItems, phaseZh } from '../lib/themeDoc'
 import '../styles/pages/theme-plan.css'
 
@@ -25,6 +25,7 @@ export function ThemePlanPage() {
   const { themeId = '' } = useParams()
   const nav = useNavigate()
   const [theme, setTheme] = useState<Theme | null>(null)
+  const [slice, setSlice] = useState<ActiveSlice | null>(null)
   const [themes, setThemes] = useState<Theme[]>([])
   const [slots, setSlots] = useState<Record<string, { used: number; max: number }>>({})
   const [drift, setDrift] = useState<
@@ -36,31 +37,50 @@ export function ThemePlanPage() {
   const [focusWarnOpen, setFocusWarnOpen] = useState(false)
   const [focusErrorOpen, setFocusErrorOpen] = useState(false)
   const [slotFullOpen, setSlotFullOpen] = useState(false)
-  const [checked, setChecked] = useState<Record<string, boolean>>({})
   const [archiveOpen, setArchiveOpen] = useState(false)
 
-  const sliceItems = useMemo(() => getSliceItems(theme), [theme])
-  const items = useMemo(
-    () =>
-      sliceItems.map((item, i) => ({
-        ...item,
-        checked: checked[item.id] ?? i === 0,
-      })),
-    [sliceItems, checked],
-  )
+  const items = useMemo(() => getSliceItems(slice, theme), [slice, theme])
   const currentLevel = useMemo(() => getCurrentLevel(theme), [theme])
 
   async function load() {
-    const [t, home, s] = await Promise.all([api.getTheme(themeId), api.home(), api.slots()])
+    const [t, home, s, active] = await Promise.all([
+      api.getTheme(themeId),
+      api.home(),
+      api.slots(),
+      api.getActiveSlice(themeId).catch(() => null),
+    ])
     setTheme(t)
     setThemes(home.themes)
     setSlots(s)
     setDrift(home.drift_events)
+    setSlice(active)
   }
 
   useEffect(() => {
     void load().catch((e) => setError(String(e.message || e)))
   }, [themeId])
+
+  async function toggleItem(item: { id: string; activityId?: string; done?: boolean }) {
+    if (!item.activityId) return
+    setBusy(true)
+    try {
+      const updated = await api.toggleActivity(item.activityId, !item.done)
+      setSlice((prev) =>
+        prev
+          ? {
+              ...prev,
+              activities: prev.activities.map((a) =>
+                a.id === updated.id ? { ...a, done: updated.done } : a,
+              ),
+            }
+          : prev,
+      )
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setBusy(false)
+    }
+  }
 
   async function confirmAdvance() {
     setBusy(true)
@@ -95,7 +115,7 @@ export function ThemePlanPage() {
   }
 
   function trySetFocus() {
-    const focusCount = themes.filter((t) => t.is_focus).length
+    const focusCount = themes.filter((t) => t.is_focus && t.status === 'active').length
     if (focusCount >= 3) {
       setFocusErrorOpen(true)
       return
@@ -133,10 +153,11 @@ export function ThemePlanPage() {
   const currentIdx = phaseIndex(theme.phase)
   const phaseLabel = PHASES[currentIdx]?.label ?? theme.phase
   const canAdvance = theme.phase !== 'application'
-  const done = items.filter((it) => it.checked).length
-  const focusedThemes = themes.filter((t) => t.is_focus)
+  const done = items.filter((it) => it.done).length
+  const focusedThemes = themes.filter((t) => t.is_focus && t.status === 'active')
   const occupyingByPhase = (key: ThemePhase) =>
     themes.filter((t) => t.phase === key && t.status === 'active').map((t) => t.title).join('、')
+  const sliceTitle = slice?.title || `${phaseLabel}计划`
 
   return (
     <>
@@ -181,7 +202,7 @@ export function ThemePlanPage() {
               <div className="slice-card__head">
                 <div className="slice-card__head-left">
                   <span className="slice-card__title">
-                    {phaseLabel}计划
+                    {sliceTitle}
                     {currentLevel ? ` · L${currentLevel.level}` : ''}
                   </span>
                   <span className="ds-tag ds-tag--brand">进行中</span>
@@ -196,24 +217,20 @@ export function ThemePlanPage() {
               <div className="slice-card__body ds-stack-8">
                 {items.length === 0 ? (
                   <p className="text-tertiary" style={{ fontSize: 12, margin: 0 }}>
-                    暂无计划条目。完成阶梯共创后，这里会展示当前级别的练习与里程碑。
+                    暂无计划活动。完成计划共创并锁定后，这里会展示当前阶段的活动列表。
                   </p>
                 ) : null}
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className={`checklist-item${item.checked ? ' is-checked' : ''}`}
+                    className={`checklist-item${item.done ? ' is-checked' : ''}`}
                   >
                     <label className="ds-check checklist-item__check">
                       <input
                         type="checkbox"
-                        checked={item.checked}
-                        onChange={() => {
-                          setChecked((prev) => ({
-                            ...prev,
-                            [item.id]: !item.checked,
-                          }))
-                        }}
+                        checked={!!item.done}
+                        disabled={busy || !item.activityId}
+                        onChange={() => void toggleItem(item)}
                       />
                       <span className="ds-check__box" />
                     </label>

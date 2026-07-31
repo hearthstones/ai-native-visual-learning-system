@@ -2,13 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type DailyTask, type Theme, type ThemePhase } from '../lib/api'
-import {
-  coreStatus,
-  getCoreConcepts,
-  getCurrentLevel,
-  getSelectedLevel,
-  phaseZh,
-} from '../lib/themeDoc'
+import { getCoreConcepts, getCurrentLevel, phaseZh } from '../lib/themeDoc'
 import '../styles/pages/theme-overview.css'
 
 export function ThemeOverviewPage() {
@@ -31,15 +25,7 @@ export function ThemeOverviewPage() {
     })()
   }, [themeId])
 
-  const cores = useMemo(() => {
-    if (!theme) return []
-    const concepts = getCoreConcepts(theme, 5)
-    const selected = getSelectedLevel(theme)
-    return concepts.map((name, i) => ({
-      name,
-      ...coreStatus(i, concepts.length, selected),
-    }))
-  }, [theme])
+  const cores = useMemo(() => (theme ? getCoreConcepts(theme, 5) : []), [theme])
 
   if (error) {
     return (
@@ -58,8 +44,8 @@ export function ThemeOverviewPage() {
 
   const phaseLabel = phaseZh[theme.phase]
   const level = getCurrentLevel(theme)
-  const doneCores = cores.filter((c) => c.status === 'done' || c.status === 'good').length
-  const currentCore = cores.find((c) => c.current)?.name || cores[0]?.name
+  const doneTasks = tasks.filter((t) => t.done).length
+  const taskProgress = tasks.length ? Math.round((doneTasks / tasks.length) * 100) : 0
   const stepActive = (key: ThemePhase) => theme.phase === key
   const demoLabel =
     theme.phase === 'practice'
@@ -82,12 +68,7 @@ export function ThemeOverviewPage() {
 
       <section className="ov-progress">
         <div className="ov-progress__track">
-          <div
-            className="ov-progress__fill"
-            style={{
-              width: `${cores.length ? Math.round((doneCores / cores.length) * 100) : 20}%`,
-            }}
-          />
+          <div className="ov-progress__fill" style={{ width: `${taskProgress}%` }} />
         </div>
         <div className="ov-progress__meta">
           {level ? (
@@ -101,9 +82,9 @@ export function ThemeOverviewPage() {
           <span>每天约 30 分钟</span>
           <span className="ov-sep">·</span>
           <span>
-            核心{' '}
+            今日任务{' '}
             <span className="mono">
-              {doneCores}/{cores.length || 0}
+              {doneTasks}/{tasks.length}
             </span>
           </span>
         </div>
@@ -140,39 +121,24 @@ export function ThemeOverviewPage() {
 
       <section className="ov-map">
         <div className="ov-map__head">
-          <span className="ov-map__title">核心掌握</span>
-          <span className="ov-map__count mono">
-            {doneCores}/{cores.length || 0}
-          </span>
+          <span className="ov-map__title">核心概念</span>
+          <span className="ov-map__count mono">{cores.length}</span>
         </div>
         {cores.length > 0 ? (
           <>
-            <div className="ov-map__bar">
-              {cores.map((item) => (
-                <div
-                  key={item.name}
-                  className={`ov-map__seg ov-map__seg--${item.status}`}
-                />
-              ))}
-            </div>
             <ul className="ov-core-list">
-              {cores.map((item) => (
-                <li
-                  key={item.name}
-                  className={`ov-core ov-core--${item.status}${item.current ? ' ov-core--current' : ''}`}
-                >
+              {cores.map((name, i) => (
+                <li key={name} className={`ov-core${i === 0 ? ' ov-core--current' : ''}`}>
                   <span className="ov-core__dot" />
-                  <span className="ov-core__name">{item.name}</span>
-                  <span className={`ov-core__label ov-core__label--${item.status}`}>{item.label}</span>
+                  <span className="ov-core__name">{name}</span>
+                  <span className="ov-core__label">待复盘评估</span>
                 </li>
               ))}
             </ul>
-            {currentCore ? (
-              <div className="ov-map__hint">今日聚焦「{currentCore}」</div>
-            ) : null}
+            <div className="ov-map__hint">掌握度请在周复盘中自评，这里只列出阶梯核心概念</div>
           </>
         ) : (
-          <div className="ov-map__hint">完成阶梯共创后，这里会展示核心概念掌握情况</div>
+          <div className="ov-map__hint">完成阶梯共创后，这里会展示核心概念</div>
         )}
       </section>
 

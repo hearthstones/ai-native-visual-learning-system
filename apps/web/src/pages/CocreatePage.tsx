@@ -65,7 +65,6 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  const [planViewed, setPlanViewed] = useState(false)
 
   useEffect(() => {
     void api.getTheme(themeId).then(setTheme).catch(() => setTheme(null))
@@ -76,7 +75,6 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
     async function boot() {
       setBusy(true)
       setError('')
-      setPlanViewed(false)
       try {
         let s: CocreateSession
         try {
@@ -169,7 +167,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
     return 'titlebar__step'
   }
 
-  const lockDisabled = kind === 'plan' && (!planViewed || busy)
+  const lockDisabled = kind === 'plan' && (busy || !session)
 
   return (
     <>
@@ -204,17 +202,13 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
               className={`titlebar__lock-btn${lockDisabled ? ' is-disabled' : ''}`}
               data-state="unlocked"
               type="button"
-              disabled={busy}
-              onClick={() => {
-                if (lockDisabled) return
-                void confirm()
-              }}
+              disabled={lockDisabled}
+              onClick={() => void confirm()}
             >
               <span className="lock-icon">
                 <Icon name="lock" size={14} className="icon" />
               </span>
               <span className="lock-text">{busy ? '锁定中…' : '锁定计划'}</span>
-              <span className="tt">需先查看计划</span>
             </button>
           ) : null}
         </div>
@@ -290,10 +284,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           </div>
         </section>
 
-        <section
-          className="doc-panel"
-          onClick={kind === 'plan' ? () => setPlanViewed(true) : undefined}
-        >
+        <section className="doc-panel">
           <div className="doc-head">
             <div className="doc-head__title">
               <Icon name="file-text" size={16} className="ic icon" />
@@ -302,10 +293,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
             <div className="doc-head__hint">{info.docHint}</div>
           </div>
 
-          <div
-            className="doc-scroll"
-            onScroll={kind === 'plan' ? () => setPlanViewed(true) : undefined}
-          >
+          <div className="doc-scroll">
             <div className="doc-inner">
               {kind === 'stage' && (
                 <StageDoc

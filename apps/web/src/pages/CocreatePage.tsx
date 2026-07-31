@@ -1,12 +1,31 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { FormEvent, KeyboardEvent } from 'react'
+import type { FormEvent, KeyboardEvent, ReactNode } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
-import { api, type CocreateKind, type CocreateSession, type Theme } from '../lib/api'
+import {
+  api,
+  type CocreateKind,
+  type CocreateSession,
+  type PlanPrefs,
+  type Theme,
+} from '../lib/api'
 import '../styles/cocreate-layout.css'
 import '../styles/pages/create-stage.css'
 import '../styles/pages/create-resources.css'
 import '../styles/pages/create-plan.css'
+
+const LEARNING_OPTIONS = ['约 3 天', '约 7 天', '约 14 天']
+const PRACTICE_OPTIONS = ['约 2 周', '约 4 周', '约 8 周']
+const APPLICATION_OPTIONS = ['长尾', '约 3 个月', '约 6 个月']
+const DAILY_OPTIONS = [20, 30, 45, 60]
+const RESOURCE_COUNT_OPTIONS = [3, 5, 8, 10, 12]
+
+const DEFAULT_PLAN_PREFS: PlanPrefs = {
+  learning_duration: '约 7 天',
+  practice_duration: '约 4 周',
+  application_duration: '长尾',
+  daily_minutes: 30,
+}
 
 const meta: Record<
   CocreateKind,
@@ -33,9 +52,9 @@ const meta: Record<
   },
   resources: {
     title: '学习资料',
-    headSub: 'AI 教练 · 筛选高杠杆资源',
-    docHint: '高杠杆资源 · 可继续加约束',
-    placeholder: '加约束、丢链接、或直接确认…（Enter 发送）',
+    headSub: 'AI 教练 · 先选数量，再筛高杠杆资源',
+    docHint: '高杠杆资源 · 数量可改',
+    placeholder: '加约束、丢链接…（Enter 发送）',
     confirmHint: '确认资料后进入学习计划共创 →',
     confirmLabel: '确认，进入学习计划',
     backPath: (id) => `/create/${id}/stage`,
@@ -43,8 +62,8 @@ const meta: Record<
   },
   plan: {
     title: '学习计划',
-    headSub: 'AI 教练 · 学/练/用三阶段计划',
-    docHint: '三阶段 · 每天约 30 分钟',
+    headSub: 'AI 教练 · 先选节奏，再共创计划',
+    docHint: '三阶段 · 时长由你选定',
     placeholder: '对计划提修改意见…（锁定后不可修改）',
     confirmHint: '',
     confirmLabel: '锁定计划',
@@ -54,6 +73,21 @@ const meta: Record<
 }
 
 const stepOrder: CocreateKind[] = ['stage', 'resources', 'plan']
+
+function applyDurationsToPrefs(
+  liveDoc: Record<string, unknown>,
+  prev: PlanPrefs,
+): PlanPrefs {
+  const durations = liveDoc.durations as
+    | { learning?: string; practice?: string; application?: string }
+    | undefined
+  return {
+    learning_duration: durations?.learning || prev.learning_duration,
+    practice_duration: durations?.practice || prev.practice_duration,
+    application_duration: durations?.application || prev.application_duration,
+    daily_minutes: Number(liveDoc.daily_minutes) || prev.daily_minutes,
+  }
+}
 
 export function CocreatePage({ kind }: { kind: CocreateKind }) {
   const { themeId = '' } = useParams()
@@ -65,6 +99,9 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [needsSetup, setNeedsSetup] = useState(kind === 'resources' || kind === 'plan')
+  const [planPrefs, setPlanPrefs] = useState<PlanPrefs>(DEFAULT_PLAN_PREFS)
+  const [resourceCount, setResourceCount] = useState(5)
 
   useEffect(() => {
     void api.getTheme(themeId).then(setTheme).catch(() => setTheme(null))
@@ -75,20 +112,49 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
     async function boot() {
       setBusy(true)
       setError('')
+      setSession(null)
+      setNeedsSetup(kind === 'resources' || kind === 'plan')
       try {
-        let s: CocreateSession
-        try {
-          s = await api.getCocreate(themeId, kind)
-          if (s.confirmed) {
+        if (kind === 'stage') {
+          let s: CocreateSession
+          try {
+            const existing = await api.getCocreate(themeId, kind)
+            s = existing.confirmed
+              ? await api.startCocreate(themeId, kind, { force: true })
+              : existing
+          } catch {
             s = await api.startCocreate(themeId, kind)
           }
-        } catch {
-          s = await api.startCocreate(themeId, kind)
+          if (!cancelled) {
+            setSession(s)
+            setNeedsSetup(false)
+            const level = (s.live_doc as { selected_level?: number }).selected_level
+            if (typeof level === 'number') setSelectedLevel(level)
+          }
+          return
         }
-        if (!cancelled) {
-          setSession(s)
-          const level = (s.live_doc as { selected_level?: number }).selected_level
-          if (typeof level === 'number') setSelectedLevel(level)
+
+        // resources / plan：有未确认会话则恢复；否则停在选择面板
+        try {
+          const existing = await api.getCocreate(themeId, kind)
+          if (cancelled) return
+          if (existing.confirmed) {
+            setNeedsSetup(true)
+            return
+          }
+          setSession(existing)
+          setNeedsSetup(false)
+          if (kind === 'resources') {
+            const target = Number(existing.live_doc.target_count)
+            const n = (existing.live_doc.resources as unknown[] | undefined)?.length
+            if (target) setResourceCount(target)
+            else if (n) setResourceCount(n)
+          }
+          if (kind === 'plan') {
+            setPlanPrefs((prev) => applyDurationsToPrefs(existing.live_doc, prev))
+          }
+        } catch {
+          if (!cancelled) setNeedsSetup(true)
         }
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e))
@@ -102,12 +168,49 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
     }
   }, [themeId, kind])
 
+  async function startResources(count = resourceCount) {
+    setBusy(true)
+    setError('')
+    try {
+      const s = await api.startCocreate(themeId, 'resources', {
+        resource_count: count,
+        force: true,
+      })
+      setSession(s)
+      setNeedsSetup(false)
+      setResourceCount(count)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function startPlan(prefs = planPrefs) {
+    setBusy(true)
+    setError('')
+    try {
+      const s = await api.startCocreate(themeId, 'plan', {
+        plan_prefs: prefs,
+        force: true,
+      })
+      setSession(s)
+      setNeedsSetup(false)
+      setPlanPrefs(prefs)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const levels = useMemo(() => {
     const doc = session?.live_doc as { levels?: Array<Record<string, unknown>> } | undefined
     return doc?.levels || []
   }, [session])
 
   const topic = theme?.title || '主题'
+  const showSetup = needsSetup && !session
 
   async function send(e?: FormEvent) {
     e?.preventDefault()
@@ -146,8 +249,6 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           selected_level: selectedLevel,
           live_doc: { ...session?.live_doc, selected_level: selectedLevel },
         })
-      } else if (kind === 'resources') {
-        await api.confirmCocreate(themeId, kind, { live_doc: session?.live_doc })
       } else {
         await api.confirmCocreate(themeId, kind, { live_doc: session?.live_doc })
       }
@@ -197,7 +298,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           </div>
         </div>
         <div className="titlebar__right">
-          {kind === 'plan' ? (
+          {kind === 'plan' && session ? (
             <button
               className={`titlebar__lock-btn${lockDisabled ? ' is-disabled' : ''}`}
               data-state="unlocked"
@@ -226,6 +327,43 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
 
           <div className="chat-scroll">
             {error ? <div className="error-banner">{error}</div> : null}
+
+            {showSetup && kind === 'resources' ? (
+              <SetupCard
+                title="先选资料数量"
+                desc="默认 5 份。改成你想要的数量后生成，之后还能再改。"
+                busy={busy}
+                cta={busy ? '生成中…' : `生成 ${resourceCount} 份资料`}
+                onStart={() => void startResources(resourceCount)}
+              >
+                <div className="pref-chips">
+                  {RESOURCE_COUNT_OPTIONS.map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      className={`pref-chip${resourceCount === n ? ' is-active' : ''}`}
+                      disabled={busy}
+                      onClick={() => setResourceCount(n)}
+                    >
+                      {n} 份
+                    </button>
+                  ))}
+                </div>
+              </SetupCard>
+            ) : null}
+
+            {showSetup && kind === 'plan' ? (
+              <SetupCard
+                title="先选学习节奏"
+                desc="学 / 练 / 用时长和每天投入由你决定，确认后再生成计划。"
+                busy={busy}
+                cta={busy ? '生成中…' : '按此节奏生成计划'}
+                onStart={() => void startPlan(planPrefs)}
+              >
+                <PrefsFields prefs={planPrefs} busy={busy} onChange={setPlanPrefs} />
+              </SetupCard>
+            ) : null}
+
             {(session?.messages || []).map((m, i) => (
               <div key={`${m.role}-${i}`} className={`msg msg--${m.role === 'user' ? 'user' : 'ai'}`}>
                 <div className="msg__avatar">
@@ -237,7 +375,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                 </div>
               </div>
             ))}
-            {busy && !session ? (
+            {busy && !session && !showSetup ? (
               <div className="msg msg--ai">
                 <div className="msg__avatar"><Icon name="sparkles" size={16} className="icon" /></div>
                 <div className="msg__body">
@@ -247,41 +385,79 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
             ) : null}
           </div>
 
-          <div className="composer-wrap">
-            <form className="ds-composer" onSubmit={(e) => void send(e)}>
-              <textarea
-                className="ds-composer__input"
-                placeholder={info.placeholder}
-                value={input}
-                disabled={busy}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={onComposerKey}
-              />
-              <div className="ds-composer__toolbar">
-                <div className="ds-composer__tools">
-                  {kind !== 'stage' ? (
-                    <button className="ds-composer__icon-btn" type="button" title="附加" onClick={() => {}}>
-                      <Icon name="plus" size={16} className="icon" />
-                    </button>
-                  ) : null}
-                  <div className="ds-composer__model">
-                    <Icon name="sparkles" size={12} className="icon" />
-                    <span>教练模式</span>
+          {!showSetup ? (
+            <div className="composer-wrap">
+              {kind === 'resources' && session ? (
+                <div className="pref-bar">
+                  <span className="pref-chips__label">资料数量</span>
+                  <div className="pref-chips">
+                    {RESOURCE_COUNT_OPTIONS.map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        className={`pref-chip${resourceCount === n ? ' is-active' : ''}`}
+                        disabled={busy}
+                        onClick={() => setResourceCount(n)}
+                      >
+                        {n} 份
+                      </button>
+                    ))}
                   </div>
-                </div>
-                <div className="ds-composer__actions">
                   <button
-                    className="ds-composer__send"
-                    type="submit"
-                    title="发送"
-                    disabled={busy || !input.trim()}
+                    type="button"
+                    className="ds-btn ds-btn--secondary pref-bar__cta"
+                    disabled={busy}
+                    onClick={() => void startResources(resourceCount)}
                   >
-                    <Icon name="send" size={16} className="icon" />
+                    {busy ? '生成中…' : '按此数量重生成'}
                   </button>
                 </div>
-              </div>
-            </form>
-          </div>
+              ) : null}
+
+              {kind === 'plan' && session ? (
+                <div className="pref-bar pref-bar--plan">
+                  <PrefsFields prefs={planPrefs} busy={busy} onChange={setPlanPrefs} />
+                  <button
+                    type="button"
+                    className="ds-btn ds-btn--secondary pref-bar__cta"
+                    disabled={busy}
+                    onClick={() => void startPlan(planPrefs)}
+                  >
+                    {busy ? '生成中…' : '按新节奏重生成'}
+                  </button>
+                </div>
+              ) : null}
+
+              <form className="ds-composer" onSubmit={(e) => void send(e)}>
+                <textarea
+                  className="ds-composer__input"
+                  placeholder={info.placeholder}
+                  value={input}
+                  disabled={busy || !session}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={onComposerKey}
+                />
+                <div className="ds-composer__toolbar">
+                  <div className="ds-composer__tools">
+                    <div className="ds-composer__model">
+                      <Icon name="sparkles" size={12} className="icon" />
+                      <span>教练模式</span>
+                    </div>
+                  </div>
+                  <div className="ds-composer__actions">
+                    <button
+                      className="ds-composer__send"
+                      type="submit"
+                      title="发送"
+                      disabled={busy || !session || !input.trim()}
+                    >
+                      <Icon name="send" size={16} className="icon" />
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          ) : null}
         </section>
 
         <section className="doc-panel">
@@ -290,11 +466,24 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
               <Icon name="file-text" size={16} className="ic icon" />
               <span>「{topic}」{info.title}</span>
             </div>
-            <div className="doc-head__hint">{info.docHint}</div>
+            <div className="doc-head__hint">
+              {kind === 'resources' && session
+                ? `当前 ${((session.live_doc.resources as unknown[]) || []).length} 份 · 目标 ${resourceCount}`
+                : kind === 'plan' && session
+                  ? `学 ${planPrefs.learning_duration} · 练 ${planPrefs.practice_duration} · 用 ${planPrefs.application_duration} · 每天约 ${planPrefs.daily_minutes} 分钟`
+                  : info.docHint}
+            </div>
           </div>
 
           <div className="doc-scroll">
             <div className="doc-inner">
+              {showSetup ? (
+                <div className="plan-setup-doc">
+                  <p className="text-tertiary">
+                    {kind === 'resources' ? '选定左侧数量后生成资料清单。' : '选定左侧节奏后生成三阶段计划。'}
+                  </p>
+                </div>
+              ) : null}
               {kind === 'stage' && (
                 <StageDoc
                   levels={levels}
@@ -302,8 +491,8 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                   onSelect={setSelectedLevel}
                 />
               )}
-              {kind === 'resources' && <ResourcesDoc doc={session?.live_doc || {}} />}
-              {kind === 'plan' && <PlanDoc doc={session?.live_doc || {}} />}
+              {kind === 'resources' && !showSetup && <ResourcesDoc doc={session?.live_doc || {}} />}
+              {kind === 'plan' && !showSetup && <PlanDoc doc={session?.live_doc || {}} />}
             </div>
           </div>
 
@@ -313,7 +502,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
               <button
                 className="ds-btn ds-btn--brand"
                 type="button"
-                disabled={busy}
+                disabled={busy || !session}
                 onClick={() => void confirm()}
               >
                 <span>{info.confirmLabel}</span>
@@ -324,6 +513,124 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
         </section>
       </main>
     </>
+  )
+}
+
+function PrefsFields({
+  prefs,
+  busy,
+  onChange,
+}: {
+  prefs: PlanPrefs
+  busy: boolean
+  onChange: (next: PlanPrefs) => void
+}) {
+  return (
+    <>
+      <div className="plan-setup__field">
+        <div className="plan-setup__label">学习期</div>
+        <div className="pref-chips">
+          {LEARNING_OPTIONS.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              className={`pref-chip${prefs.learning_duration === opt ? ' is-active' : ''}`}
+              disabled={busy}
+              onClick={() => onChange({ ...prefs, learning_duration: opt })}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="plan-setup__field">
+        <div className="plan-setup__label">练习期</div>
+        <div className="pref-chips">
+          {PRACTICE_OPTIONS.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              className={`pref-chip${prefs.practice_duration === opt ? ' is-active' : ''}`}
+              disabled={busy}
+              onClick={() => onChange({ ...prefs, practice_duration: opt })}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="plan-setup__field">
+        <div className="plan-setup__label">应用期</div>
+        <div className="pref-chips">
+          {APPLICATION_OPTIONS.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              className={`pref-chip${prefs.application_duration === opt ? ' is-active' : ''}`}
+              disabled={busy}
+              onClick={() => onChange({ ...prefs, application_duration: opt })}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="plan-setup__field">
+        <div className="plan-setup__label">每天投入</div>
+        <div className="pref-chips">
+          {DAILY_OPTIONS.map((n) => (
+            <button
+              key={n}
+              type="button"
+              className={`pref-chip${prefs.daily_minutes === n ? ' is-active' : ''}`}
+              disabled={busy}
+              onClick={() => onChange({ ...prefs, daily_minutes: n })}
+            >
+              {n} 分钟
+            </button>
+          ))}
+        </div>
+      </div>
+    </>
+  )
+}
+
+function SetupCard({
+  title,
+  desc,
+  busy,
+  cta,
+  onStart,
+  children,
+}: {
+  title: string
+  desc: string
+  busy: boolean
+  cta: string
+  onStart: () => void
+  children: ReactNode
+}) {
+  return (
+    <div className="msg msg--ai">
+      <div className="msg__avatar"><Icon name="sparkles" size={16} className="icon" /></div>
+      <div className="msg__body">
+        <div className="msg__bubble plan-setup">
+          <div className="plan-setup__title">{title}</div>
+          <p className="plan-setup__desc">{desc}</p>
+          {children}
+          <button
+            className="ds-btn ds-btn--brand plan-setup__cta"
+            type="button"
+            disabled={busy}
+            onClick={onStart}
+          >
+            <span>{cta}</span>
+            <Icon name="arrow-right" size={12} className="icon" />
+          </button>
+        </div>
+        <div className="msg__meta">AI 教练 · 等待你的选择</div>
+      </div>
+    </div>
   )
 }
 
@@ -499,15 +806,27 @@ function PlanDoc({ doc }: { doc: Record<string, unknown> }) {
   const phases =
     (doc.phases as Record<
       string,
-      { title?: string; summary?: string; activities?: Array<{ title: string; description?: string; activity_type?: string }> }
+      {
+        title?: string
+        duration?: string
+        summary?: string
+        activities?: Array<{ title: string; description?: string; activity_type?: string }>
+      }
     >) || {}
+  const durations = (doc.durations as Record<string, string>) || {}
   const daily = doc.daily_minutes ? Number(doc.daily_minutes) : 30
 
-  const phaseMeta: Array<{ key: string; index: string; badge: string; badgeClass: string }> = [
-    { key: 'learning', index: 'B', badge: '学 · 约 7 天', badgeClass: 'phase-block__badge--learn' },
-    { key: 'practice', index: 'C', badge: '练 · 约 4 周', badgeClass: 'phase-block__badge--practice' },
-    { key: 'application', index: 'D', badge: '用 · 长尾', badgeClass: 'phase-block__badge--apply' },
+  const phaseMeta: Array<{ key: string; index: string; fallback: string; badgeClass: string }> = [
+    { key: 'learning', index: 'B', fallback: '约 7 天', badgeClass: 'phase-block__badge--learn' },
+    { key: 'practice', index: 'C', fallback: '约 4 周', badgeClass: 'phase-block__badge--practice' },
+    { key: 'application', index: 'D', fallback: '长尾', badgeClass: 'phase-block__badge--apply' },
   ]
+
+  const shortLabel: Record<string, string> = {
+    learning: '学',
+    practice: '练',
+    application: '用',
+  }
 
   return (
     <>
@@ -528,9 +847,11 @@ function PlanDoc({ doc }: { doc: Record<string, unknown> }) {
         {doc.goal ? <p className="text-secondary" style={{ marginTop: 12, fontSize: 12 }}>{String(doc.goal)}</p> : null}
       </section>
 
-      {phaseMeta.map(({ key, index, badge, badgeClass }) => {
+      {phaseMeta.map(({ key, index, fallback, badgeClass }) => {
         const phase = phases[key]
         const acts = phase?.activities || []
+        const duration = phase?.duration || durations[key] || fallback
+        const badge = `${shortLabel[key]} · ${duration}`
         return (
           <section key={key} className="doc-section">
             <div className="doc-section__head">
@@ -591,7 +912,9 @@ function PlanDoc({ doc }: { doc: Record<string, unknown> }) {
           </span>
           <span className="m">
             <Icon name="check-circle" size={12} className="ic icon" />
-            3 阶段
+            学 {durations.learning || phases.learning?.duration || '约 7 天'} · 练{' '}
+            {durations.practice || phases.practice?.duration || '约 4 周'} · 用{' '}
+            {durations.application || phases.application?.duration || '长尾'}
           </span>
         </div>
       </div>

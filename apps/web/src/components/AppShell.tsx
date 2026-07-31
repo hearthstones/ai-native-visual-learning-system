@@ -6,6 +6,7 @@ function noop() {
 }
 
 function projectLabel(pathname: string) {
+  if (pathname.startsWith('/settings')) return '设置'
   if (pathname.startsWith('/create')) return '新建主题'
   if (pathname.startsWith('/review')) return '周复盘'
   if (pathname.startsWith('/themes')) return '主题执行'
@@ -40,6 +41,7 @@ export function AppShell({
   }
 
   const themeActive = pathname.startsWith('/themes')
+  const settingsActive = pathname.startsWith('/settings')
 
   return (
     <div className="app-shell" data-viewport-mode="app-shell">
@@ -63,9 +65,14 @@ export function AppShell({
           <button className="ds-wbtitlebar__iconbtn" type="button" aria-label="通知" onClick={noop}>
             <Icon name="bell" size={16} className="icon" />
           </button>
-          <button className="ds-wbtitlebar__iconbtn" type="button" aria-label="设置" onClick={noop}>
+          <NavLink
+            to="/settings"
+            className="ds-wbtitlebar__iconbtn"
+            aria-label="设置"
+            title="设置"
+          >
             <Icon name="settings" size={16} className="icon" />
-          </button>
+          </NavLink>
         </div>
       </header>
 
@@ -107,15 +114,14 @@ export function AppShell({
         >
           <Icon name="scroll-text" size={16} />
         </NavLink>
-        <button
-          className="ds-activityrail__btn"
-          type="button"
+        <NavLink
+          to="/settings"
+          className={`ds-activityrail__btn${settingsActive ? ' is-active' : ''}`}
           title="设置"
           aria-label="设置"
-          onClick={noop}
         >
           <Icon name="settings" size={16} />
-        </button>
+        </NavLink>
       </nav>
 
       <main className="app-main" data-scroll-region="primary">

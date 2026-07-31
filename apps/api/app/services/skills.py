@@ -53,11 +53,14 @@ STAGE_EXTRA = """
 
 RESOURCES_EXTRA = """
 产品适配：
-- 产出恰好 5 个高杠杆资源 + 推荐顺序 + 7 天短路径摘要。
+- 默认产出约 5 个高杠杆资源；若用户（含启动参数或对话）明确要求 N 个，必须严格产出 N 个，不得擅自截断或补回 5。
+- order 长度必须与 resources 长度一致（0..N-1 的推荐阅读顺序）。
+- 给出与资料配套的短路径摘要（默认可按约 7 天写 path_7d；若用户改了节奏，摘要跟着改）。
 - 若用户限定「微信读书」，优先推荐微信读书可读的书籍，并在每项加 weread_readable: true/false 与可选 book_hint。
 - live_doc 结构：
   {
     "constraints": ["..."],
+    "target_count": 5,
     "resources": [
       {
         "name": "...",
@@ -72,38 +75,48 @@ RESOURCES_EXTRA = """
         "book_hint": ""
       }
     ],
-    "order": [0,1,2,3,4],
+    "order": [0, 1, 2],
     "path_7d": "..."
   }
 """
 
 PLAN_EXTRA = """
 产品适配（重要：不要照搬原 SKILL 的「10节×2小时」唯一形态）：
-- 愿用性：约 30 分钟/天。
+- 每天投入以用户指定的 daily_minutes 为准（默认 30）。
+- 三阶段时长以用户指定为准，写入各 phase 的 duration 字段，并按该时长规划 activities 数量与节奏。
+  常见默认：学习期约 7 天、练习期约 4 周、应用期长尾——但用户另选时必须服从用户。
 - 产出主题生命周期三阶段计划：learning / practice / application。
 - 保留「约 20% 核心」精神。
 - live_doc 结构：
   {
     "goal": "...",
     "core_20": ["..."],
+    "daily_minutes": 30,
+    "durations": {
+      "learning": "约 7 天",
+      "practice": "约 4 周",
+      "application": "长尾"
+    },
     "phases": {
       "learning": {
         "title": "学习期",
+        "duration": "约 7 天",
         "summary": "...",
         "activities": [{"title":"...","description":"...","activity_type":"learn"}]
       },
       "practice": {
         "title": "练习期",
+        "duration": "约 4 周",
         "summary": "...",
         "activities": [{"title":"...","description":"...","activity_type":"practice"}]
       },
       "application": {
         "title": "应用期",
+        "duration": "长尾",
         "summary": "...",
         "activities": [{"title":"...","description":"...","activity_type":"apply"}]
       }
-    },
-    "daily_minutes": 30
+    }
   }
 - 冷启动锁定时：仅将 learning 阶段设为当前可执行；practice/application 先作为骨架保留。
 """

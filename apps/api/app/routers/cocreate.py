@@ -12,6 +12,7 @@ from app.schemas import (
     CocreateMessageIn,
     CocreateSessionOut,
     CocreateStart,
+    PlanPrefs,
     ThemeOut,
 )
 from app.services import domain as domain_svc
@@ -44,10 +45,18 @@ def start_cocreate(
             CocreateSession.confirmed == False,  # noqa: E712
         )
     ).first()
-    if existing:
+    if existing and not body.force:
         return existing
+    if existing and body.force:
+        session.delete(existing)
+        session.commit()
 
-    seed = _seed_user_message(theme, body.kind)
+    seed = _seed_user_message(
+        theme,
+        body.kind,
+        resource_count=body.resource_count,
+        plan_prefs=body.plan_prefs,
+    )
     system = system_prompt_for(body.kind.value)
     context_msgs = [
         {
@@ -76,7 +85,11 @@ def start_cocreate(
         )
 
     if body.kind == CocreateKind.resources:
+        count = body.resource_count or 5
+        live_doc.setdefault("target_count", count)
         live_doc = _maybe_enrich_weread(settings, live_doc)
+    elif body.kind == CocreateKind.plan and body.plan_prefs:
+        live_doc = _apply_plan_prefs(live_doc, body.plan_prefs)
 
     messages = [
         {"role": "user", "content": seed},
@@ -137,17 +150,23 @@ def post_message(
 
     system = system_prompt_for(kind.value)
     llm_messages = [{"role": m["role"], "content": m["content"]} for m in messages]
-    llm_messages.append(
-        {
-            "role": "user",
-            "content": (
-                "额外上下文：主题="
-                f"{theme.title}；类型={theme.theme_type.value}；目标={theme.goal}。"
-                f"当前 live_doc={row.live_doc}。"
-                '请返回 JSON：{"assistant_message":"...","live_doc":{...}}'
-            ),
-        }
+    extra = (
+        "额外上下文：主题="
+        f"{theme.title}；类型={theme.theme_type.value}；目标={theme.goal}。"
+        f"当前 live_doc={row.live_doc}。"
+        '请返回 JSON：{"assistant_message":"...","live_doc":{...}}'
     )
+    if kind == CocreateKind.resources:
+        extra += (
+            " 若用户本轮要求调整资料数量，必须把 live_doc.resources 与 order "
+            "严格改成该数量，并更新 target_count；禁止继续输出固定 5 条。"
+        )
+    if kind == CocreateKind.plan:
+        extra += (
+            " 若用户本轮调整了学/练/用时长或每天分钟数，同步更新 durations、"
+            "各 phase.duration、daily_minutes，并按新节奏重排 activities。"
+        )
+    llm_messages.append({"role": "user", "content": extra})
 
     try:
         result = chat_json(
@@ -223,29 +242,58 @@ def confirm_cocreate(
     return theme
 
 
-def _seed_user_message(theme: Theme, kind: CocreateKind) -> str:
+def _seed_user_message(
+    theme: Theme,
+    kind: CocreateKind,
+    *,
+    resource_count: int | None = None,
+    plan_prefs: PlanPrefs | None = None,
+) -> str:
     base = f"主题：{theme.title}\n类型：{theme.theme_type.value}\n目标：{theme.goal or '（未填）'}"
     if kind == CocreateKind.stage:
         return f"{base}\n请为该主题生成 5 级学习阶梯初稿。"
     if kind == CocreateKind.resources:
         ladder = theme.ladder_doc or {}
         level = theme.current_ladder_level
+        count = resource_count or 5
         return (
             f"{base}\n当前阶梯级别：{level}\n阶梯摘要：{ladder}\n"
-            "请筛选 5 个高杠杆学习资料初稿。"
+            f"请筛选 {count} 个高杠杆学习资料初稿。"
+            "若后续对话要求增减数量，以最新要求为准，不要锁死在默认值。"
             + ("优先考虑微信读书可读书籍。" if theme.theme_type.value == "general" else "")
         )
-    # plan
+    prefs = plan_prefs or PlanPrefs()
     return (
         f"{base}\n当前阶梯级别：{theme.current_ladder_level}\n"
         f"资料清单：{theme.resources_doc}\n"
-        "请生成学/练/用三阶段计划初稿，约 30 分钟/天。"
+        "请按以下用户选定的节奏生成学/练/用三阶段计划初稿：\n"
+        f"- 学习期：{prefs.learning_duration}\n"
+        f"- 练习期：{prefs.practice_duration}\n"
+        f"- 应用期：{prefs.application_duration}\n"
+        f"- 每天约 {prefs.daily_minutes} 分钟\n"
+        "activities 数量与摘要必须匹配上述时长。"
     )
 
 
-def _mentions_weread(text: str) -> bool:
-    t = text.lower()
-    return "微信读书" in text or "weread" in t or "微信" in text
+def _apply_plan_prefs(live_doc: dict[str, Any], prefs: PlanPrefs) -> dict[str, Any]:
+    out = dict(live_doc)
+    out["daily_minutes"] = prefs.daily_minutes
+    out["durations"] = {
+        "learning": prefs.learning_duration,
+        "practice": prefs.practice_duration,
+        "application": prefs.application_duration,
+    }
+    phases = out.get("phases")
+    if isinstance(phases, dict):
+        phases = dict(phases)
+        for key, duration in out["durations"].items():
+            phase = phases.get(key)
+            if isinstance(phase, dict):
+                phase = dict(phase)
+                phase.setdefault("duration", duration)
+                phases[key] = phase
+        out["phases"] = phases
+    return out
 
 
 def _maybe_enrich_weread(settings: Settings, live_doc: dict[str, Any]) -> dict[str, Any]:

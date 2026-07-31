@@ -12,7 +12,7 @@ from app.config import Settings
 def get_llm_client(settings: Settings) -> OpenAI:
     if not settings.deepseek_api_key:
         raise RuntimeError(
-            "未配置 DEEPSEEK_API_KEY。请在仓库根目录 .env 中设置后重启 API。"
+            "未配置 DEEPSEEK_API_KEY。请在设置页配置，或在仓库根目录 .env 中设置后重启 API。"
         )
     return OpenAI(
         api_key=settings.deepseek_api_key,
@@ -71,6 +71,7 @@ def normalize_cocreate_result(kind: str, result: dict[str, Any]) -> dict[str, An
             "assistant_message": assistant or "已筛出高杠杆资料初稿，可继续加约束。",
             "live_doc": {
                 "constraints": result.get("constraints") or [],
+                "target_count": result.get("target_count") or len(result["resources"]),
                 "resources": result["resources"],
                 "order": result.get("order") or list(range(len(result["resources"]))),
                 "path_7d": result.get("path_7d") or "",
@@ -79,12 +80,20 @@ def normalize_cocreate_result(kind: str, result: dict[str, Any]) -> dict[str, An
     if kind == "plan" and (
         isinstance(result.get("phases"), dict) or isinstance(result.get("core_20"), list)
     ):
+        phases = result.get("phases") or {}
+        durations = result.get("durations") or {}
+        if isinstance(phases, dict):
+            for key in ("learning", "practice", "application"):
+                phase = phases.get(key)
+                if isinstance(phase, dict) and phase.get("duration") and key not in durations:
+                    durations[key] = phase["duration"]
         return {
             "assistant_message": assistant or "已生成学/练/用三阶段计划初稿。",
             "live_doc": {
                 "goal": result.get("goal") or "",
                 "core_20": result.get("core_20") or [],
-                "phases": result.get("phases") or {},
+                "phases": phases,
+                "durations": durations,
                 "daily_minutes": result.get("daily_minutes") or 30,
             },
         }

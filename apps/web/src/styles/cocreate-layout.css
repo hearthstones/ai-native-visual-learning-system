@@ -773,3 +773,100 @@ img { display: block; }
   .doc-panel { min-height: 60vh; }
   body { overflow: auto; }
 }
+
+/* Pref chips + plan setup */
+.pref-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.pref-chips__label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+.pref-chip {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-neutral-l2);
+  background: var(--bg-overlay-l1);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+}
+.pref-chip:hover { background: var(--bg-overlay-l2); color: var(--text-default); }
+.pref-chip.is-active {
+  background: var(--bg-brand-popup, var(--bg-overlay-l3));
+  color: var(--text-brand, var(--text-default));
+  border-color: transparent;
+}
+.pref-chip--action {
+  background: var(--bg-overlay-l2);
+  color: var(--text-default);
+  font-weight: var(--font-weight-medium);
+}
+.pref-chip:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.pref-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  background: var(--bg-overlay-l1);
+  border: 1px solid var(--border-neutral-l1);
+  border-radius: var(--radius-8);
+}
+.pref-bar .pref-chips { margin-bottom: 0; flex: 1; }
+.pref-bar--plan {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+.pref-bar__cta {
+  align-self: flex-end;
+  height: 28px;
+}
+
+.plan-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 440px;
+}
+.plan-setup__title {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-default);
+}
+.plan-setup__desc {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.plan-setup__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.plan-setup__label {
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-tertiary);
+}
+.plan-setup__cta {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+.plan-setup-doc {
+  padding: 24px 8px;
+}
+.plan-setup .pref-chips {
+  margin-bottom: 0;
+}

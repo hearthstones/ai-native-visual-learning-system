@@ -86,6 +86,35 @@ export interface WeeklyReviewInput {
   draft_notes?: string
 }
 
+export interface PlanPrefs {
+  learning_duration: string
+  practice_duration: string
+  application_duration: string
+  daily_minutes: number
+}
+
+export interface StartCocreateOptions {
+  resource_count?: number
+  plan_prefs?: PlanPrefs
+  force?: boolean
+}
+
+export interface LlmSettings {
+  provider: string
+  deepseek_api_key_configured: boolean
+  deepseek_api_key_masked: string
+  deepseek_base_url: string
+  deepseek_model: string
+  model_options: Array<{ value: string; label: string }>
+  weread_configured: boolean
+}
+
+export interface LlmSettingsUpdate {
+  deepseek_api_key?: string
+  deepseek_base_url?: string
+  deepseek_model?: string
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
     headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
@@ -106,7 +135,13 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  health: () => request<{ ok: boolean; deepseek_configured: boolean; weread_configured: boolean }>('/api/health'),
+  health: () =>
+    request<{ ok: boolean; deepseek_configured: boolean; weread_configured: boolean; model?: string }>(
+      '/api/health',
+    ),
+  getSettings: () => request<LlmSettings>('/api/settings'),
+  updateSettings: (body: LlmSettingsUpdate) =>
+    request<LlmSettings>('/api/settings', { method: 'PATCH', body: JSON.stringify(body) }),
   home: () => request<HomeData>('/api/home'),
   slots: () => request<Record<string, { used: number; max: number }>>('/api/slots'),
   createTheme: (body: { title: string; theme_type: ThemeType; goal?: string }) =>
@@ -118,10 +153,10 @@ export const api = {
   ) => request<Theme>(`/api/themes/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
   advancePhase: (id: string) =>
     request<Theme>(`/api/themes/${id}/advance-phase`, { method: 'POST' }),
-  startCocreate: (themeId: string, kind: CocreateKind) =>
+  startCocreate: (themeId: string, kind: CocreateKind, options: StartCocreateOptions = {}) =>
     request<CocreateSession>(`/api/themes/${themeId}/cocreate/start`, {
       method: 'POST',
-      body: JSON.stringify({ kind }),
+      body: JSON.stringify({ kind, ...options }),
     }),
   getCocreate: (themeId: string, kind: CocreateKind) =>
     request<CocreateSession>(`/api/themes/${themeId}/cocreate/${kind}`),

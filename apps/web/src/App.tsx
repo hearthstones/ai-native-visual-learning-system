@@ -8,6 +8,7 @@ import { CreateInterceptPage } from './pages/CreateInterceptPage'
 import { CreateSummaryPage } from './pages/CreateSummaryPage'
 import { HomePage } from './pages/HomePage'
 import { ReviewPage } from './pages/ReviewPage'
+import { SettingsPage } from './pages/SettingsPage'
 import { ThemeOverviewPage } from './pages/ThemeOverviewPage'
 import { ThemePlanPage } from './pages/ThemePlanPage'
 import { ThemePracticePage } from './pages/ThemePracticePage'
@@ -30,6 +31,7 @@ export default function App() {
       <Routes>
         <Route element={<ShellLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="settings" element={<SettingsPage />} />
           <Route path="create" element={<CreateInfoPage />} />
           <Route path="create/intercept" element={<CreateInterceptPage />} />
           <Route path="create/:themeId/stage" element={<CocreatePage kind="stage" />} />

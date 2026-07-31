@@ -44,12 +44,40 @@ class ThemeOut(BaseModel):
         from_attributes = True
 
 
+class PlanPrefs(BaseModel):
+    """User-chosen durations before plan generation."""
+
+    learning_duration: str = "约 7 天"
+    practice_duration: str = "约 4 周"
+    application_duration: str = "长尾"
+    daily_minutes: int = Field(default=30, ge=10, le=180)
+
+
 class CocreateStart(BaseModel):
     kind: CocreateKind
+    resource_count: Optional[int] = Field(default=None, ge=1, le=20)
+    plan_prefs: Optional[PlanPrefs] = None
+    force: bool = False
 
 
 class CocreateMessageIn(BaseModel):
     content: str = Field(min_length=1)
+
+
+class SettingsUpdate(BaseModel):
+    deepseek_api_key: Optional[str] = None
+    deepseek_base_url: Optional[str] = None
+    deepseek_model: Optional[str] = None
+
+
+class SettingsOut(BaseModel):
+    provider: str
+    deepseek_api_key_configured: bool
+    deepseek_api_key_masked: str
+    deepseek_base_url: str
+    deepseek_model: str
+    model_options: list[dict[str, str]]
+    weread_configured: bool
 
 
 class CocreateConfirmIn(BaseModel):

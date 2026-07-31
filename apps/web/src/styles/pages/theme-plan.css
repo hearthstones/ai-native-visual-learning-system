@@ -1,28 +1,12 @@
 /* from prototype/pages/theme-plan.html (page-specific) */
-/* App shell layout */
+/* Page layout only — shell 由 shared.css 负责，勿再声明 .app-shell */
 body { background: var(--bg-base-default); margin: 0; font-family: var(--body-base-font-family); color: var(--text-default); }
 .ds-stack-8 { display: flex; flex-direction: column; gap: var(--spacer-8); }
-.app-shell {
-  display: grid;
-  grid-template-columns: 48px 1fr;
-  grid-template-rows: 40px 1fr;
-  height: 100vh;
-  overflow: hidden;
-}
-.app-shell > .ds-wbtitlebar { grid-column: 1 / -1; }
-.app-main { overflow-y: auto; background: var(--bg-base-default); }
 
 /* Two-column layout */
 .phase-main { display: grid; grid-template-columns: 65% 35%; height: 100%; overflow: hidden; }
 
-/* Override shared-components 720px — keep desktop layout until 600px */
-@media (max-width: 720px) {
-  .app-shell { grid-template-columns: 48px 1fr; }
-  .ds-activityrail { display: inline-flex; }
-}
 @media (max-width: 600px) {
-  .app-shell { grid-template-columns: 1fr; }
-  .ds-activityrail { display: none; }
   .phase-main { grid-template-columns: 1fr; height: auto; overflow: visible; }
 }
 .phase-left { padding: var(--spacer-24); border-right: 1px solid var(--border-neutral-l1); overflow-y: auto; min-width: 0; }

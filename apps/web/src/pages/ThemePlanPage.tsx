@@ -1,7 +1,8 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type Theme, type ThemePhase } from '../lib/api'
+import { getCurrentLevel, getSliceItems, phaseZh } from '../lib/themeDoc'
 import '../styles/pages/theme-plan.css'
 
 const PHASES: Array<{ key: ThemePhase; label: string }> = [
@@ -11,13 +12,6 @@ const PHASES: Array<{ key: ThemePhase; label: string }> = [
 ]
 
 const SLOT_KEYS: ThemePhase[] = ['learning', 'practice', 'application']
-
-const DEMO_ITEMS = [
-  { id: 'a1', label: '阅读费曼学习法核心章节', desc: '理解以教代学的底层逻辑', checked: false },
-  { id: 'a2', label: '整理间隔重复卡片', desc: '将核心概念转化为 Anki 闪卡', checked: false },
-  { id: 'a3', label: '完成思维导图笔记', desc: '用思维导图串联知识结构', checked: true },
-  { id: 'a4', label: '录制讲解视频', desc: '用自己的话复述并录制 5 分钟讲解', checked: false },
-]
 
 function phaseIndex(phase: ThemePhase) {
   return PHASES.findIndex((p) => p.key === phase)
@@ -42,8 +36,19 @@ export function ThemePlanPage() {
   const [focusWarnOpen, setFocusWarnOpen] = useState(false)
   const [focusErrorOpen, setFocusErrorOpen] = useState(false)
   const [slotFullOpen, setSlotFullOpen] = useState(false)
-  const [items, setItems] = useState(DEMO_ITEMS)
+  const [checked, setChecked] = useState<Record<string, boolean>>({})
   const [archiveOpen, setArchiveOpen] = useState(false)
+
+  const sliceItems = useMemo(() => getSliceItems(theme), [theme])
+  const items = useMemo(
+    () =>
+      sliceItems.map((item, i) => ({
+        ...item,
+        checked: checked[item.id] ?? i === 0,
+      })),
+    [sliceItems, checked],
+  )
+  const currentLevel = useMemo(() => getCurrentLevel(theme), [theme])
 
   async function load() {
     const [t, home, s] = await Promise.all([api.getTheme(themeId), api.home(), api.slots()])
@@ -175,7 +180,10 @@ export function ThemePlanPage() {
             <div className="slice-card">
               <div className="slice-card__head">
                 <div className="slice-card__head-left">
-                  <span className="slice-card__title">{phaseLabel}计划</span>
+                  <span className="slice-card__title">
+                    {phaseLabel}计划
+                    {currentLevel ? ` · L${currentLevel.level}` : ''}
+                  </span>
                   <span className="ds-tag ds-tag--brand">进行中</span>
                 </div>
                 <span
@@ -186,6 +194,11 @@ export function ThemePlanPage() {
                 </span>
               </div>
               <div className="slice-card__body ds-stack-8">
+                {items.length === 0 ? (
+                  <p className="text-tertiary" style={{ fontSize: 12, margin: 0 }}>
+                    暂无计划条目。完成阶梯共创后，这里会展示当前级别的练习与里程碑。
+                  </p>
+                ) : null}
                 {items.map((item) => (
                   <div
                     key={item.id}
@@ -196,11 +209,10 @@ export function ThemePlanPage() {
                         type="checkbox"
                         checked={item.checked}
                         onChange={() => {
-                          setItems((prev) =>
-                            prev.map((it) =>
-                              it.id === item.id ? { ...it, checked: !it.checked } : it,
-                            ),
-                          )
+                          setChecked((prev) => ({
+                            ...prev,
+                            [item.id]: !item.checked,
+                          }))
                         }}
                       />
                       <span className="ds-check__box" />
@@ -265,16 +277,24 @@ export function ThemePlanPage() {
               </div>
               <div className={`archive-section__body${archiveOpen ? ' is-open' : ''}`}>
                 <div className="archive-section__inner ds-stack-8">
-                  <div className="checklist-item is-checked">
-                    <label className="ds-check checklist-item__check">
-                      <input type="checkbox" checked disabled />
-                      <span className="ds-check__box" />
-                    </label>
-                    <div className="checklist-item__content">
-                      <span className="checklist-item__label">阅读《矛盾论》原文</span>
-                      <span className="checklist-item__desc">通读毛泽东《矛盾论》全文</span>
+                  {theme.goal ? (
+                    <div className="checklist-item is-checked">
+                      <label className="ds-check checklist-item__check">
+                        <input type="checkbox" checked disabled />
+                        <span className="ds-check__box" />
+                      </label>
+                      <div className="checklist-item__content">
+                        <span className="checklist-item__label">{theme.goal}</span>
+                        <span className="checklist-item__desc">
+                          {phaseZh.learning}目标 · 已锁定基线
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <p className="text-tertiary" style={{ fontSize: 12, margin: 0 }}>
+                      暂无归档条目
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

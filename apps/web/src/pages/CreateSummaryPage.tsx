@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type DailyTask, type Theme } from '../lib/api'
+import { getCoreConcepts, phaseZh } from '../lib/themeDoc'
 import '../styles/pages/create-summary.css'
 
 const typeLabel: Record<string, string> = {
@@ -29,8 +30,7 @@ export function CreateSummaryPage() {
         ])
         if (cancelled) return
         setTheme(t)
-        const today = (home?.today_tasks || []).filter((task) => task.theme_id === themeId)
-        setTasks(today)
+        setTasks((home?.today_tasks || []).filter((task) => task.theme_id === themeId))
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e))
       } finally {
@@ -60,18 +60,13 @@ export function CreateSummaryPage() {
     )
   }
 
+  const phaseLabel = phaseZh[theme.phase]
   const displayTasks: Array<{ id: string; title: string }> = tasks.length
     ? tasks
-    : [
-        { id: '1', title: '开始今日第一项学习任务' },
-        { id: '2', title: '用费曼法复述一条核心概念' },
-      ]
+    : [{ id: '1', title: `开始「${theme.title}」今日第一项任务` }]
 
-  const concepts = (() => {
-    const levels = (theme.ladder_doc?.levels as Array<{ concepts?: string[] }>) || []
-    const flat = levels.flatMap((l) => l.concepts || [])
-    return flat.length ? flat.slice(0, 5).join(' · ') : theme.goal || '计划已就绪'
-  })()
+  const concepts = getCoreConcepts(theme)
+  const conceptLine = concepts.length ? concepts.join(' · ') : theme.goal || '计划已就绪'
 
   return (
     <div className="overview-first-page">
@@ -81,7 +76,7 @@ export function CreateSummaryPage() {
         </div>
         <h1 className="lock-notice__title">计划已锁定</h1>
         <p className="lock-notice__subtitle">
-          「{theme.title}」的学习计划已就绪。每天约 30 分钟，开始你的学习期。
+          「{theme.title}」的学习计划已就绪。每天约 30 分钟，开始你的{phaseLabel}。
         </p>
       </section>
 
@@ -112,9 +107,9 @@ export function CreateSummaryPage() {
       </section>
 
       <section className="core-oneliner">
-        <div className="core-oneliner__text">核心：{concepts}</div>
+        <div className="core-oneliner__text">核心：{conceptLine}</div>
         <div className="core-oneliner__meta">
-          {typeLabel[theme.theme_type] || theme.theme_type} · 学习期
+          {typeLabel[theme.theme_type] || theme.theme_type} · {phaseLabel}
           {theme.current_ladder_level ? ` · L${theme.current_ladder_level}` : ''}
         </div>
         <Link

@@ -1,22 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type DailyTask, type Theme, type ThemePhase } from '../lib/api'
+import {
+  coreStatus,
+  getCoreConcepts,
+  getCurrentLevel,
+  getSelectedLevel,
+  phaseZh,
+} from '../lib/themeDoc'
 import '../styles/pages/theme-overview.css'
-
-const phaseZh: Record<ThemePhase, string> = {
-  learning: '学习期',
-  practice: '练习期',
-  application: '应用期',
-}
-
-const CORE_ITEMS = [
-  { name: '主动阅读四问', status: 'done' as const, label: '已掌握' },
-  { name: '检视阅读 vs 分析阅读', status: 'good' as const, label: '良好', current: true },
-  { name: '刻意练习三要素', status: 'done' as const, label: '已掌握' },
-  { name: '费曼学习法', status: 'weak' as const, label: '待加强' },
-  { name: '间隔重复与主动回忆', status: 'weak' as const, label: '待加强' },
-]
 
 export function ThemeOverviewPage() {
   const { themeId = '' } = useParams()
@@ -38,6 +31,16 @@ export function ThemeOverviewPage() {
     })()
   }, [themeId])
 
+  const cores = useMemo(() => {
+    if (!theme) return []
+    const concepts = getCoreConcepts(theme, 5)
+    const selected = getSelectedLevel(theme)
+    return concepts.map((name, i) => ({
+      name,
+      ...coreStatus(i, concepts.length, selected),
+    }))
+  }, [theme])
+
   if (error) {
     return (
       <div className="ov-page">
@@ -54,14 +57,16 @@ export function ThemeOverviewPage() {
   }
 
   const phaseLabel = phaseZh[theme.phase]
-  const displayTasks =
-    tasks.length > 0
-      ? tasks
-      : [
-          { id: 'demo-1', title: '检视阅读《如何阅读一本书》第 2 章' },
-          { id: 'demo-2', title: '用费曼法复述「检视阅读 vs 分析阅读」' },
-        ]
+  const level = getCurrentLevel(theme)
+  const doneCores = cores.filter((c) => c.status === 'done' || c.status === 'good').length
+  const currentCore = cores.find((c) => c.current)?.name || cores[0]?.name
   const stepActive = (key: ThemePhase) => theme.phase === key
+  const demoLabel =
+    theme.phase === 'practice'
+      ? '演示：练习期看板'
+      : theme.phase === 'application'
+        ? '演示：应用期看板'
+        : '演示：切换到练习期看板'
 
   return (
     <div className="ov-page">
@@ -71,37 +76,56 @@ export function ThemeOverviewPage() {
         <h1 className="ov-identity__title">{theme.title}</h1>
         <div className="ov-identity__meta">
           <span className="ds-tag ds-tag--brand">{phaseLabel}</span>
-          <span className="ov-identity__goal">{theme.goal || '建立阅读方法论框架'}</span>
+          <span className="ov-identity__goal">{theme.goal || level?.understand || '围绕主题持续推进'}</span>
         </div>
       </header>
 
       <section className="ov-progress">
         <div className="ov-progress__track">
-          <div className="ov-progress__fill" style={{ width: '43%' }} />
+          <div
+            className="ov-progress__fill"
+            style={{
+              width: `${cores.length ? Math.round((doneCores / cores.length) * 100) : 20}%`,
+            }}
+          />
         </div>
         <div className="ov-progress__meta">
-          <span>
-            第 <span className="mono">3/7</span> 天
-          </span>
-          <span className="ov-sep">·</span>
+          {level ? (
+            <>
+              <span>
+                L<span className="mono">{level.level}</span> · {level.name}
+              </span>
+              <span className="ov-sep">·</span>
+            </>
+          ) : null}
           <span>每天约 30 分钟</span>
           <span className="ov-sep">·</span>
           <span>
-            核心 <span className="mono">3/5</span>
+            核心{' '}
+            <span className="mono">
+              {doneCores}/{cores.length || 0}
+            </span>
           </span>
         </div>
       </section>
 
       <section className="ov-cta">
         <div className="ov-cta__body">
-          <div className="ov-cta__label">今日任务 · {displayTasks.length} 项</div>
+          <div className="ov-cta__label">今日任务 · {tasks.length} 项</div>
           <div className="ov-cta__tasks">
-            {displayTasks.map((task, i) => (
-              <div key={task.id} className="ov-cta__task">
-                <span className="ov-cta__idx mono">{String(i + 1).padStart(2, '0')}</span>
-                <span>{task.title}</span>
+            {tasks.length === 0 ? (
+              <div className="ov-cta__task">
+                <span className="ov-cta__idx mono">—</span>
+                <span>今天还没有该主题任务</span>
               </div>
-            ))}
+            ) : (
+              tasks.map((task, i) => (
+                <div key={task.id} className="ov-cta__task">
+                  <span className="ov-cta__idx mono">{String(i + 1).padStart(2, '0')}</span>
+                  <span>{task.title}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
         <Link
@@ -117,28 +141,39 @@ export function ThemeOverviewPage() {
       <section className="ov-map">
         <div className="ov-map__head">
           <span className="ov-map__title">核心掌握</span>
-          <span className="ov-map__count mono">3/5</span>
+          <span className="ov-map__count mono">
+            {doneCores}/{cores.length || 0}
+          </span>
         </div>
-        <div className="ov-map__bar">
-          <div className="ov-map__seg ov-map__seg--done" />
-          <div className="ov-map__seg ov-map__seg--good" />
-          <div className="ov-map__seg ov-map__seg--done" />
-          <div className="ov-map__seg ov-map__seg--weak" />
-          <div className="ov-map__seg ov-map__seg--weak" />
-        </div>
-        <ul className="ov-core-list">
-          {CORE_ITEMS.map((item) => (
-            <li
-              key={item.name}
-              className={`ov-core ov-core--${item.status}${item.current ? ' ov-core--current' : ''}`}
-            >
-              <span className="ov-core__dot" />
-              <span className="ov-core__name">{item.name}</span>
-              <span className={`ov-core__label ov-core__label--${item.status}`}>{item.label}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="ov-map__hint">今日任务关联「检视阅读 vs 分析阅读」</div>
+        {cores.length > 0 ? (
+          <>
+            <div className="ov-map__bar">
+              {cores.map((item) => (
+                <div
+                  key={item.name}
+                  className={`ov-map__seg ov-map__seg--${item.status}`}
+                />
+              ))}
+            </div>
+            <ul className="ov-core-list">
+              {cores.map((item) => (
+                <li
+                  key={item.name}
+                  className={`ov-core ov-core--${item.status}${item.current ? ' ov-core--current' : ''}`}
+                >
+                  <span className="ov-core__dot" />
+                  <span className="ov-core__name">{item.name}</span>
+                  <span className={`ov-core__label ov-core__label--${item.status}`}>{item.label}</span>
+                </li>
+              ))}
+            </ul>
+            {currentCore ? (
+              <div className="ov-map__hint">今日聚焦「{currentCore}」</div>
+            ) : null}
+          </>
+        ) : (
+          <div className="ov-map__hint">完成阶梯共创后，这里会展示核心概念掌握情况</div>
+        )}
       </section>
 
       <section className="ov-aux">
@@ -183,7 +218,7 @@ export function ThemeOverviewPage() {
           className="ov-demo__link"
           data-dom-id="btn-demo-practice"
         >
-          演示：切换到练习期
+          {demoLabel}
           <Icon name="arrow-right" size={12} />
         </Link>
       </div>

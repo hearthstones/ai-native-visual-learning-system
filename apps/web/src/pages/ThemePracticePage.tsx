@@ -1,28 +1,43 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
-import { api, type Theme } from '../lib/api'
+import { api, type DailyTask, type Theme } from '../lib/api'
+import {
+  coreStatus,
+  getCoreConcepts,
+  getCurrentLevel,
+  getSelectedLevel,
+  phaseZh,
+} from '../lib/themeDoc'
 import '../styles/pages/theme-practice.css'
-
-const CORE_ITEMS = [
-  { name: '主动阅读四问', status: 'done' as const, label: '已掌握' },
-  { name: '检视阅读 vs 分析阅读', status: 'done' as const, label: '已掌握' },
-  { name: '刻意练习三要素', status: 'done' as const, label: '已掌握' },
-  { name: '费曼学习法', status: 'done' as const, label: '已掌握' },
-  { name: '间隔重复与主动回忆', status: 'weak' as const, label: '待加强' },
-]
 
 export function ThemePracticePage() {
   const { themeId = '' } = useParams()
   const [theme, setTheme] = useState<Theme | null>(null)
+  const [tasks, setTasks] = useState<DailyTask[]>([])
   const [error, setError] = useState('')
 
   useEffect(() => {
-    void api
-      .getTheme(themeId)
-      .then(setTheme)
-      .catch((e) => setError(e instanceof Error ? e.message : String(e)))
+    void (async () => {
+      try {
+        const [t, home] = await Promise.all([api.getTheme(themeId), api.home()])
+        setTheme(t)
+        setTasks(home.today_tasks.filter((x) => x.theme_id === themeId))
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e))
+      }
+    })()
   }, [themeId])
+
+  const cores = useMemo(() => {
+    if (!theme) return []
+    const concepts = getCoreConcepts(theme, 5)
+    const selected = getSelectedLevel(theme)
+    return concepts.map((name, i) => ({
+      name,
+      ...coreStatus(i, concepts.length, selected),
+    }))
+  }, [theme])
 
   if (error) {
     return (
@@ -39,43 +54,65 @@ export function ThemePracticePage() {
     )
   }
 
+  const phaseLabel = phaseZh[theme.phase]
+  const level = getCurrentLevel(theme)
+  const doneCores = cores.filter((c) => c.status === 'done' || c.status === 'good').length
+  const displayTasks =
+    tasks.length > 0
+      ? tasks
+      : level?.exercise
+        ? [{ id: 'ex', title: level.exercise }]
+        : [{ id: 'empty', title: `继续推进「${theme.title}」的练习` }]
+
   return (
     <div className="ov-page">
       <header className="ov-identity">
         <h1 className="ov-identity__title">{theme.title}</h1>
         <div className="ov-identity__meta">
-          <span className="ds-tag ds-tag--brand">练习期</span>
+          <span className="ds-tag ds-tag--brand">{phaseLabel}</span>
           <span className="ov-identity__goal">{theme.goal || '在真实场景中刻意练习'}</span>
         </div>
       </header>
 
       <section className="ov-progress">
         <div className="ov-progress__track">
-          <div className="ov-progress__fill" style={{ width: '50%' }} />
+          <div
+            className="ov-progress__fill"
+            style={{
+              width: `${cores.length ? Math.round((doneCores / cores.length) * 100) : 40}%`,
+            }}
+          />
         </div>
         <div className="ov-progress__meta">
-          <span>练习期</span>
+          <span>{phaseLabel}</span>
+          {level ? (
+            <>
+              <span className="ov-sep">·</span>
+              <span>
+                L<span className="mono">{level.level}</span> · {level.name}
+              </span>
+            </>
+          ) : null}
           <span className="ov-sep">·</span>
           <span>
-            第 <span className="mono">2/4</span> 周
-          </span>
-          <span className="ov-sep">·</span>
-          <span>已完成学习期</span>
-          <span className="ov-sep">·</span>
-          <span>
-            核心 <span className="mono">4/5</span>
+            核心{' '}
+            <span className="mono">
+              {doneCores}/{cores.length || 0}
+            </span>
           </span>
         </div>
       </section>
 
       <section className="ov-cta">
         <div className="ov-cta__body">
-          <div className="ov-cta__label">今日任务 · 1 项</div>
+          <div className="ov-cta__label">今日任务 · {displayTasks.length} 项</div>
           <div className="ov-cta__tasks">
-            <div className="ov-cta__task">
-              <span className="ov-cta__idx mono">01</span>
-              <span>用费曼法向同事讲解阅读四问（约 20 分钟）</span>
-            </div>
+            {displayTasks.map((task, i) => (
+              <div key={task.id} className="ov-cta__task">
+                <span className="ov-cta__idx mono">{String(i + 1).padStart(2, '0')}</span>
+                <span>{task.title}</span>
+              </div>
+            ))}
           </div>
         </div>
         <Link
@@ -93,64 +130,88 @@ export function ThemePracticePage() {
           <span className="ov-map__title">学习路径</span>
         </div>
         <div className="ov-path">
-          <div className="ov-path__stage ov-path__stage--done">
+          <div
+            className={`ov-path__stage${
+              theme.phase === 'learning' ? ' ov-path__stage--current' : ' ov-path__stage--done'
+            }`}
+          >
             <div className="ov-path__stage-head">
-              <img
-                src="/icons/check-circle.svg"
-                width={16}
-                height={16}
-                alt=""
-                style={{ filter: 'brightness(0.6)' }}
-              />
               <span className="ov-path__stage-name">学</span>
             </div>
             <div className="ov-path__stage-label">学习期</div>
-            <div className="ov-path__stage-meta">已完成</div>
+            <div className="ov-path__stage-meta">
+              {theme.phase === 'learning' ? '当前' : '已完成 / 可回顾'}
+            </div>
           </div>
           <div className="ov-path__connector">
             <Icon name="arrow-right" size={12} />
           </div>
-          <div className="ov-path__stage ov-path__stage--current">
+          <div
+            className={`ov-path__stage${
+              theme.phase === 'practice'
+                ? ' ov-path__stage--current'
+                : theme.phase === 'application'
+                  ? ' ov-path__stage--done'
+                  : ' ov-path__stage--upcoming'
+            }`}
+          >
             <div className="ov-path__stage-head">
               <span className="ov-path__stage-dot" />
               <span className="ov-path__stage-name">练</span>
             </div>
             <div className="ov-path__stage-label">练习期</div>
             <div className="ov-path__stage-meta">
-              当前 · 第 <span className="mono">2/4</span> 周
+              {theme.phase === 'practice' ? '当前' : theme.phase === 'application' ? '已完成' : '未开始'}
             </div>
           </div>
           <div className="ov-path__connector">
             <Icon name="arrow-right" size={12} />
           </div>
-          <div className="ov-path__stage ov-path__stage--upcoming">
+          <div
+            className={`ov-path__stage${
+              theme.phase === 'application' ? ' ov-path__stage--current' : ' ov-path__stage--upcoming'
+            }`}
+          >
             <div className="ov-path__stage-head">
               <span className="ov-path__stage-dot ov-path__stage-dot--hollow" />
               <span className="ov-path__stage-name">用</span>
             </div>
             <div className="ov-path__stage-label">应用期</div>
-            <div className="ov-path__stage-meta">未开始</div>
+            <div className="ov-path__stage-meta">
+              {theme.phase === 'application' ? '当前' : '未开始'}
+            </div>
           </div>
         </div>
-        <div className="ov-map__hint">练习期 · 每周 1-2 次刻意练习，巩固核心方法</div>
+        <div className="ov-map__hint">
+          {level?.mastery || `${phaseLabel} · 围绕「${theme.title}」巩固核心方法`}
+        </div>
       </section>
 
       <section className="ov-aux">
-        <details className="ov-aux-core">
+        <details className="ov-aux-core" open>
           <summary>
             <span className="ov-aux-core__label">
-              核心掌握 <span className="mono">4/5</span>
+              核心掌握{' '}
+              <span className="mono">
+                {doneCores}/{cores.length || 0}
+              </span>
             </span>
             <Icon name="chevron-right" size={12} className="ov-aux-core__chevron" />
           </summary>
           <ul className="ov-core-list">
-            {CORE_ITEMS.map((item) => (
-              <li key={item.name} className={`ov-core ov-core--${item.status}`}>
-                <span className="ov-core__dot" />
-                <span className="ov-core__name">{item.name}</span>
-                <span className={`ov-core__label ov-core__label--${item.status}`}>{item.label}</span>
+            {cores.length === 0 ? (
+              <li className="ov-core">
+                <span className="ov-core__name text-tertiary">暂无核心概念数据</span>
               </li>
-            ))}
+            ) : (
+              cores.map((item) => (
+                <li key={item.name} className={`ov-core ov-core--${item.status}`}>
+                  <span className="ov-core__dot" />
+                  <span className="ov-core__name">{item.name}</span>
+                  <span className={`ov-core__label ov-core__label--${item.status}`}>{item.label}</span>
+                </li>
+              ))
+            )}
           </ul>
         </details>
       </section>
@@ -168,12 +229,8 @@ export function ThemePracticePage() {
       </nav>
 
       <div className="ov-demo">
-        <Link
-          to={`/themes/${theme.id}`}
-          className="ov-demo__link"
-          data-dom-id="btn-demo-learning"
-        >
-          演示：切换到学习期
+        <Link to={`/themes/${theme.id}`} className="ov-demo__link" data-dom-id="btn-demo-learning">
+          返回主题概览
           <Icon name="arrow-right" size={12} />
         </Link>
       </div>

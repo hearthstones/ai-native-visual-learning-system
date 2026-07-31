@@ -15,9 +15,24 @@ img{display:block;}
 .app-shell{display:grid;grid-template-columns:48px 1fr;grid-template-rows:40px 1fr;height:100vh;overflow:hidden;}
 .app-shell>.ds-wbtitlebar{grid-column:1/-1;}
 .app-main{overflow-y:auto;background:var(--bg-base-default);}
-.app-shell--bare{display:block;grid-template-columns:unset;grid-template-rows:unset;}
-.app-main--bare{height:100%;min-height:100vh;overflow:auto;}
-.app-shell--cocreate .app-main--bare{overflow:hidden;height:100vh;}
+/* bare：无 titlebar/rail 时只有一个子节点，不能再用 48px|1fr，否则 main 会被挤进第一列。
+   使用 !important 防止各页 CSS 再次声明 .app-shell 覆盖（Vite 会全局注入页面样式）。 */
+.app-shell.app-shell--bare{
+  display:block !important;
+  grid-template-columns:none !important;
+  grid-template-rows:none !important;
+}
+.app-shell.app-shell--bare > .app-main--bare{
+  width:100% !important;
+  height:100%;
+  min-height:100vh;
+  overflow:auto;
+}
+.app-shell.app-shell--cocreate > .app-main--bare{
+  overflow:hidden !important;
+  height:100vh !important;
+  min-height:100vh;
+}
 
 /* ===== Window Titlebar ===== */
 .ds-wbtitlebar{display:flex;align-items:center;justify-content:space-between;gap:var(--spacer-12);height:40px;padding:0 var(--spacer-12);background:var(--bg-base-secondary);border-bottom:1px solid var(--border-neutral-l1);}

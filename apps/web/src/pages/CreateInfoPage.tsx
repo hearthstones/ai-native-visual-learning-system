@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type ThemeType } from '../lib/api'
+import { isLearningSlotFull } from '../lib/slots'
 import '../styles/pages/create-info.css'
 
 export function CreateInfoPage() {
@@ -20,9 +21,7 @@ export function CreateInfoPage() {
       .slots()
       .then((slots) => {
         if (cancelled) return
-        const used = slots.learning?.used ?? 0
-        const max = slots.learning?.max ?? 1
-        if (used >= max) {
+        if (isLearningSlotFull(slots)) {
           nav('/create/intercept', { replace: true })
           return
         }
@@ -46,9 +45,7 @@ export function CreateInfoPage() {
     setError('')
     try {
       const slots = await api.slots()
-      const used = slots.learning?.used ?? 0
-      const max = slots.learning?.max ?? 1
-      if (used >= max) {
+      if (isLearningSlotFull(slots)) {
         nav('/create/intercept', { replace: true })
         return
       }

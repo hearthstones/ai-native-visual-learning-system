@@ -2,16 +2,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type HomeData, type Theme } from '../lib/api'
-import { draftResumeLabel, draftResumePath, driftTitle } from '../lib/themeDoc'
+import { isLearningSlotFull, slotSummaryParts } from '../lib/slots'
+import { draftResumeLabel, draftResumePath, driftTitle, phaseZh } from '../lib/themeDoc'
 import '../styles/pages/home.css'
 import '../styles/pages/home-empty.css'
 import '../styles/pages/home-first.css'
-
-const phaseZh: Record<string, string> = {
-  learning: '学习期',
-  practice: '练习期',
-  application: '应用期',
-}
 
 const phaseTag: Record<string, string> = {
   learning: 'ds-tag ds-tag--brand',
@@ -35,12 +30,13 @@ function formatTodaySubtitle() {
 }
 
 function SlotBar({ slots }: { slots: HomeData['slots'] }) {
+  const parts = slotSummaryParts(slots)
   return (
     <div className="slot-bar">
       <span className="slot-bar__label">阶段槽位</span>
-      <span className="slot-bar__item">学 {slots.learning?.used ?? 0}/{slots.learning?.max ?? 1}</span>
-      <span className="slot-bar__item">练 {slots.practice?.used ?? 0}/{slots.practice?.max ?? 3}</span>
-      <span className="slot-bar__item">用 {slots.application?.used ?? 0}/{slots.application?.max ?? 5}</span>
+      <span className="slot-bar__item">学 {parts.learning}</span>
+      <span className="slot-bar__item">练 {parts.practice}</span>
+      <span className="slot-bar__item">用 {parts.application}</span>
     </div>
   )
 }
@@ -126,7 +122,8 @@ export function HomePage() {
 
   if (!data) return null
 
-  const learningFull = (data.slots.learning?.used ?? 0) >= (data.slots.learning?.max ?? 1)
+  const learningFull = isLearningSlotFull(data.slots)
+  const slotParts = slotSummaryParts(data.slots)
   const goCreate = () => nav(learningFull ? '/create/intercept' : '/create')
 
   /* ── 空态：home-empty ── */
@@ -172,9 +169,9 @@ export function HomePage() {
           )}
           <div className="home-empty__slots">
             <span className="home-empty__slots-label">阶段槽位</span>
-            <span>学 {data.slots.learning?.used ?? 0}/{data.slots.learning?.max ?? 1}</span>
-            <span>练 {data.slots.practice?.used ?? 0}/{data.slots.practice?.max ?? 3}</span>
-            <span>用 {data.slots.application?.used ?? 0}/{data.slots.application?.max ?? 5}</span>
+            <span>学 {slotParts.learning}</span>
+            <span>练 {slotParts.practice}</span>
+            <span>用 {slotParts.application}</span>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AppShell } from './components/AppShell'
 import { api } from './lib/api'
+import type { SlotMap } from './lib/slots'
 import { CocreatePage } from './pages/CocreatePage'
 import { CreateInfoPage } from './pages/CreateInfoPage'
 import { CreateInterceptPage } from './pages/CreateInterceptPage'
@@ -16,7 +17,7 @@ import { ThemesPage } from './pages/ThemesPage'
 import { ThemeWorkPage } from './pages/ThemeWorkPage'
 
 function ShellLayout() {
-  const [slots, setSlots] = useState<Record<string, { used: number; max: number }>>()
+  const [slots, setSlots] = useState<SlotMap>()
   const location = useLocation()
 
   useEffect(() => {

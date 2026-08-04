@@ -3,6 +3,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
+from app import plan_defaults
 from app.models import (
     CocreateKind,
     ThemePhase,
@@ -48,10 +49,10 @@ class ThemeOut(BaseModel):
 class PlanPrefs(BaseModel):
     """User-chosen durations before plan generation."""
 
-    learning_duration: str = "10 节 × 2 小时"
-    practice_duration: str = "约 4 周"
-    application_duration: str = "长尾"
-    daily_minutes: int = Field(default=30, ge=10, le=180)
+    learning_duration: str = plan_defaults.DEFAULT_LEARNING_DURATION
+    practice_duration: str = plan_defaults.DEFAULT_PRACTICE_DURATION
+    application_duration: str = plan_defaults.DEFAULT_APPLICATION_DURATION
+    daily_minutes: int = Field(default=plan_defaults.DEFAULT_DAILY_MINUTES, ge=10, le=180)
 
 
 class CocreateStart(BaseModel):
@@ -163,7 +164,7 @@ class ActiveSliceOut(BaseModel):
     title: str = ""
     core_points: list[Any] = Field(default_factory=list)
     activities: list[ActivityOut] = Field(default_factory=list)
-    daily_minutes: int = 30
+    daily_minutes: int = plan_defaults.DEFAULT_DAILY_MINUTES
 
 
 class ActivityToggle(BaseModel):

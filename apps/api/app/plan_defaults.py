@@ -1,0 +1,6 @@
+"""计划共创默认节奏；schemas.PlanPrefs 与 cocreate seed 共用。"""
+
+DEFAULT_LEARNING_DURATION = "10 节 × 2 小时"
+DEFAULT_PRACTICE_DURATION = "约 4 周"
+DEFAULT_APPLICATION_DURATION = "长尾"
+DEFAULT_DAILY_MINUTES = 30

@@ -2,6 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type ActiveSlice, type Theme } from '../lib/api'
+import {
+  isLearningSlotFull,
+  slotMax,
+  slotUsed,
+  type SlotMap,
+} from '../lib/slots'
 import { getSliceItems } from '../lib/themeDoc'
 import '../styles/components.css'
 import '../styles/pages/create-intercept.css'
@@ -17,7 +23,7 @@ export function CreateInterceptPage() {
   const nav = useNavigate()
   const [theme, setTheme] = useState<Theme | null>(null)
   const [slice, setSlice] = useState<ActiveSlice | null>(null)
-  const [slots, setSlots] = useState<Record<string, { used: number; max: number }>>({})
+  const [slots, setSlots] = useState<SlotMap>({})
   const [choice, setChoice] = useState<Choice>('advance')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -32,9 +38,7 @@ export function CreateInterceptPage() {
         const home = await api.home()
         if (cancelled) return
         setSlots(home.slots)
-        const used = home.slots.learning?.used ?? 0
-        const max = home.slots.learning?.max ?? 1
-        if (used < max) {
+        if (!isLearningSlotFull(home.slots)) {
           nav('/create', { replace: true })
           return
         }
@@ -85,10 +89,9 @@ export function CreateInterceptPage() {
     }
   }
 
-  const learning = slots.learning
-  const used = learning?.used ?? 0
-  const max = learning?.max ?? 1
-  const full = used >= max
+  const used = slotUsed(slots, 'learning')
+  const max = slotMax(slots, 'learning')
+  const full = isLearningSlotFull(slots)
   const name = theme?.title ?? '当前主题'
 
   if (loading) {

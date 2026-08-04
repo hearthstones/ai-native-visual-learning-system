@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Icon } from './Icon'
+import { slotSummaryParts, type SlotMap } from '../lib/slots'
 
 function contextLabel(pathname: string) {
   if (pathname.startsWith('/settings')) return '设置'
@@ -14,26 +15,14 @@ function contextLabel(pathname: string) {
   return `${y}-${m}-${day} · 今天`
 }
 
-function SlotChip({
-  slots,
-}: {
-  slots?: Record<string, { used: number; max: number }>
-}) {
+function SlotChip({ slots }: { slots?: SlotMap }) {
   if (!slots) return null
-  const learning = slots.learning
-  const practice = slots.practice
-  const application = slots.application
+  const parts = slotSummaryParts(slots)
   return (
     <div className="shell-slots" title="阶段槽位">
-      <span className="shell-slots__item">
-        学 {learning?.used ?? 0}/{learning?.max ?? 1}
-      </span>
-      <span className="shell-slots__item">
-        练 {practice?.used ?? 0}/{practice?.max ?? 3}
-      </span>
-      <span className="shell-slots__item">
-        用 {application?.used ?? 0}/{application?.max ?? 5}
-      </span>
+      <span className="shell-slots__item">学 {parts.learning}</span>
+      <span className="shell-slots__item">练 {parts.practice}</span>
+      <span className="shell-slots__item">用 {parts.application}</span>
     </div>
   )
 }
@@ -43,7 +32,7 @@ export function AppShell({
   slots,
 }: {
   title?: string
-  slots?: Record<string, { used: number; max: number }>
+  slots?: SlotMap
 }) {
   const { pathname } = useLocation()
   const isCocreate = /^\/create\/[^/]+\/(stage|resources|plan)\/?$/.test(pathname)

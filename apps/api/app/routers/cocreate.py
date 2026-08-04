@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 
 from app.config import Settings, get_settings
 from app.db import get_session
+from app import plan_defaults
 from app.models import CocreateKind, CocreateSession, Theme
 from app.schemas import (
     CocreateConfirmIn,
@@ -291,7 +292,7 @@ def _seed_user_message(
             f"- 学习期：{plan_prefs.learning_duration}\n"
             f"- 练习期：{plan_prefs.practice_duration}\n"
             f"- 应用期：{plan_prefs.application_duration}\n"
-            f"- 练/用每天约 {plan_prefs.daily_minutes} 分钟（学习期若为「10 节 × 2 小时」则按每节 120 分钟）\n"
+            f"- 练/用每天约 {plan_prefs.daily_minutes} 分钟（学习期若为「{plan_defaults.DEFAULT_LEARNING_DURATION}」则按每节 120 分钟）\n"
             "activities 数量与摘要必须匹配上述时长。"
         )
     return (
@@ -299,9 +300,9 @@ def _seed_user_message(
         f"资料清单：{theme.resources_doc}\n"
         "请根据主题、目标、阶梯与资料，推荐学/练/用三阶段计划初稿。\n"
         "首轮节奏锚点（除非上下文强烈需要微调，否则按此）：\n"
-        "- 学习期：约 10 节 × 每节 2 小时\n"
-        "- 练习期：约 4 周，每天约 30 分钟\n"
-        "- 应用期：长尾，每天约 30 分钟\n"
+        f"- 学习期：{plan_defaults.DEFAULT_LEARNING_DURATION}\n"
+        f"- 练习期：{plan_defaults.DEFAULT_PRACTICE_DURATION}，每天约 {plan_defaults.DEFAULT_DAILY_MINUTES} 分钟\n"
+        f"- 应用期：{plan_defaults.DEFAULT_APPLICATION_DURATION}，每天约 {plan_defaults.DEFAULT_DAILY_MINUTES} 分钟\n"
         "在 assistant_message 里说明推荐理由，并邀请我提意见。"
     )
 

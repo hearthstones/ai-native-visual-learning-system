@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type ActiveSlice, type Theme, type ThemePhase } from '../lib/api'
 import { getCurrentLevel, getSliceItems, phaseZh } from '../lib/themeDoc'
+import { isSlotFull, MAX_FOCUS, slotMax, slotUsed, type SlotMap } from '../lib/slots'
 import '../styles/pages/theme-plan.css'
 
 const PHASES: Array<{ key: ThemePhase; label: string }> = [
@@ -23,7 +24,7 @@ export function ThemePlanPage() {
   const [theme, setTheme] = useState<Theme | null>(null)
   const [slice, setSlice] = useState<ActiveSlice | null>(null)
   const [themes, setThemes] = useState<Theme[]>([])
-  const [slots, setSlots] = useState<Record<string, { used: number; max: number }>>({})
+  const [slots, setSlots] = useState<SlotMap>({})
   const [drift, setDrift] = useState<
     Array<{ id: string; kind: string; message: string; theme_id: string | null; created_at: string }>
   >([])
@@ -133,7 +134,7 @@ export function ThemePlanPage() {
 
   function trySetFocus() {
     const focusCount = themes.filter((t) => t.is_focus && t.status === 'active').length
-    if (focusCount >= 3) {
+    if (focusCount >= MAX_FOCUS) {
       setFocusErrorOpen(true)
       return
     }
@@ -149,8 +150,7 @@ export function ThemePlanPage() {
     const idx = phaseIndex(theme.phase)
     if (idx >= PHASES.length - 1) return
     const next = PHASES[idx + 1]
-    const slot = slots[next.key]
-    if (slot && slot.used >= slot.max) {
+    if (isSlotFull(slots, next.key)) {
       setSlotFullOpen(true)
       return
     }
@@ -348,10 +348,10 @@ export function ThemePlanPage() {
             <div id="slotOverview">
               {SLOT_KEYS.map((key) => {
                 const phase = PHASES.find((p) => p.key === key)!
-                const used = slots[key]?.used ?? 0
-                const limit = slots[key]?.max ?? 1
+                const used = slotUsed(slots, key)
+                const limit = slotMax(slots, key)
                 const pct = Math.min((used / limit) * 100, 100)
-                const isFull = used >= limit
+                const isFull = isSlotFull(slots, key)
                 const occupying = occupyingByPhase(key)
                 return (
                   <div key={key} className="slot-card">

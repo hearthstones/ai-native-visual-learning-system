@@ -4,6 +4,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type Theme, type ThemeStatus } from '../lib/api'
 import { draftResumeLabel, draftResumePath, phaseZh } from '../lib/themeDoc'
+import { isLearningSlotFull, slotSummaryParts, type SlotMap } from '../lib/slots'
 import '../styles/pages/themes.css'
 
 type TabKey = ThemeStatus
@@ -130,7 +131,7 @@ export function ThemesPage() {
   const tab: TabKey = isTabKey(params.get('tab')) ? (params.get('tab') as TabKey) : 'active'
 
   const [themes, setThemes] = useState<Theme[]>([])
-  const [slots, setSlots] = useState<Record<string, { used: number; max: number }>>({})
+  const [slots, setSlots] = useState<SlotMap>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [ok, setOk] = useState('')
@@ -192,7 +193,8 @@ export function ThemesPage() {
 
   const historyCount = HISTORY_TABS.reduce((n, t) => n + counts[t.key], 0)
   const filtered = useMemo(() => themes.filter((t) => t.status === tab), [themes, tab])
-  const learningFull = (slots.learning?.used ?? 0) >= (slots.learning?.max ?? 1)
+  const learningFull = isLearningSlotFull(slots)
+  const slotParts = slotSummaryParts(slots)
 
   function setTab(next: TabKey) {
     const p = new URLSearchParams(params)
@@ -530,15 +532,9 @@ export function ThemesPage() {
 
       <div className="themes-slotbar">
         <span className="themes-slotbar__label">阶段槽位</span>
-        <span className="themes-slotbar__item">
-          学 {slots.learning?.used ?? 0}/{slots.learning?.max ?? 1}
-        </span>
-        <span className="themes-slotbar__item">
-          练 {slots.practice?.used ?? 0}/{slots.practice?.max ?? 3}
-        </span>
-        <span className="themes-slotbar__item">
-          用 {slots.application?.used ?? 0}/{slots.application?.max ?? 5}
-        </span>
+        <span className="themes-slotbar__item">学 {slotParts.learning}</span>
+        <span className="themes-slotbar__item">练 {slotParts.practice}</span>
+        <span className="themes-slotbar__item">用 {slotParts.application}</span>
       </div>
 
       {error ? <div className="error-banner">{error}</div> : null}

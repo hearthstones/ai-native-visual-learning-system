@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
+import { PlanDoc } from '../components/cocreate/PlanDoc'
+import { ResourcesDoc } from '../components/cocreate/ResourcesDoc'
+import { StageDoc } from '../components/cocreate/StageDoc'
 import {
   api,
   type CocreateKind,
@@ -9,17 +12,12 @@ import {
   type PlanPrefs,
   type Theme,
 } from '../lib/api'
+import { applyDurationsToPrefs, DEFAULT_PLAN_PREFS } from '../lib/planPrefs'
+import { formatSlotPair, isLearningSlotFull } from '../lib/slots'
 import '../styles/cocreate-layout.css'
 import '../styles/pages/create-stage.css'
 import '../styles/pages/create-resources.css'
 import '../styles/pages/create-plan.css'
-
-const DEFAULT_PLAN_PREFS: PlanPrefs = {
-  learning_duration: '10 节 × 2 小时',
-  practice_duration: '约 4 周',
-  application_duration: '长尾',
-  daily_minutes: 30,
-}
 
 const RESOURCE_SUGGESTIONS = [
   '我对这个主题很感兴趣，请再多给几份高质量参考资料',
@@ -82,21 +80,6 @@ const meta: Record<
 
 const stepOrder: CocreateKind[] = ['stage', 'resources', 'plan']
 
-function applyDurationsToPrefs(
-  liveDoc: Record<string, unknown>,
-  prev: PlanPrefs,
-): PlanPrefs {
-  const durations = liveDoc.durations as
-    | { learning?: string; practice?: string; application?: string }
-    | undefined
-  return {
-    learning_duration: durations?.learning || prev.learning_duration,
-    practice_duration: durations?.practice || prev.practice_duration,
-    application_duration: durations?.application || prev.application_duration,
-    daily_minutes: Number(liveDoc.daily_minutes) || prev.daily_minutes,
-  }
-}
-
 export function CocreatePage({ kind }: { kind: CocreateKind }) {
   const { themeId = '' } = useParams()
   const nav = useNavigate()
@@ -112,7 +95,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
   const [revisionMode, setRevisionMode] = useState(false)
   const [openedAt, setOpenedAt] = useState<Date | null>(null)
   const [planPrefs, setPlanPrefs] = useState<PlanPrefs>(DEFAULT_PLAN_PREFS)
-  const [slotBlocker, setSlotBlocker] = useState<Theme | null>(null)
+  const [slotBlocker, setSlotBlocker] = useState<{ theme: Theme; pair: string } | null>(null)
 
   useEffect(() => {
     void api.getTheme(themeId).then(setTheme).catch(() => setTheme(null))
@@ -128,12 +111,14 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
       .home()
       .then((home) => {
         if (cancelled) return
-        const used = home.slots.learning?.used ?? 0
-        const max = home.slots.learning?.max ?? 1
         const occupying = home.themes.find(
           (t) => t.status === 'active' && t.phase === 'learning' && t.id !== themeId,
         )
-        setSlotBlocker(used >= max && occupying ? occupying : null)
+        setSlotBlocker(
+          isLearningSlotFull(home.slots) && occupying
+            ? { theme: occupying, pair: formatSlotPair(home.slots, 'learning') }
+            : null,
+        )
       })
       .catch(() => {
         if (!cancelled) setSlotBlocker(null)
@@ -326,13 +311,25 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
             <span className="topic">{topic}</span>
           </div>
           <div className="titlebar__stepper">
-            <span className="titlebar__step is-done"><span className="dot" />信息</span>
+            <span className="titlebar__step is-done">
+              <span className="dot" />
+              信息
+            </span>
             <span className="titlebar__step-sep">·</span>
-            <span className={stepClass('stage')}><span className="dot" />阶梯</span>
+            <span className={stepClass('stage')}>
+              <span className="dot" />
+              阶梯
+            </span>
             <span className="titlebar__step-sep">·</span>
-            <span className={stepClass('resources')}><span className="dot" />资料</span>
+            <span className={stepClass('resources')}>
+              <span className="dot" />
+              资料
+            </span>
             <span className="titlebar__step-sep">·</span>
-            <span className={stepClass('plan')}><span className="dot" />计划</span>
+            <span className={stepClass('plan')}>
+              <span className="dot" />
+              计划
+            </span>
           </div>
         </div>
         <div className="titlebar__right">
@@ -368,7 +365,16 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
 
           <div className="chat-scroll">
             {showRevisionBanner ? (
-              <div className="error-banner" style={{ display: 'grid', gap: 8, background: 'var(--status-warning-surface-l1)', borderColor: 'var(--status-warning-surface-l2)', color: 'var(--text-default)' }}>
+              <div
+                className="error-banner"
+                style={{
+                  display: 'grid',
+                  gap: 8,
+                  background: 'var(--status-warning-surface-l1)',
+                  borderColor: 'var(--status-warning-surface-l2)',
+                  color: 'var(--text-default)',
+                }}
+              >
                 <div>本步已确认。可继续查看；若要重开共创请点「重新共创」</div>
                 <div>
                   <button
@@ -385,7 +391,8 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
             {slotBlocker ? (
               <div className="error-banner" style={{ display: 'grid', gap: 8 }}>
                 <div>
-                  学习槽位已被「{slotBlocker.title}」占用（1/1）。现在可以共创计划，但锁定前需先腾槽。
+                  学习槽位已被「{slotBlocker.theme.title}」占用（{slotBlocker.pair}
+                  ）。现在可以共创计划，但锁定前需先腾槽。
                 </div>
                 <div>
                   <button
@@ -421,7 +428,9 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                   {m.role === 'user' ? '我' : <Icon name="sparkles" size={16} className="icon" />}
                 </div>
                 <div className="msg__body">
-                  <div className="msg__bubble" style={{ whiteSpace: 'pre-wrap' }}>{m.content}</div>
+                  <div className="msg__bubble" style={{ whiteSpace: 'pre-wrap' }}>
+                    {m.content}
+                  </div>
                   <div className="msg__meta">
                     {m.role === 'user' ? '你' : 'AI 教练'} · {messageTimeLabel(i, messages.length)}
                   </div>
@@ -430,7 +439,9 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
             ))}
             {busy && session ? (
               <div className="msg msg--ai">
-                <div className="msg__avatar"><Icon name="sparkles" size={16} className="icon" /></div>
+                <div className="msg__avatar">
+                  <Icon name="sparkles" size={16} className="icon" />
+                </div>
                 <div className="msg__body">
                   <div className="msg__bubble">AI 教练思考中…</div>
                 </div>
@@ -438,7 +449,9 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
             ) : null}
             {busy && !session ? (
               <div className="msg msg--ai">
-                <div className="msg__avatar"><Icon name="sparkles" size={16} className="icon" /></div>
+                <div className="msg__avatar">
+                  <Icon name="sparkles" size={16} className="icon" />
+                </div>
                 <div className="msg__body">
                   <div className="msg__bubble">
                     {kind === 'resources'
@@ -507,7 +520,9 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           <div className="doc-head">
             <div className="doc-head__title">
               <Icon name="file-text" size={16} className="ic icon" />
-              <span>「{topic}」{info.title}</span>
+              <span>
+                「{topic}」{info.title}
+              </span>
             </div>
             <div className="doc-head__hint">
               {kind === 'resources' && session
@@ -551,317 +566,6 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           ) : null}
         </section>
       </main>
-    </>
-  )
-}
-
-function StageDoc({
-  levels,
-  selectedLevel,
-  onSelect,
-  readOnly = false,
-}: {
-  levels: Array<Record<string, unknown>>
-  selectedLevel: number | null
-  onSelect: (n: number) => void
-  readOnly?: boolean
-}) {
-  return (
-    <section className="doc-section">
-      <div className="doc-section__head">
-        <span className="doc-section__index">A</span>
-        <h3 className="doc-section__title">
-          <Icon name="layers" size={14} className="ic icon" />
-          学习阶梯定位
-        </h3>
-        <span className="ds-tag ds-tag--brand">{readOnly ? '已确认' : '点击选择'}</span>
-      </div>
-      <div className="ladder">
-        {levels.map((lv) => {
-          const level = Number(lv.level)
-          const selected = selectedLevel === level
-          const concepts = Array.isArray(lv.concepts) ? (lv.concepts as string[]).join('、') : ''
-          return (
-            <div
-              key={level}
-              className={`ladder__row${selected ? ' is-selected' : ''}`}
-              data-level={level}
-              onClick={readOnly ? undefined : () => onSelect(level)}
-              style={readOnly ? { cursor: 'default' } : undefined}
-            >
-              <div className="ladder__lvl">L{level}</div>
-              <div>
-                <div className="ladder__name">{String(lv.name || '')}</div>
-                <div className="ladder__desc">
-                  {lv.understand ? (
-                    <div className="row"><span className="k">理解：</span>{String(lv.understand)}</div>
-                  ) : null}
-                  {lv.mastery ? (
-                    <div className="row"><span className="k">掌握：</span>{String(lv.mastery)}</div>
-                  ) : null}
-                  {concepts ? (
-                    <div className="row"><span className="k">核心概念：</span>{concepts}</div>
-                  ) : null}
-                  {lv.milestone ? (
-                    <div className="row"><span className="k">里程碑：</span>{String(lv.milestone)}</div>
-                  ) : null}
-                  {lv.exercise ? (
-                    <div className="row"><span className="k">练习：</span>{String(lv.exercise)}</div>
-                  ) : null}
-                  {lv.self_check ? (
-                    <div className="row"><span className="k">自检：</span>{String(lv.self_check)}</div>
-                  ) : null}
-                </div>
-              </div>
-              <button
-                className="ladder__select-btn"
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onSelect(level)
-                }}
-              >
-                {selected ? '✓ 已选定' : '我在这里'}
-              </button>
-            </div>
-          )
-        })}
-        {!levels.length ? <p className="text-tertiary">等待阶梯生成…</p> : null}
-      </div>
-    </section>
-  )
-}
-
-function ResourcesDoc({ doc }: { doc: Record<string, unknown> }) {
-  const resources = (doc.resources as Array<Record<string, unknown>>) || []
-  const constraints = (doc.constraints as string[]) || []
-  const path7d = String(doc.path_7d || '')
-  const rationale = String(doc.rationale || '')
-
-  return (
-    <>
-      <section className="doc-section">
-        <div className="doc-section__head">
-          <span className="doc-section__index">A</span>
-          <h3 className="doc-section__title">资料范围</h3>
-          {constraints[0] ? (
-            <span className="ds-tag ds-tag--brand" style={{ marginLeft: 'auto' }}>{constraints[0]}</span>
-          ) : null}
-        </div>
-        <div className="constraint-tags">
-          {(constraints.length ? constraints : ['高杠杆优先']).map((c) => (
-            <span key={c} className="constraint-tag">{c}</span>
-          ))}
-        </div>
-        {rationale ? <p className="text-secondary" style={{ marginTop: 12, fontSize: 12 }}>{rationale}</p> : null}
-        {path7d ? <p className="text-secondary" style={{ marginTop: 8, fontSize: 12 }}>{path7d}</p> : null}
-      </section>
-
-      <section className="doc-section">
-        <div className="doc-section__head">
-          <span className="doc-section__index">B</span>
-          <h3 className="doc-section__title">学习资源（{resources.length} 份）</h3>
-          <span className="ds-tag" style={{ marginLeft: 'auto' }}>已排序</span>
-        </div>
-        <div className="resources">
-          {resources.map((r, i) => (
-            <div key={i} className="resource-card">
-              <div className="resource-card__head">
-                <span className="resource-card__icon">
-                  <Icon name="file-text" size={16} className="icon" />
-                </span>
-                <div>
-                  <div className="resource-card__title">{String(r.name || `资源 ${i + 1}`)}</div>
-                  <div className="resource-card__author">{String(r.type || '')}</div>
-                </div>
-                <div className="resource-card__tags">
-                  {i < 2 ? <span className="ds-tag ds-tag--brand">核心</span> : <span className="ds-tag">补充</span>}
-                  {r.weread_readable ? <span className="ds-tag">微信读书可读</span> : null}
-                  {r.difficulty ? <span className="ds-tag">{String(r.difficulty)}</span> : null}
-                </div>
-              </div>
-              <div className="resource-card__body">
-                {r.learner_type ? (
-                  <div className="resource-field">
-                    <div className="resource-field__label">类型</div>
-                    <div className="resource-field__value">{String(r.learner_type)}</div>
-                  </div>
-                ) : null}
-                {r.difficulty ? (
-                  <div className="resource-field">
-                    <div className="resource-field__label">难度</div>
-                    <div className="resource-field__value">{String(r.difficulty)}</div>
-                  </div>
-                ) : null}
-                {r.covers ? (
-                  <div className="resource-field resource-field--full">
-                    <div className="resource-field__label">覆盖</div>
-                    <div className="resource-field__value">{String(r.covers)}</div>
-                  </div>
-                ) : null}
-                {r.why ? (
-                  <div className="resource-field resource-field--full">
-                    <div className="resource-field__label">为什么选它</div>
-                    <div className="resource-field__value">{String(r.why)}</div>
-                  </div>
-                ) : null}
-                {r.how_to_use ? (
-                  <div className="resource-field resource-field--full">
-                    <div className="resource-field__label">最短路径</div>
-                    <div className="resource-field__value">{String(r.how_to_use)}</div>
-                  </div>
-                ) : null}
-                {r.warning ? (
-                  <div className="resource-field resource-field--full">
-                    <div className="resource-field__label">注意</div>
-                    <div className="resource-field__warning">⚠ {String(r.warning)}</div>
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          ))}
-          {!resources.length ? <p className="text-tertiary">等待资料推荐…</p> : null}
-        </div>
-      </section>
-    </>
-  )
-}
-
-function PlanDoc({ doc }: { doc: Record<string, unknown> }) {
-  const core = (Array.isArray(doc.core_20) ? doc.core_20 : [])
-    .map((c) => {
-      if (typeof c === 'string') return c
-      if (c && typeof c === 'object' && 'title' in c) return String((c as { title: unknown }).title)
-      return String(c ?? '')
-    })
-    .filter(Boolean)
-  const phases =
-    (doc.phases as Record<
-      string,
-      {
-        title?: string
-        duration?: string
-        summary?: string
-        activities?: Array<{
-          title: string
-          description?: string
-          activity_type?: string
-          minutes?: number
-        }>
-      }
-    >) || {}
-  const durations = (doc.durations as Record<string, string>) || {}
-  const phaseMinutes = (doc.phase_minutes as Record<string, number>) || {}
-  const fallbackDaily = doc.daily_minutes ? Number(doc.daily_minutes) : 30
-  const rationale = String(doc.rationale || '')
-
-  const phaseMeta: Array<{ key: string; index: string; fallback: string; badgeClass: string; defaultMin: number }> = [
-    { key: 'learning', index: 'B', fallback: '10 节 × 2 小时', badgeClass: 'phase-block__badge--learn', defaultMin: 120 },
-    { key: 'practice', index: 'C', fallback: '约 4 周', badgeClass: 'phase-block__badge--practice', defaultMin: 30 },
-    { key: 'application', index: 'D', fallback: '长尾', badgeClass: 'phase-block__badge--apply', defaultMin: 30 },
-  ]
-
-  const shortLabel: Record<string, string> = {
-    learning: '学',
-    practice: '练',
-    application: '用',
-  }
-
-  return (
-    <>
-      <section className="doc-section">
-        <div className="doc-section__head">
-          <span className="doc-section__index">A</span>
-          <span className="doc-section__title">
-            <Icon name="sparkles" size={14} className="ic icon" />
-            核心精神
-          </span>
-        </div>
-        <div className="core20">
-          {core.map((c) => (
-            <div key={c} className="core20__item"><span className="dot" />{c}</div>
-          ))}
-          {!core.length ? <p className="text-tertiary">等待计划推荐…</p> : null}
-        </div>
-        {rationale ? <p className="text-secondary" style={{ marginTop: 12, fontSize: 12 }}>{rationale}</p> : null}
-        {doc.goal ? <p className="text-secondary" style={{ marginTop: 8, fontSize: 12 }}>{String(doc.goal)}</p> : null}
-      </section>
-
-      {phaseMeta.map(({ key, index, fallback, badgeClass, defaultMin }) => {
-        const phase = phases[key]
-        const acts = phase?.activities || []
-        const duration = phase?.duration || durations[key] || fallback
-        const phaseMin = Number(phaseMinutes[key]) || defaultMin
-        const badge = `${shortLabel[key]} · ${duration}`
-        return (
-          <section key={key} className="doc-section">
-            <div className="doc-section__head">
-              <span className="doc-section__index">{index}</span>
-              <span className="doc-section__title">{phase?.title || key}</span>
-              <span className={`phase-block__badge ${badgeClass}`}>{badge}</span>
-            </div>
-            <div className="phase-block">
-              <div className="phase-block__head">
-                <span className={`phase-block__badge ${badgeClass}`}>{phase?.title || key}</span>
-                <span className="phase-block__title">{phase?.summary || ''}</span>
-              </div>
-              <div className="sessions">
-                {acts.map((a, i) => {
-                  const mins = Number(a.minutes) || phaseMin
-                  return (
-                    <div key={i} className="session-card">
-                      <div className="session-card__top">
-                        <span className="session-card__num">{i + 1}</span>
-                        <span className="session-card__title">{a.title}</span>
-                        <span className="session-card__duration">
-                          <Icon name="clock" size={12} className="ic icon" />
-                          {mins >= 60 ? `${mins / 60} 小时` : `${mins} 分钟`}
-                        </span>
-                      </div>
-                      {a.description ? (
-                        <div className="session-card__grid">
-                          <div className="session-field session-field--full">
-                            <div className="session-field__label">说明</div>
-                            <div className="session-field__value">{a.description}</div>
-                          </div>
-                        </div>
-                      ) : null}
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </section>
-        )
-      })}
-
-      <div className="validation-card">
-        <div className="validation-card__head">
-          <span className="validation-card__icon">
-            <Icon name="check-circle" size={16} className="icon" />
-          </span>
-          <span className="validation-card__title">计划已就绪</span>
-        </div>
-        <div className="validation-card__desc">
-          确认无误后锁定计划，今日任务将自动生成。
-        </div>
-        <div className="validation-card__meta">
-          <span className="m">
-            <Icon name="clock" size={12} className="ic icon" />
-            学每节 2 小时 · 练/用每天约 {fallbackDaily} 分钟
-          </span>
-          <span className="m">
-            <Icon name="layers" size={12} className="ic icon" />
-            {core.length || 0} 条核心精神
-          </span>
-          <span className="m">
-            <Icon name="check-circle" size={12} className="ic icon" />
-            学 {durations.learning || phases.learning?.duration || '10 节 × 2 小时'} · 练{' '}
-            {durations.practice || phases.practice?.duration || '约 4 周'} · 用{' '}
-            {durations.application || phases.application?.duration || '长尾'}
-          </span>
-        </div>
-      </div>
     </>
   )
 }

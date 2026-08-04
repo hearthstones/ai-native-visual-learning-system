@@ -1,4 +1,5 @@
 import type { ActiveSlice, Theme, ThemePhase } from './api'
+import { DEFAULT_PLAN_PREFS } from './planPrefs'
 
 export interface LadderLevel {
   level: number
@@ -123,7 +124,7 @@ export function getDailyMinutes(
     const n = Number((doc as { daily_minutes?: number } | undefined)?.daily_minutes)
     if (Number.isFinite(n) && n > 0) return n
   }
-  return 30
+  return DEFAULT_PLAN_PREFS.daily_minutes
 }
 
 export function workNoteKey(themeId: string) {

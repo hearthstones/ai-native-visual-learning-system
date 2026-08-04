@@ -286,12 +286,12 @@
   align-items: center;
   gap: var(--spacer-4);
   font-size: var(--body-sm-font-size);
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color .12s;
 }
 .ov-secondary__link:hover {
-  color: var(--text-secondary);
+  color: var(--text-default);
 }
 .ov-secondary__link img {
   filter: brightness(0.5);

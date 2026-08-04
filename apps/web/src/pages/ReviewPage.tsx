@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
-import { api, type Theme, type WeeklyReview } from '../lib/api'
-import { getCoreConcepts, phaseZh } from '../lib/themeDoc'
+import { api, type DailyTask, type Theme, type WeeklyReview } from '../lib/api'
+import { getCoreConcepts, phaseZh, workNoteKey } from '../lib/themeDoc'
 import '../styles/components.css'
 import '../styles/pages/review-weekly.css'
 
@@ -38,9 +38,22 @@ function weekRangeLabel(weekStart?: string) {
   return `${fmt(start)} → ${fmt(end)}`
 }
 
+type DraftShape = {
+  scores?: number[]
+  q1?: string
+  q2?: string
+  q3?: string
+  themeId?: string
+  workNote?: string
+}
+
 export function ReviewPage() {
+  const [params] = useSearchParams()
   const [review, setReview] = useState<WeeklyReview | null>(null)
+  const [activeThemes, setActiveThemes] = useState<Theme[]>([])
   const [focusTheme, setFocusTheme] = useState<Theme | null>(null)
+  const [todayTasks, setTodayTasks] = useState<DailyTask[]>([])
+  const [workNote, setWorkNote] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [savedHint, setSavedHint] = useState('')
@@ -57,39 +70,67 @@ export function ReviewPage() {
           api.home(),
         ])
         setReview(latest)
+        const actives = home.themes.filter((t) => t.status === 'active')
+        setActiveThemes(actives)
+        setTodayTasks(home.today_tasks)
+
+        const fromQuery = params.get('themeId')
         const focus =
-          home.themes.find((t) => t.is_focus && t.status === 'active') ||
-          home.themes.find((t) => t.status === 'active') ||
+          actives.find((t) => t.id === fromQuery) ||
+          actives.find((t) => t.is_focus) ||
+          actives[0] ||
           null
         setFocusTheme(focus)
-        const cores = getCoreConcepts(focus, 5)
 
-        let draft: {
-          scores?: number[]
-          q1?: string
-          q2?: string
-          q3?: string
-          themeId?: string
-        } | null = null
+        const cores = getCoreConcepts(focus, 5)
+        let draft: DraftShape | null = null
         try {
           draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null')
         } catch {
           draft = null
         }
 
+        const note = focus ? localStorage.getItem(workNoteKey(focus.id)) || '' : ''
+        setWorkNote(note)
+
         if (draft && draft.themeId === focus?.id) {
           setScores(cores.map((_, i) => draft!.scores?.[i] ?? 0))
           setQ1(draft.q1 || '')
           setQ2(draft.q2 || '')
-          setQ3(draft.q3 || '')
+          setQ3(draft.q3 || (draft.workNote || note).slice(0, 50))
         } else {
           setScores(cores.map(() => 0))
+          if (note && !q1) {
+            /* leave questions empty; note shown separately for one-click import */
+          }
         }
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e))
       }
     })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  function selectTheme(theme: Theme) {
+    setFocusTheme(theme)
+    const cores = getCoreConcepts(theme, 5)
+    setScores(cores.map(() => 0))
+    const note = localStorage.getItem(workNoteKey(theme.id)) || ''
+    setWorkNote(note)
+    setQ1('')
+    setQ2('')
+    setQ3('')
+  }
+
+  function importWorkNote() {
+    if (!workNote.trim()) return
+    const snippet = workNote.trim().slice(0, 50)
+    if (!q1.trim()) setQ1(snippet)
+    else if (!q3.trim()) setQ3(snippet)
+    else setQ1(snippet)
+    setSavedHint('已带入作业笔记')
+    window.setTimeout(() => setSavedHint(''), 2000)
+  }
 
   const cores = useMemo(() => getCoreConcepts(focusTheme, 5), [focusTheme])
   const wins = useMemo(() => (review ? asTextList(review.wins) : []), [review])
@@ -98,6 +139,13 @@ export function ReviewPage() {
     () => (review ? asTextList(review.adjustments) : []),
     [review],
   )
+
+  const themeTasks = useMemo(
+    () => (focusTheme ? todayTasks.filter((t) => t.theme_id === focusTheme.id) : todayTasks),
+    [focusTheme, todayTasks],
+  )
+  const doneCount = themeTasks.filter((t) => t.done).length
+  const taskTotal = themeTasks.length
 
   function saveDraft() {
     localStorage.setItem(
@@ -108,6 +156,7 @@ export function ReviewPage() {
         q1,
         q2,
         q3,
+        workNote,
         savedAt: new Date().toISOString(),
       }),
     )
@@ -119,10 +168,11 @@ export function ReviewPage() {
     setBusy(true)
     setError('')
     try {
+      const objective = `今日推进 ${doneCount}/${taskTotal}；作业笔记：${workNote || '无'}`
       const r = await api.createWeeklyReview({
         answers: [q1, q2, q3].filter((x) => x.trim()),
         mastery: cores.map((name, i) => ({ name, score: scores[i] ?? 0 })),
-        draft_notes: [q1, q2, q3].filter(Boolean).join('\n'),
+        draft_notes: [objective, q1, q2, q3].filter(Boolean).join('\n'),
       })
       setReview(r)
       localStorage.removeItem(DRAFT_KEY)
@@ -163,18 +213,45 @@ export function ReviewPage() {
         </div>
       </div>
 
+      {activeThemes.length > 0 ? (
+        <div className="review-theme-picker" style={{ marginBottom: 16 }}>
+          <span className="text-tertiary" style={{ fontSize: 12, marginRight: 8 }}>
+            复盘主题
+          </span>
+          <div style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 8 }}>
+            {activeThemes.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                className={`ds-btn ds-btn--sm ${
+                  focusTheme?.id === t.id ? 'ds-btn--brand' : 'ds-btn--secondary'
+                }`}
+                onClick={() => selectTheme(t)}
+              >
+                {t.is_focus ? '★ ' : ''}
+                {t.title}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       {error ? <div className="error-banner">{error}</div> : null}
       {savedHint ? <div className="ds-alert ds-alert--info" style={{ marginBottom: 12 }}>{savedHint}</div> : null}
 
       <div className="kpi-grid">
         <div className="ds-statcard">
-          <div className="ds-statcard__label">本周摘要</div>
-          <div className="ds-statcard__value" style={{ fontSize: 16, lineHeight: 1.4 }}>
-            {review ? '已生成' : '待生成'}
+          <div className="ds-statcard__label">今日推进</div>
+          <div className="ds-statcard__value">
+            {doneCount}/{Math.max(taskTotal, 1)}
           </div>
           <div className="ds-statcard__delta is-up">
             <Icon name="check-circle" size={14} />
-            <span>{wins[0] || '完成本周任务后生成汇总'}</span>
+            <span>
+              {taskTotal
+                ? `${Math.round((doneCount / taskTotal) * 100)}% 已完成`
+                : '暂无今日任务'}
+            </span>
           </div>
         </div>
         <div className="ds-statcard">
@@ -192,10 +269,28 @@ export function ReviewPage() {
           <div className="ds-statcard__value">{adjustments.length || 0}</div>
           <div className="ds-statcard__delta is-up">
             <Icon name="trending-up" size={14} />
-            <span>{adjustments[0] || '生成后展示'}</span>
+            <span>{adjustments[0] || (review ? '见下方列表' : '生成后展示')}</span>
           </div>
         </div>
       </div>
+
+      {workNote ? (
+        <div className="ds-alert ds-alert--info" style={{ marginBottom: 16 }}>
+          <span className="ds-alert__icon">
+            <Icon name="scroll-text" size={16} />
+          </span>
+          <div className="ds-alert__content" style={{ flex: 1 }}>
+            <div className="ds-alert__title">作业面笔记</div>
+            <div className="ds-alert__desc" style={{ whiteSpace: 'pre-wrap' }}>
+              {workNote.slice(0, 200)}
+              {workNote.length > 200 ? '…' : ''}
+            </div>
+          </div>
+          <button className="ds-btn ds-btn--secondary ds-btn--sm" type="button" onClick={importWorkNote}>
+            带入三问
+          </button>
+        </div>
+      ) : null}
 
       {wins.length > 0 ? (
         <div className="ds-card" style={{ marginBottom: 'var(--spacer-16)' }}>
@@ -219,7 +314,7 @@ export function ReviewPage() {
         </div>
         {cores.length === 0 ? (
           <p className="text-tertiary" style={{ fontSize: 12 }}>
-            暂无主焦点主题的核心概念。先完成阶梯共创或设定主焦点。
+            暂无核心概念。请先完成阶梯共创，或在上方选择有阶梯的主题。
           </p>
         ) : (
           cores.map((name, i) => {

@@ -33,6 +33,7 @@ def home(session: Session = Depends(get_session)) -> HomeOut:
     )
     today = date.today().isoformat()
     active_ids = {t.id for t in themes if t.status == ThemeStatus.active}
+    domain_svc.ensure_focus_for_lonely_active(session)
     for t in themes:
         if t.status == ThemeStatus.active:
             domain_svc.ensure_today_tasks(session, t)
@@ -45,6 +46,14 @@ def home(session: Session = Depends(get_session)) -> HomeOut:
         if task.theme_id not in active_ids:
             session.delete(task)
     session.commit()
+    # refresh themes after possible focus repair
+    themes = list(
+        session.exec(
+            select(Theme)
+            .where(col(Theme.status).in_([ThemeStatus.active, ThemeStatus.draft]))
+            .order_by(Theme.updated_at.desc())
+        ).all()
+    )
 
     if not active_ids:
         tasks: list[DailyTask] = []

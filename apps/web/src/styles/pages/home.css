@@ -66,6 +66,47 @@
 .home-section__link:hover {
   color: var(--text-brand);
 }
+.home-section__hint {
+  font-size: var(--body-xs-font-size);
+  font-weight: var(--font-weight-normal);
+  color: var(--text-tertiary);
+  text-transform: none;
+  letter-spacing: normal;
+}
+.home-section__more-link {
+  display: inline-block;
+  margin-top: var(--spacer-12);
+  font-size: var(--body-sm-font-size);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.home-section__more-link:hover {
+  color: var(--text-brand);
+}
+.home-drift-list {
+  margin: 0;
+  padding-left: 1.1em;
+}
+.home-drift-list li + li {
+  margin-top: var(--spacer-4);
+}
+.home-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-12);
+  max-width: 480px;
+}
+.home-skeleton__bar {
+  height: 12px;
+  border-radius: var(--radius-4);
+  background: var(--bg-overlay-l2);
+}
+.home-skeleton__bar--medium {
+  width: 72%;
+}
+.home-skeleton__bar--short {
+  width: 48%;
+}
 .home-draft-card {
   margin-top: var(--spacer-12);
   display: flex;
@@ -151,6 +192,10 @@
   line-height: var(--body-base-line-height);
   color: var(--text-default);
   min-width: 0;
+  text-decoration: none;
+}
+.today-item__text:hover {
+  color: var(--text-brand);
 }
 .today-item__enter {
   display: inline-flex;
@@ -159,6 +204,7 @@
   flex-shrink: 0;
   font-size: var(--body-sm-font-size);
   color: var(--text-secondary);
+  text-decoration: none;
   transition: color .12s ease;
 }
 .today-item:hover .today-item__enter {
@@ -170,6 +216,15 @@
 }
 .today-item:hover .today-item__enter img {
   transform: translateX(2px);
+}
+.today-item__check {
+  flex-shrink: 0;
+}
+.today-item.is-done {
+  opacity: 0.55;
+}
+.today-item.is-done .today-item__text {
+  text-decoration: line-through;
 }
 
 /* ── Theme Card Grid ───────────────────────────────────────── */

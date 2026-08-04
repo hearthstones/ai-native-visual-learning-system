@@ -1,11 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Icon } from './Icon'
 
-function noop() {
-  /* 原型壳层入口：本阶段仅视觉，不接产品功能 */
-}
-
-function projectLabel(pathname: string) {
+function contextLabel(pathname: string) {
   if (pathname.startsWith('/settings')) return '设置'
   if (pathname.startsWith('/create')) return '新建主题'
   if (pathname.startsWith('/review')) return '周复盘'
@@ -18,8 +14,33 @@ function projectLabel(pathname: string) {
   return `${y}-${m}-${day} · 今天`
 }
 
+function SlotChip({
+  slots,
+}: {
+  slots?: Record<string, { used: number; max: number }>
+}) {
+  if (!slots) return null
+  const learning = slots.learning
+  const practice = slots.practice
+  const application = slots.application
+  return (
+    <div className="shell-slots" title="阶段槽位">
+      <span className="shell-slots__item">
+        学 {learning?.used ?? 0}/{learning?.max ?? 1}
+      </span>
+      <span className="shell-slots__item">
+        练 {practice?.used ?? 0}/{practice?.max ?? 3}
+      </span>
+      <span className="shell-slots__item">
+        用 {application?.used ?? 0}/{application?.max ?? 5}
+      </span>
+    </div>
+  )
+}
+
 export function AppShell({
   title = '刻意练习',
+  slots,
 }: {
   title?: string
   slots?: Record<string, { used: number; max: number }>
@@ -44,6 +65,7 @@ export function AppShell({
   const themesManageActive = pathname === '/themes'
   const themeActive = pathname.startsWith('/themes/')
   const settingsActive = pathname.startsWith('/settings')
+  const homeActive = pathname === '/' && !themesManageActive && !themeActive
 
   return (
     <div className="app-shell" data-viewport-mode="app-shell">
@@ -55,26 +77,10 @@ export function AppShell({
             <span className="ds-wbtitlebar__light ds-wbtitlebar__light--max" />
           </div>
           <span className="ds-wbtitlebar__mode-chip">{title}</span>
-          <button className="ds-wbtitlebar__project-selector" type="button" onClick={noop}>
-            <span>{projectLabel(pathname)}</span>
-            <Icon name="chevron-down" size={12} className="icon" />
-          </button>
+          <span className="ds-wbtitlebar__context">{contextLabel(pathname)}</span>
         </div>
         <div className="ds-wbtitlebar__right">
-          <button className="ds-wbtitlebar__iconbtn" type="button" aria-label="搜索" onClick={noop}>
-            <Icon name="search" size={16} className="icon" />
-          </button>
-          <button className="ds-wbtitlebar__iconbtn" type="button" aria-label="通知" onClick={noop}>
-            <Icon name="bell" size={16} className="icon" />
-          </button>
-          <NavLink
-            to="/settings"
-            className="ds-wbtitlebar__iconbtn"
-            aria-label="设置"
-            title="设置"
-          >
-            <Icon name="settings" size={16} className="icon" />
-          </NavLink>
+          <SlotChip slots={slots} />
         </div>
       </header>
 
@@ -82,40 +88,32 @@ export function AppShell({
         <NavLink
           to="/"
           end
-          className={({ isActive }) =>
-            `ds-activityrail__btn${isActive && !themesManageActive && !themeActive ? ' is-active' : ''}`
-          }
+          className={() => `ds-activityrail__btn${homeActive ? ' is-active' : ''}`}
           title="今天"
           aria-label="今天"
         >
           <Icon name="home" size={16} />
+          <span className="ds-activityrail__label">今天</span>
         </NavLink>
         <NavLink
           to="/themes"
           className={`ds-activityrail__btn${themesManageActive || themeActive ? ' is-active' : ''}`}
-          title="我的主题"
+          title="主题"
           aria-label="我的主题"
         >
           <Icon name="layers" size={16} />
+          <span className="ds-activityrail__label">主题</span>
         </NavLink>
-        <button
-          className="ds-activityrail__btn"
-          type="button"
-          title="日历"
-          aria-label="日历"
-          onClick={noop}
-        >
-          <Icon name="calendar" size={16} />
-        </button>
         <div className="ds-activityrail__divider" />
         <div className="ds-activityrail__spacer" />
         <NavLink
           to="/review"
           className={({ isActive }) => `ds-activityrail__btn${isActive ? ' is-active' : ''}`}
-          title="周复盘"
+          title="复盘"
           aria-label="周复盘"
         >
           <Icon name="scroll-text" size={16} />
+          <span className="ds-activityrail__label">复盘</span>
         </NavLink>
         <NavLink
           to="/settings"
@@ -124,6 +122,7 @@ export function AppShell({
           aria-label="设置"
         >
           <Icon name="settings" size={16} />
+          <span className="ds-activityrail__label">设置</span>
         </NavLink>
       </nav>
 

@@ -17,10 +17,6 @@ function phaseIndex(phase: ThemePhase) {
   return PHASES.findIndex((p) => p.key === phase)
 }
 
-function noop() {
-  /* 原型演示：未接后端的条目编辑 */
-}
-
 export function ThemePlanPage() {
   const { themeId = '' } = useParams()
   const nav = useNavigate()
@@ -34,6 +30,7 @@ export function ThemePlanPage() {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [advanceOpen, setAdvanceOpen] = useState(false)
+  const [advanceLowOpen, setAdvanceLowOpen] = useState(false)
   const [completeOpen, setCompleteOpen] = useState(false)
   const [focusWarnOpen, setFocusWarnOpen] = useState(false)
   const [focusErrorOpen, setFocusErrorOpen] = useState(false)
@@ -157,6 +154,10 @@ export function ThemePlanPage() {
       setSlotFullOpen(true)
       return
     }
+    if (items.length > 0 && done / items.length < 0.5) {
+      setAdvanceLowOpen(true)
+      return
+    }
     setAdvanceOpen(true)
   }
 
@@ -261,26 +262,8 @@ export function ThemePlanPage() {
                       <span className="checklist-item__label">{item.label}</span>
                       <span className="checklist-item__desc">{item.desc}</span>
                     </div>
-                    <button
-                      type="button"
-                      className="checklist-item__delete"
-                      title="删除"
-                      onClick={noop}
-                    >
-                      <Icon name="trash" size={12} alt="trash" />
-                    </button>
                   </div>
                 ))}
-                <div className="slice-add-row">
-                  <button
-                    type="button"
-                    className="ds-btn ds-btn--tertiary ds-btn--sm"
-                    onClick={noop}
-                  >
-                    <Icon name="plus" size={12} className="icon" />
-                    添加
-                  </button>
-                </div>
               </div>
               {canAdvance ? (
                 <div className="slice-card__foot">
@@ -327,7 +310,7 @@ export function ThemePlanPage() {
                 <span>学习计划</span>
                 <span className="archive-section__badge">
                   <Icon name="lock" size={12} alt="lock" />
-                  已归档 · 只读
+                  锁定基线 · 只读
                 </span>
               </div>
               <div className={`archive-section__body${archiveOpen ? ' is-open' : ''}`}>
@@ -440,7 +423,7 @@ export function ThemePlanPage() {
               ) : (
                 <button
                   type="button"
-                  className="focus-action-btn"
+                  className={`focus-action-btn${theme.status === 'active' ? ' is-prominent' : ''}`}
                   disabled={busy}
                   onClick={() => trySetFocus()}
                 >
@@ -483,6 +466,39 @@ export function ThemePlanPage() {
                 ))
               )}
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className={`modal-overlay${advanceLowOpen ? ' is-open' : ''}`} id="modalAdvanceLow">
+        <div className="ds-dialog">
+          <div className="ds-dialog__head">
+            <span className="ds-dialog__title">切片完成度偏低</span>
+            <button type="button" className="ds-dialog__close" onClick={() => setAdvanceLowOpen(false)}>
+              <Icon name="x" size={14} alt="close" />
+            </button>
+          </div>
+          <div className="ds-dialog__body">
+            当前切片完成度不足一半（{done}/{items.length}），确定推进到下一阶段？
+          </div>
+          <div className="ds-dialog__foot">
+            <button
+              type="button"
+              className="ds-btn ds-btn--secondary"
+              onClick={() => setAdvanceLowOpen(false)}
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              className="ds-btn ds-btn--brand"
+              onClick={() => {
+                setAdvanceLowOpen(false)
+                setAdvanceOpen(true)
+              }}
+            >
+              仍然推进
+            </button>
           </div>
         </div>
       </div>

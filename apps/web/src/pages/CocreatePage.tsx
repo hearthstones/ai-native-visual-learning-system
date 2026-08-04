@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import {
   api,
@@ -100,6 +100,8 @@ function applyDurationsToPrefs(
 export function CocreatePage({ kind }: { kind: CocreateKind }) {
   const { themeId = '' } = useParams()
   const nav = useNavigate()
+  const [searchParams] = useSearchParams()
+  const reviseRequested = searchParams.get('revise') === '1'
   const info = meta[kind]
   const [theme, setTheme] = useState<Theme | null>(null)
   const [session, setSession] = useState<CocreateSession | null>(null)
@@ -107,6 +109,8 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [revisionMode, setRevisionMode] = useState(false)
+  const [openedAt, setOpenedAt] = useState<Date | null>(null)
   const [planPrefs, setPlanPrefs] = useState<PlanPrefs>(DEFAULT_PLAN_PREFS)
   const [slotBlocker, setSlotBlocker] = useState<Theme | null>(null)
 
@@ -145,19 +149,24 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
       setBusy(true)
       setError('')
       setSession(null)
+      setRevisionMode(false)
+      setOpenedAt(null)
       try {
         let s: CocreateSession
         try {
           const existing = await api.getCocreate(themeId, kind)
-          s = existing.confirmed
-            ? await api.startCocreate(themeId, kind, { force: true })
-            : existing
+          if (existing.confirmed) {
+            s = existing
+            if (!cancelled) setRevisionMode(true)
+          } else {
+            s = existing
+          }
         } catch {
-          // 首轮：不让用户先填表，直接基于前置信息推荐
           s = await api.startCocreate(themeId, kind)
         }
         if (!cancelled) {
           setSession(s)
+          setOpenedAt(new Date())
           const level = (s.live_doc as { selected_level?: number }).selected_level
           if (typeof level === 'number') setSelectedLevel(level)
           if (kind === 'plan') {
@@ -221,6 +230,34 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
     }
   }
 
+  async function restartCocreate() {
+    setBusy(true)
+    setError('')
+    try {
+      const s = await api.startCocreate(themeId, kind, { force: true })
+      setSession(s)
+      setRevisionMode(false)
+      setOpenedAt(new Date())
+      if (kind === 'plan') {
+        setPlanPrefs((prev) => applyDurationsToPrefs(s.live_doc, prev))
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  function messageTimeLabel(index: number, total: number) {
+    if (index === total - 1) {
+      if (!openedAt) return '刚刚'
+      const secs = Math.floor((Date.now() - openedAt.getTime()) / 1000)
+      if (secs < 60) return '刚刚'
+      return `${Math.floor(secs / 60)} 分钟前`
+    }
+    return '稍早'
+  }
+
   async function confirm() {
     setBusy(true)
     setError('')
@@ -261,6 +298,8 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
 
   const lockDisabled = kind === 'plan' && (busy || !session)
   const rationale = session?.live_doc.rationale ? String(session.live_doc.rationale) : ''
+  const messages = session?.messages || []
+  const showRevisionBanner = revisionMode || (reviseRequested && session?.confirmed)
 
   return (
     <>
@@ -318,6 +357,21 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           </div>
 
           <div className="chat-scroll">
+            {showRevisionBanner ? (
+              <div className="error-banner" style={{ display: 'grid', gap: 8, background: 'var(--status-warning-surface-l1)', borderColor: 'var(--status-warning-surface-l2)', color: 'var(--text-default)' }}>
+                <div>本步已确认。可继续查看；若要重开共创请点「重新共创」</div>
+                <div>
+                  <button
+                    className="ds-btn ds-btn--secondary ds-btn--sm"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => void restartCocreate()}
+                  >
+                    重新共创
+                  </button>
+                </div>
+              </div>
+            ) : null}
             {slotBlocker ? (
               <div className="error-banner" style={{ display: 'grid', gap: 8 }}>
                 <div>
@@ -358,10 +412,20 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                 </div>
                 <div className="msg__body">
                   <div className="msg__bubble" style={{ whiteSpace: 'pre-wrap' }}>{m.content}</div>
-                  <div className="msg__meta">{m.role === 'user' ? '你' : 'AI 教练'} · 刚刚</div>
+                  <div className="msg__meta">
+                    {m.role === 'user' ? '你' : 'AI 教练'} · {messageTimeLabel(i, messages.length)}
+                  </div>
                 </div>
               </div>
             ))}
+            {busy && session ? (
+              <div className="msg msg--ai">
+                <div className="msg__avatar"><Icon name="sparkles" size={16} className="icon" /></div>
+                <div className="msg__body">
+                  <div className="msg__bubble">AI 教练思考中…</div>
+                </div>
+              </div>
+            ) : null}
             {busy && !session ? (
               <div className="msg msg--ai">
                 <div className="msg__avatar"><Icon name="sparkles" size={16} className="icon" /></div>

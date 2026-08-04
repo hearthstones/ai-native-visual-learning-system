@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
-import { api, type DailyTask, type Theme, type ThemePhase } from '../lib/api'
-import { getCoreConcepts, getCurrentLevel, phaseZh } from '../lib/themeDoc'
+import { api, type ActiveSlice, type DailyTask, type Theme, type ThemePhase } from '../lib/api'
+import { getCoreConcepts, getCurrentLevel, getDailyMinutes, getSliceItems, phaseZh } from '../lib/themeDoc'
 import '../styles/pages/theme-overview.css'
 
 export function ThemeOverviewPage() {
@@ -10,14 +10,20 @@ export function ThemeOverviewPage() {
   const [params] = useSearchParams()
   const fromCreate = params.get('from') === 'create'
   const [theme, setTheme] = useState<Theme | null>(null)
+  const [slice, setSlice] = useState<ActiveSlice | null>(null)
   const [tasks, setTasks] = useState<DailyTask[]>([])
   const [error, setError] = useState('')
 
   useEffect(() => {
     void (async () => {
       try {
-        const [t, home] = await Promise.all([api.getTheme(themeId), api.home()])
+        const [t, home, active] = await Promise.all([
+          api.getTheme(themeId),
+          api.home(),
+          api.getActiveSlice(themeId).catch(() => null),
+        ])
         setTheme(t)
+        setSlice(active)
         setTasks(home.today_tasks.filter((x) => x.theme_id === themeId))
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e))
@@ -26,6 +32,7 @@ export function ThemeOverviewPage() {
   }, [themeId])
 
   const cores = useMemo(() => (theme ? getCoreConcepts(theme, 5) : []), [theme])
+  const sliceItems = useMemo(() => getSliceItems(slice, theme), [slice, theme])
 
   if (error) {
     return (
@@ -44,15 +51,17 @@ export function ThemeOverviewPage() {
 
   const phaseLabel = phaseZh[theme.phase]
   const level = getCurrentLevel(theme)
+  const dailyMinutes = getDailyMinutes(slice, theme)
   const doneTasks = tasks.filter((t) => t.done).length
-  const taskProgress = tasks.length ? Math.round((doneTasks / tasks.length) * 100) : 0
+  const sliceDone = sliceItems.filter((it) => it.done).length
+  const sliceTotal = sliceItems.length
+  const hasSliceProgress = sliceTotal > 0
+  const progressPct = hasSliceProgress
+    ? Math.round((sliceDone / sliceTotal) * 100)
+    : tasks.length
+      ? Math.round((doneTasks / tasks.length) * 100)
+      : 0
   const stepActive = (key: ThemePhase) => theme.phase === key
-  const demoLabel =
-    theme.phase === 'practice'
-      ? '演示：练习期看板'
-      : theme.phase === 'application'
-        ? '演示：应用期看板'
-        : '演示：切换到练习期看板'
 
   return (
     <div className="ov-page">
@@ -68,7 +77,7 @@ export function ThemeOverviewPage() {
 
       <section className="ov-progress">
         <div className="ov-progress__track">
-          <div className="ov-progress__fill" style={{ width: `${taskProgress}%` }} />
+          <div className="ov-progress__fill" style={{ width: `${progressPct}%` }} />
         </div>
         <div className="ov-progress__meta">
           {level ? (
@@ -79,9 +88,14 @@ export function ThemeOverviewPage() {
               <span className="ov-sep">·</span>
             </>
           ) : null}
-          <span>每天约 30 分钟</span>
+          <span>每天约 {dailyMinutes} 分钟</span>
           <span className="ov-sep">·</span>
           <span>
+            切片{' '}
+            <span className="mono">
+              {sliceDone}/{sliceTotal}
+            </span>
+            <span className="ov-sep"> · </span>
             今日任务{' '}
             <span className="mono">
               {doneTasks}/{tasks.length}
@@ -131,7 +145,7 @@ export function ThemeOverviewPage() {
                 <li key={name} className={`ov-core${i === 0 ? ' ov-core--current' : ''}`}>
                   <span className="ov-core__dot" />
                   <span className="ov-core__name">{name}</span>
-                  <span className="ov-core__label">待复盘评估</span>
+                  <span className="ov-core__label">{i === 0 ? '本周自评' : '待自评'}</span>
                 </li>
               ))}
             </ul>
@@ -177,17 +191,6 @@ export function ThemeOverviewPage() {
           作业
         </Link>
       </nav>
-
-      <div className="ov-demo">
-        <Link
-          to={`/themes/${theme.id}/practice`}
-          className="ov-demo__link"
-          data-dom-id="btn-demo-practice"
-        >
-          {demoLabel}
-          <Icon name="arrow-right" size={12} />
-        </Link>
-      </div>
     </div>
   )
 }

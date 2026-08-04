@@ -7,9 +7,9 @@ import '../styles/pages/create-info.css'
 
 export function CreateInfoPage() {
   const nav = useNavigate()
-  const [title, setTitle] = useState('革新学习方法')
+  const [title, setTitle] = useState('')
   const [themeType, setThemeType] = useState<ThemeType>('general')
-  const [goal, setGoal] = useState('建立可持续的主题阅读方法')
+  const [goal, setGoal] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [checkingSlot, setCheckingSlot] = useState(true)

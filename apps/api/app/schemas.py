@@ -69,6 +69,7 @@ class SettingsUpdate(BaseModel):
     deepseek_api_key: Optional[str] = None
     deepseek_base_url: Optional[str] = None
     deepseek_model: Optional[str] = None
+    weread_api_key: Optional[str] = None
 
 
 class SettingsOut(BaseModel):
@@ -79,6 +80,7 @@ class SettingsOut(BaseModel):
     deepseek_model: str
     model_options: list[dict[str, str]]
     weread_configured: bool
+    weread_api_key_masked: str = ""
 
 
 class CocreateConfirmIn(BaseModel):
@@ -161,6 +163,7 @@ class ActiveSliceOut(BaseModel):
     title: str = ""
     core_points: list[Any] = Field(default_factory=list)
     activities: list[ActivityOut] = Field(default_factory=list)
+    daily_minutes: int = 30
 
 
 class ActivityToggle(BaseModel):

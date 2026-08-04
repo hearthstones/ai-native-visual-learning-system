@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from datetime import date, datetime
 from typing import Any
 
@@ -227,13 +228,32 @@ def sync_activity_done(session: Session, task: DailyTask, done: bool) -> None:
     session.add(act)
 
 
+_DAY_RANGE_RE = re.compile(
+    r"[（(]?\s*第?\s*\d+\s*[-–—~到至]\s*\d+\s*天\s*[)）]?",
+    re.UNICODE,
+)
+
+
+def format_daily_task_title(activity: Activity) -> str:
+    """把多日切片活动收成「今天可完成」的短句。"""
+    desc = (activity.description or "").strip()
+    title = (activity.title or "").strip()
+    if desc:
+        first = re.split(r"[；;。\n]", desc, maxsplit=1)[0].strip()
+        if first:
+            return first if len(first) <= 48 else f"{first[:47]}…"
+    cleaned = _DAY_RANGE_RE.sub("", title).strip(" ·-—")
+    return cleaned or title or "今日推进"
+
+
 def ensure_today_tasks(
     session: Session,
     theme: Theme,
-    limit: int = 3,
+    limit: int = 2,
     *,
     replace: bool = False,
 ) -> list[DailyTask]:
+    """生成今日推进：默认取当前切片里下一批未完成活动（最多 2 条）。"""
     today = date.today().isoformat()
     if replace:
         clear_today_tasks(session, theme.id)
@@ -259,7 +279,24 @@ def ensure_today_tasks(
                 t.activity_id and t.activity_id not in activity_ids for t in existing
             )
             if not stale:
-                return list(existing)
+                # 刷新标题语义（多日切片 → 今日短句），不重置完成态
+                ordered = sorted(existing, key=lambda t: t.sort_order)
+                keep = ordered[:limit]
+                for extra in ordered[limit:]:
+                    session.delete(extra)
+                for t in keep:
+                    if not t.activity_id:
+                        continue
+                    act = session.get(Activity, t.activity_id)
+                    if not act:
+                        continue
+                    new_title = format_daily_task_title(act)
+                    new_desc = act.description or act.title
+                    if t.title != new_title or t.description != new_desc:
+                        t.title = new_title
+                        t.description = new_desc
+                        session.add(t)
+                return list(keep)
         clear_today_tasks(session, theme.id)
 
     slice_row = get_active_slice(session, theme.id)
@@ -277,14 +314,27 @@ def ensure_today_tasks(
         t = DailyTask(
             theme_id=theme.id,
             activity_id=act.id,
-            title=act.title,
-            description=act.description,
+            title=format_daily_task_title(act),
+            description=act.description or act.title,
             task_date=today,
             sort_order=i,
         )
         session.add(t)
         tasks.append(t)
     return tasks
+
+
+def ensure_focus_for_lonely_active(session: Session) -> None:
+    """若只有一个进行中主题且无人设焦点，自动设为主焦点。"""
+    actives = list(
+        session.exec(select(Theme).where(Theme.status == ThemeStatus.active)).all()
+    )
+    if len(actives) != 1:
+        return
+    theme = actives[0]
+    if theme.is_focus:
+        return
+    set_focus(session, theme, True)
 
 
 def advance_phase(session: Session, theme: Theme) -> PlanSlice:

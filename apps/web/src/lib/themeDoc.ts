@@ -110,3 +110,29 @@ export function getSliceItems(
     ? [{ id: 'goal', label: theme.goal, desc: '主题目标（计划未锁定）' }]
     : []
 }
+
+/** 从切片/主题文档读取每日时长，缺省 30 */
+export function getDailyMinutes(
+  slice?: ActiveSlice | null,
+  theme?: Theme | null,
+): number {
+  const fromSlice = Number(slice?.daily_minutes)
+  if (Number.isFinite(fromSlice) && fromSlice > 0) return fromSlice
+  const docs = [theme?.ladder_doc, theme?.resources_doc]
+  for (const doc of docs) {
+    const n = Number((doc as { daily_minutes?: number } | undefined)?.daily_minutes)
+    if (Number.isFinite(n) && n > 0) return n
+  }
+  return 30
+}
+
+export function workNoteKey(themeId: string) {
+  return `work-note:${themeId}`
+}
+
+export function driftTitle(kind?: string) {
+  if (kind === 'focus_over_one') return '主焦点偏多'
+  if (kind === 'slot_full') return '阶段槽位已满'
+  if (kind === 'phase_stuck') return '阶段可能卡住'
+  return '漂移提示'
+}

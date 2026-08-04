@@ -139,13 +139,17 @@ def chat_json(
         "temperature": temperature,
         "extra_body": {"thinking": {"type": "disabled"}},
     }
-    # Prefer JSON mode when available
+    # Prefer JSON mode when available；DeepSeek 要求 prompt 含 "json" 字样
     try:
         completion = client.chat.completions.create(
             **kwargs,
             response_format={"type": "json_object"},
         )
-    except Exception:
+    except Exception as first_err:
+        # JSON mode 不支持或 prompt 不合规时降级；连接类错误直接抛出
+        err_text = str(first_err)
+        if "Connection" in err_text or "connect" in err_text.lower():
+            raise
         completion = client.chat.completions.create(**kwargs)
     content = completion.choices[0].message.content or ""
     parsed = extract_json(content)

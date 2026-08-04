@@ -110,7 +110,16 @@ body { background: var(--bg-base-default); margin: 0; font-family: var(--body-ba
 .focus-action-btn { font-size: var(--body-xs-font-size); padding: 0 var(--spacer-8); height: 22px; border-radius: var(--radius-2); border: 1px solid var(--border-neutral-l1); background: var(--bg-overlay-l1); color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
 .focus-action-btn:hover { background: var(--bg-overlay-l2); color: var(--text-default); }
 .focus-action-btn.is-danger { border-color: var(--status-error-surface-l2); color: var(--status-error-default); }
-.focus-action-btn.is-danger:hover { background: var(--status-error-surface-l1); }
+.focus-action-btn.is-prominent {
+  border-color: var(--brand-default);
+  background: var(--brand-surface-l1);
+  color: var(--brand-default);
+  font-weight: 500;
+}
+.focus-action-btn.is-prominent:hover {
+  background: var(--brand-surface-l2);
+  color: var(--brand-default);
+}
 
 /* Scrollbar */
 .phase-left::-webkit-scrollbar, .phase-right::-webkit-scrollbar { width: 6px; }

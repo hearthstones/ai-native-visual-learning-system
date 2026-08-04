@@ -79,6 +79,7 @@
   margin-top: 24px;
   display: flex;
   justify-content: flex-end;
+  gap: var(--spacer-8);
 }
 
 .ok-banner {

@@ -359,20 +359,23 @@ export function ThemesPage() {
         return (
           <>
             {primary('进入', { kind: 'brand', to: `/themes/${theme.id}` })}
+            {primary(theme.is_focus ? '取消焦点' : '设焦点', {
+              kind: 'secondary',
+              onClick: () =>
+                void runAction(
+                  theme.id,
+                  () => api.updateTheme(theme.id, { is_focus: !theme.is_focus }),
+                  theme.is_focus ? '已取消主焦点' : '已设为主焦点',
+                ),
+            })}
+            {primary('休眠', {
+              kind: 'tertiary',
+              onClick: () => askConfirm(theme, 'dormant'),
+            })}
             <MoreMenu
               theme={theme}
               items={[
                 { label: '编辑', onClick: () => openEdit(theme) },
-                {
-                  label: theme.is_focus ? '取消焦点' : '设焦点',
-                  onClick: () =>
-                    void runAction(
-                      theme.id,
-                      () => api.updateTheme(theme.id, { is_focus: !theme.is_focus }),
-                      theme.is_focus ? '已取消主焦点' : '已设为主焦点',
-                    ),
-                },
-                { label: '休眠', onClick: () => askConfirm(theme, 'dormant') },
                 ...(theme.phase === 'application'
                   ? [{ label: '标记完成', onClick: () => askConfirm(theme, 'completed') }]
                   : []),
@@ -571,21 +574,26 @@ export function ThemesPage() {
           </button>
         </div>
         {historyOpen ? (
-          <div className="ds-tabs themes-tabs themes-tabs--history" role="tablist" aria-label="历史状态">
-            {HISTORY_TABS.map((t) => (
-              <button
-                key={t.key}
-                type="button"
-                role="tab"
-                aria-selected={tab === t.key}
-                className={`ds-tab${tab === t.key ? ' is-active' : ''}`}
-                onClick={() => setTab(t.key)}
-              >
-                {t.label}
-                <span className="themes-tab-count">{counts[t.key]}</span>
-              </button>
-            ))}
-          </div>
+          <>
+            <p className="themes-history-hint text-tertiary" style={{ fontSize: 12, margin: '8px 0 0' }}>
+              历史包含废弃、归档与回收站，与「完成」成功终点分开存放。
+            </p>
+            <div className="ds-tabs themes-tabs themes-tabs--history" role="tablist" aria-label="历史状态">
+              {HISTORY_TABS.map((t) => (
+                <button
+                  key={t.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === t.key}
+                  className={`ds-tab${tab === t.key ? ' is-active' : ''}`}
+                  onClick={() => setTab(t.key)}
+                >
+                  {t.label}
+                  <span className="themes-tab-count">{counts[t.key]}</span>
+                </button>
+              ))}
+            </div>
+          </>
         ) : null}
       </div>
 

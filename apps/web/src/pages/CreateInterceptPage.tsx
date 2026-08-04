@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'
-import { api, type Theme } from '../lib/api'
+import { api, type ActiveSlice, type Theme } from '../lib/api'
+import { getSliceItems } from '../lib/themeDoc'
 import '../styles/components.css'
 import '../styles/pages/create-intercept.css'
 
@@ -15,6 +16,7 @@ const typeLabel: Record<string, string> = {
 export function CreateInterceptPage() {
   const nav = useNavigate()
   const [theme, setTheme] = useState<Theme | null>(null)
+  const [slice, setSlice] = useState<ActiveSlice | null>(null)
   const [slots, setSlots] = useState<Record<string, { used: number; max: number }>>({})
   const [choice, setChoice] = useState<Choice>('advance')
   const [error, setError] = useState('')
@@ -38,6 +40,10 @@ export function CreateInterceptPage() {
         }
         const learning = home.themes.find((t) => t.status === 'active' && t.phase === 'learning')
         setTheme(learning ?? null)
+        if (learning) {
+          const active = await api.getActiveSlice(learning.id).catch(() => null)
+          if (!cancelled) setSlice(active)
+        }
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e))
       } finally {
@@ -49,6 +55,15 @@ export function CreateInterceptPage() {
       cancelled = true
     }
   }, [nav])
+
+  const sliceItems = useMemo(() => getSliceItems(slice, theme), [slice, theme])
+  const sliceDone = sliceItems.filter((it) => it.done).length
+  const sliceTotal = sliceItems.length
+  const sliceLow = sliceTotal > 0 && sliceDone / sliceTotal < 0.5
+  const confirmExtra =
+    choice === 'advance' && sliceLow
+      ? '学习切片完成度偏低，推进后学习期任务将归档'
+      : ''
 
   async function onConfirm() {
     if (!theme || busy) return
@@ -175,6 +190,12 @@ export function CreateInterceptPage() {
                       </span>
                     </span>
                     <span className="radio-option__sub">把学习切片归档，进入练习期，腾出学习槽位后新建</span>
+                    {confirmExtra ? (
+                      <span className="radio-option__sub" style={{ color: 'var(--status-warning-default)' }}>
+                        {confirmExtra}
+                        {sliceTotal > 0 ? `（${sliceDone}/${sliceTotal}）` : ''}
+                      </span>
+                    ) : null}
                   </label>
 
                   <label className="radio-option">

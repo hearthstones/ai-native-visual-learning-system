@@ -12,10 +12,10 @@ button{font:inherit;}
 img{display:block;}
 
 /* ===== App Shell ===== */
-.app-shell{display:grid;grid-template-columns:48px 1fr;grid-template-rows:40px 1fr;height:100vh;overflow:hidden;}
+.app-shell{display:grid;grid-template-columns:56px 1fr;grid-template-rows:40px 1fr;height:100vh;overflow:hidden;}
 .app-shell>.ds-wbtitlebar{grid-column:1/-1;}
 .app-main{overflow-y:auto;background:var(--bg-base-default);}
-/* bare：无 titlebar/rail 时只有一个子节点，不能再用 48px|1fr，否则 main 会被挤进第一列。
+/* bare：无 titlebar/rail 时只有一个子节点，不能再用 56px|1fr，否则 main 会被挤进第一列。
    使用 !important 防止各页 CSS 再次声明 .app-shell 覆盖（Vite 会全局注入页面样式）。 */
 .app-shell.app-shell--bare{
   display:block !important;
@@ -43,17 +43,20 @@ img{display:block;}
 .ds-wbtitlebar__light--min{background:var(--status-alert-default);}
 .ds-wbtitlebar__light--max{background:var(--status-success-default);}
 .ds-wbtitlebar__mode-chip{display:inline-flex;align-items:center;gap:var(--spacer-6);height:24px;padding:0 var(--spacer-8);background:var(--bg-brand);color:var(--text-onbrand);border-radius:var(--radius-full);font-size:var(--body-xs-font-size);font-weight:500;}
-.ds-wbtitlebar__project-selector{display:inline-flex;align-items:center;gap:var(--spacer-6);height:24px;padding:0 var(--spacer-8);background:var(--bg-overlay-l1);color:var(--text-default);border:1px solid var(--border-neutral-l2);border-radius:var(--radius-6);font-size:var(--body-sm-font-size);cursor:pointer;}
+.ds-wbtitlebar__context{display:inline-flex;align-items:center;height:24px;padding:0 var(--spacer-8);color:var(--text-secondary);font-size:var(--body-sm-font-size);}
 .ds-wbtitlebar__iconbtn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-6);background:transparent;border:none;cursor:pointer;color:inherit;text-decoration:none;}
 .ds-wbtitlebar__iconbtn:hover{background:var(--bg-overlay-l2);}
 .ds-wbtitlebar__iconbtn.is-active{background:var(--bg-overlay-l3);}
+.shell-slots{display:inline-flex;align-items:center;gap:var(--spacer-8);padding:0 var(--spacer-8);height:24px;border-radius:var(--radius-6);background:var(--bg-overlay-l1);border:1px solid var(--border-neutral-l2);}
+.shell-slots__item{font-size:var(--body-xs-font-size);color:var(--text-tertiary);font-variant-numeric:tabular-nums;}
 
 /* ===== Activity Rail ===== */
-.ds-activityrail{display:inline-flex;flex-direction:column;align-items:center;gap:var(--spacer-4);width:48px;padding:var(--spacer-8) 0;background:var(--bg-base-secondary);border-right:1px solid var(--border-neutral-l1);}
-.ds-activityrail__btn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--radius-8);background:transparent;border:none;cursor:pointer;text-decoration:none;}
-.ds-activityrail__btn:hover{background:var(--bg-overlay-l2);}
-.ds-activityrail__btn.is-active{background:var(--bg-overlay-l3);}
+.ds-activityrail{display:inline-flex;flex-direction:column;align-items:center;gap:var(--spacer-4);width:56px;padding:var(--spacer-8) 0;background:var(--bg-base-secondary);border-right:1px solid var(--border-neutral-l1);}
+.ds-activityrail__btn{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:44px;min-height:40px;padding:6px 0;border-radius:var(--radius-8);background:transparent;border:none;cursor:pointer;text-decoration:none;color:var(--text-tertiary);}
+.ds-activityrail__btn:hover{background:var(--bg-overlay-l2);color:var(--text-default);}
+.ds-activityrail__btn.is-active{background:var(--bg-overlay-l3);color:var(--text-default);}
 .ds-activityrail__btn.is-active::before{content:"";position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:3px;height:20px;border-radius:var(--radius-full);background:var(--bg-brand);}
+.ds-activityrail__label{font-size:9px;line-height:1;letter-spacing:0.02em;}
 .ds-activityrail__divider{width:24px;height:1px;margin:var(--spacer-4) 0;background:var(--border-neutral-l2);}
 .ds-activityrail__spacer{flex:1;}
 .ds-activityrail__btn img{display:block;}

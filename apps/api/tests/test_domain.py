@@ -66,7 +66,7 @@ def test_toggle_syncs_activity_done(session: Session):
     session.commit()
 
     tasks = session.exec(select(DailyTask).where(DailyTask.theme_id == theme.id)).all()
-    assert len(tasks) == 3
+    assert len(tasks) == 2
     task = tasks[0]
     domain_svc.sync_activity_done(session, task, True)
     session.commit()
@@ -82,7 +82,18 @@ def test_toggle_syncs_activity_done(session: Session):
     session.commit()
     titles = {t.title for t in new_tasks}
     assert task.title not in titles
-    assert "A4" in titles or len(new_tasks) == 3
+    assert len(new_tasks) == 2
+    assert "A2" in titles and "A3" in titles
+
+
+def test_format_daily_task_title_prefers_first_step():
+    act = Activity(
+        slice_id="s",
+        theme_id="t",
+        title="精读原文（第1-3天）",
+        description="通读原文，标记不懂段落；结合视频解读。",
+    )
+    assert domain_svc.format_daily_task_title(act) == "通读原文，标记不懂段落"
 
 
 def test_advance_phase_replaces_today_tasks(session: Session):
@@ -132,7 +143,8 @@ def test_relock_excludes_self_from_slot_and_purges(session: Session):
     assert old_slice_ids.isdisjoint({s.id for s in slices})
     assert old_act_ids.isdisjoint({a.id for a in acts})
     tasks = session.exec(select(DailyTask).where(DailyTask.theme_id == theme.id)).all()
-    assert {t.title for t in tasks} == {"新1", "新2", "新3"}
+    assert {t.title for t in tasks} == {"新1", "新2"}
+    assert len(tasks) == 2
     assert theme.phase == ThemePhase.learning
 
 

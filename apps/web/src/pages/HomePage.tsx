@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type HomeData, type Theme } from '../lib/api'
-import { draftResumeLabel, draftResumePath } from '../lib/themeDoc'
+import { draftResumeLabel, draftResumePath, driftTitle } from '../lib/themeDoc'
 import '../styles/pages/home.css'
 import '../styles/pages/home-empty.css'
 import '../styles/pages/home-first.css'
@@ -71,6 +71,17 @@ export function HomePage() {
     void load()
   }, [])
 
+  async function toggleTodayTask(taskId: string, done: boolean) {
+    await api.toggleTask(taskId, done)
+    setData((prev) => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        today_tasks: prev.today_tasks.map((t) => (t.id === taskId ? { ...t, done } : t)),
+      }
+    })
+  }
+
   const active = useMemo(
     () => (data ? data.themes.filter((t) => t.status === 'active') : []),
     [data],
@@ -83,7 +94,11 @@ export function HomePage() {
   if (loading) {
     return (
       <div className="home-page">
-        <p className="text-secondary">加载中…</p>
+        <div className="home-skeleton" aria-hidden="true">
+          <div className="home-skeleton__bar" />
+          <div className="home-skeleton__bar home-skeleton__bar--medium" />
+          <div className="home-skeleton__bar home-skeleton__bar--short" />
+        </div>
       </div>
     )
   }
@@ -156,6 +171,8 @@ export function HomePage() {
 
   const isFirst = active.length === 1
   const themeMap = data.themes
+  const visibleThemes = active.slice(0, 4)
+  const driftMessages = data.drift_events.slice(0, 3)
 
   return (
     <div className="home-page">
@@ -171,7 +188,10 @@ export function HomePage() {
       </div>
 
       <section className="home-section">
-        <div className="home-section__label">今日任务</div>
+        <div className="home-section__label-row">
+          <div className="home-section__label">今日推进</div>
+          <span className="home-section__hint">当前切片下一批</span>
+        </div>
         <div className="today-list">
           {data.today_tasks.length === 0 && (
             <p className="text-tertiary" style={{ fontSize: 12 }}>今天还没有任务。</p>
@@ -179,20 +199,30 @@ export function HomePage() {
           {data.today_tasks.map((task) => {
             const theme = themeById(themeMap, task.theme_id)
             return (
-              <Link
+              <div
                 key={task.id}
-                className="today-item"
-                to={`/themes/${task.theme_id}/work`}
-                style={task.done ? { opacity: 0.55 } : undefined}
+                className={`today-item${task.done ? ' is-done' : ''}`}
               >
+                <label className="ds-check today-item__check">
+                  <input
+                    type="checkbox"
+                    checked={task.done}
+                    onChange={(e) => {
+                      void toggleTodayTask(task.id, e.target.checked)
+                    }}
+                  />
+                  <span className="ds-check__box" />
+                </label>
                 <span className={phaseDot[theme?.phase ?? 'learning']} />
                 <span className="ds-tag today-item__topic-tag">{theme?.title ?? '主题'}</span>
-                <span className="today-item__text">{task.title}</span>
-                <span className="today-item__enter">
+                <Link className="today-item__text" to={`/themes/${task.theme_id}/work`}>
+                  {task.title}
+                </Link>
+                <Link className="today-item__enter" to={`/themes/${task.theme_id}/work`}>
                   <span>进入</span>
                   <Icon name="arrow-right" size={14} />
-                </span>
-              </Link>
+                </Link>
+              </div>
             )
           })}
         </div>
@@ -206,7 +236,7 @@ export function HomePage() {
           </Link>
         </div>
         <div className="theme-grid">
-          {active.map((theme) => {
+          {visibleThemes.map((theme) => {
             const todayCount = data.today_tasks.filter((t) => t.theme_id === theme.id).length
             return (
               <div key={theme.id} className="theme-card">
@@ -232,6 +262,11 @@ export function HomePage() {
             )
           })}
         </div>
+        {active.length > 4 && (
+          <Link className="home-section__more-link" to="/themes">
+            查看全部 {active.length} 个主题
+          </Link>
+        )}
         {!isFirst && <SlotBar slots={data.slots} />}
         {drafts.length > 0 && (
           <div className="home-draft-card">
@@ -256,7 +291,7 @@ export function HomePage() {
         )}
       </section>
 
-      {data.drift_events.length > 0 && (
+      {driftMessages.length > 0 && (
         <section className="home-section">
           <div className="home-section__label">漂移提示</div>
           <div className="ds-alert ds-alert--warning">
@@ -264,9 +299,17 @@ export function HomePage() {
               <Icon name="alert-triangle" size={16} />
             </span>
             <div className="ds-alert__content">
-              <div className="ds-alert__title">主焦点偏多</div>
+              <div className="ds-alert__title">{driftTitle(data.drift_events[0]?.kind)}</div>
               <div className="ds-alert__desc">
-                {data.drift_events[0]?.message}
+                {driftMessages.length === 1 ? (
+                  driftMessages[0].message
+                ) : (
+                  <ul className="home-drift-list">
+                    {driftMessages.map((ev) => (
+                      <li key={ev.id}>{ev.message}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           </div>

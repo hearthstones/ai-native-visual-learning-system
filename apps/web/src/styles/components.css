@@ -14,7 +14,7 @@
       flex-direction: column;
       align-items: center;
       gap: var(--spacer-4);
-      width: 48px;
+      width: 56px;
       padding: var(--spacer-8) 0;
       background: var(--bg-base-secondary);
       border-right: 1px solid var(--border-neutral-l1);
@@ -22,18 +22,24 @@
     .ds-activityrail__btn {
       position: relative;
       display: inline-flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
+      gap: 2px;
+      width: 44px;
+      min-height: 40px;
+      padding: 6px 0;
       border-radius: var(--radius-8);
       background: transparent;
       border: none;
       cursor: pointer;
+      color: var(--text-tertiary);
+      text-decoration: none;
     }
-    .ds-activityrail__btn:hover { background: var(--bg-overlay-l2); }
+    .ds-activityrail__btn:hover { background: var(--bg-overlay-l2); color: var(--text-default); }
     .ds-activityrail__btn.is-active {
       background: var(--bg-overlay-l3);
+      color: var(--text-default);
     }
     .ds-activityrail__btn.is-active::before {
       content: "";
@@ -45,6 +51,11 @@
       height: 20px;
       border-radius: var(--radius-full);
       background: var(--bg-brand);
+    }
+    .ds-activityrail__label {
+      font-size: 9px;
+      line-height: 1;
+      letter-spacing: 0.02em;
     }
     .ds-activityrail__divider {
       width: 24px;

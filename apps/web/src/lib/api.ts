@@ -86,6 +86,7 @@ export interface ActiveSlice {
   title: string
   core_points: unknown[]
   activities: SliceActivity[]
+  daily_minutes?: number
 }
 
 export interface WeeklyReviewInput {
@@ -115,12 +116,14 @@ export interface LlmSettings {
   deepseek_model: string
   model_options: Array<{ value: string; label: string }>
   weread_configured: boolean
+  weread_api_key_masked?: string
 }
 
 export interface LlmSettingsUpdate {
   deepseek_api_key?: string
   deepseek_base_url?: string
   deepseek_model?: string
+  weread_api_key?: string
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -150,6 +153,14 @@ export const api = {
   getSettings: () => request<LlmSettings>('/api/settings'),
   updateSettings: (body: LlmSettingsUpdate) =>
     request<LlmSettings>('/api/settings', { method: 'PATCH', body: JSON.stringify(body) }),
+  testLlm: () =>
+    request<{ ok: boolean; model: string; models?: string[]; echo: unknown }>(
+      '/api/settings/test-llm',
+      {
+        method: 'POST',
+        body: '{}',
+      },
+    ),
   home: () => request<HomeData>('/api/home'),
   slots: () => request<Record<string, { used: number; max: number }>>('/api/slots'),
   listThemes: (status?: ThemeStatus) => {

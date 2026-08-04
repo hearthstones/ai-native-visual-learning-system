@@ -1,20 +1,37 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type ActiveSlice, type DailyTask, type Theme } from '../lib/api'
-import { getCoreConcepts, getCurrentLevel, getSliceItems, phaseZh } from '../lib/themeDoc'
+import {
+  getCoreConcepts,
+  getCurrentLevel,
+  getDailyMinutes,
+  getSliceItems,
+  phaseZh,
+  workNoteKey,
+} from '../lib/themeDoc'
 import '../styles/pages/theme-work.css'
+import '../styles/components.css'
 
+const DRAFT_KEY = 'weekly-review-draft'
 type Mode = 'execute' | 'plan' | 'review'
+
+function parseMode(raw: string | null): Mode {
+  if (raw === 'plan' || raw === 'review') return raw
+  return 'execute'
+}
 
 export function ThemeWorkPage() {
   const { themeId = '' } = useParams()
-  const [mode, setMode] = useState<Mode>('execute')
+  const nav = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const mode = parseMode(searchParams.get('mode'))
   const [theme, setTheme] = useState<Theme | null>(null)
   const [slice, setSlice] = useState<ActiveSlice | null>(null)
   const [tasks, setTasks] = useState<DailyTask[]>([])
   const [error, setError] = useState('')
   const [note, setNote] = useState('')
+  const [cocreateOpen, setCocreateOpen] = useState(false)
 
   useEffect(() => {
     void (async () => {
@@ -27,8 +44,7 @@ export function ThemeWorkPage() {
         setTheme(t)
         setTasks(home.today_tasks.filter((x) => x.theme_id === themeId))
         setSlice(active)
-        const key = `work-note:${themeId}`
-        setNote(localStorage.getItem(key) || '')
+        setNote(localStorage.getItem(workNoteKey(themeId)) || '')
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e))
       }
@@ -38,6 +54,43 @@ export function ThemeWorkPage() {
   const level = useMemo(() => getCurrentLevel(theme), [theme])
   const sliceItems = useMemo(() => getSliceItems(slice, theme), [slice, theme])
   const concepts = useMemo(() => getCoreConcepts(theme, 3), [theme])
+  const dailyMinutes = getDailyMinutes(slice, theme)
+  const nextItem = sliceItems.find((it) => !it.done)
+  const materialHint = theme?.goal || level?.understand || '围绕主题目标推进当前切片'
+
+  function setMode(next: Mode) {
+    setSearchParams({ mode: next }, { replace: true })
+  }
+
+  function takeNoteToReview() {
+    if (!theme || !note.trim()) return
+    let draft: {
+      themeId?: string | null
+      scores?: number[]
+      q1?: string
+      q2?: string
+      q3?: string
+    } | null = null
+    try {
+      draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null')
+    } catch {
+      draft = null
+    }
+    const sameTheme = draft?.themeId === theme.id
+    const mergedQ1 = sameTheme && draft?.q1 ? `${draft.q1}\n\n${note.trim()}` : note.trim()
+    localStorage.setItem(
+      DRAFT_KEY,
+      JSON.stringify({
+        themeId: theme.id,
+        scores: sameTheme ? draft?.scores ?? [] : [],
+        q1: mergedQ1,
+        q2: sameTheme ? draft?.q2 ?? '' : '',
+        q3: sameTheme ? draft?.q3 ?? '' : '',
+        savedAt: new Date().toISOString(),
+      }),
+    )
+    nav(`/review?themeId=${theme.id}`)
+  }
 
   if (error) {
     return (
@@ -86,7 +139,7 @@ export function ThemeWorkPage() {
           ) : null}
           <span className="page-header__meta-item">
             <Icon name="clock" size={14} />
-            每天约 30 分钟
+            每天约 {dailyMinutes} 分钟
           </span>
           <span className="ds-tag ds-tag--brand">{phaseLabel}</span>
         </div>
@@ -201,16 +254,10 @@ export function ThemeWorkPage() {
           </div>
 
           <aside className="source-sidebar">
-            <p className="source-sidebar__title">来源</p>
-            <p className="source-sidebar__text">{theme.title}</p>
-            <p className="source-sidebar__text" style={{ marginTop: 'var(--spacer-8)' }}>
-              {sliceTitle}
+            <p className="source-sidebar__title">下一步</p>
+            <p className="source-sidebar__text">
+              {nextItem ? nextItem.label : sliceItems.length ? '当前切片已全部完成' : '暂无计划活动'}
             </p>
-            {level?.understand ? (
-              <p className="source-sidebar__text" style={{ marginTop: 'var(--spacer-8)' }}>
-                {level.understand}
-              </p>
-            ) : null}
             <div
               style={{
                 marginTop: 'var(--spacer-16)',
@@ -218,8 +265,8 @@ export function ThemeWorkPage() {
                 borderTop: '1px solid var(--border-neutral-l1)',
               }}
             >
-              <p className="source-sidebar__title">阶段</p>
-              <p className="source-sidebar__text">{phaseLabel}</p>
+              <p className="source-sidebar__title">资料提示</p>
+              <p className="source-sidebar__text">{materialHint}</p>
             </div>
             {concepts.length > 0 ? (
               <div
@@ -265,14 +312,15 @@ export function ThemeWorkPage() {
                 <Icon name="layout" size={12} className="icon" />
                 阶段管理
               </Link>
-              <Link
-                to={`/create/${theme.id}/plan`}
+              <button
+                type="button"
                 data-dom-id="btn-open-cocreate"
                 className="ds-btn ds-btn--brand ds-btn--sm"
+                onClick={() => setCocreateOpen(true)}
               >
                 <Icon name="sparkles" size={12} className="icon" />
                 打开共创
-              </Link>
+              </button>
             </div>
           </div>
           <div className="slice-card__body">
@@ -344,7 +392,7 @@ export function ThemeWorkPage() {
           onChange={(e) => {
             const v = e.target.value
             setNote(v)
-            localStorage.setItem(`work-note:${theme.id}`, v)
+            localStorage.setItem(workNoteKey(theme.id), v)
           }}
         />
         <p className="text-tertiary" style={{ fontSize: 'var(--body-xs-font-size)', marginTop: 8 }}>
@@ -355,10 +403,47 @@ export function ThemeWorkPage() {
           <span className="text-tertiary" style={{ fontSize: 'var(--body-xs-font-size)' }}>
             {concepts.length ? `核心：${concepts.join(' · ')}` : '完成阶梯共创后可见核心概念'}
           </span>
-          <Link to="/review" data-dom-id="btn-open-full-review" className="ds-btn ds-btn--secondary ds-btn--sm">
-            <Icon name="file-text" size={12} className="icon" />
-            进入完整复盘
-          </Link>
+          <div style={{ display: 'flex', gap: 'var(--spacer-8)' }}>
+            <button
+              type="button"
+              className="ds-btn ds-btn--tertiary ds-btn--sm"
+              disabled={!note.trim()}
+              onClick={takeNoteToReview}
+            >
+              <Icon name="arrow-right" size={12} className="icon" />
+              带去周复盘
+            </button>
+            <Link to="/review" data-dom-id="btn-open-full-review" className="ds-btn ds-btn--secondary ds-btn--sm">
+              <Icon name="file-text" size={12} className="icon" />
+              进入完整复盘
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className={`modal-overlay${cocreateOpen ? ' is-open' : ''}`}>
+        <div className="ds-dialog">
+          <div className="ds-dialog__head">
+            <span className="ds-dialog__title">打开计划共创</span>
+            <button type="button" className="ds-dialog__close" onClick={() => setCocreateOpen(false)}>
+              <Icon name="x" size={14} alt="close" />
+            </button>
+          </div>
+          <div className="ds-dialog__body">
+            将打开计划共创。若该步已确认，会进入修订模式（只读历史+可强制重开）
+          </div>
+          <div className="ds-dialog__foot">
+            <button type="button" className="ds-btn ds-btn--secondary" onClick={() => setCocreateOpen(false)}>
+              取消
+            </button>
+            <Link
+              to={`/create/${theme.id}/plan?revise=1`}
+              className="ds-btn ds-btn--brand"
+              onClick={() => setCocreateOpen(false)}
+            >
+              打开修订
+            </Link>
+          </div>
         </div>
       </div>
     </div>

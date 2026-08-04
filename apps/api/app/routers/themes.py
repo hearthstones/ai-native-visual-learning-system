@@ -157,6 +157,13 @@ def get_active_slice(theme_id: str, session: Session = Depends(get_session)) -> 
             .order_by(col(Activity.sort_order))
         ).all()
     )
+    doc = slice_row.doc or {}
+    daily = doc.get("daily_minutes")
+    if not isinstance(daily, (int, float)) or daily <= 0:
+        parent = (doc.get("parent_plan") or {}) if isinstance(doc, dict) else {}
+        daily = parent.get("daily_minutes") if isinstance(parent, dict) else None
+    if not isinstance(daily, (int, float)) or daily <= 0:
+        daily = 30
     return ActiveSliceOut(
         id=slice_row.id,
         theme_id=theme_id,
@@ -174,6 +181,7 @@ def get_active_slice(theme_id: str, session: Session = Depends(get_session)) -> 
             )
             for a in activities
         ],
+        daily_minutes=int(daily),
     )
 
 

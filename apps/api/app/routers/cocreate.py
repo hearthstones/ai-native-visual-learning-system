@@ -223,6 +223,11 @@ def confirm_cocreate(
     ).first()
     if not row:
         raise HTTPException(404, "尚无共创会话")
+    if row.confirmed:
+        raise HTTPException(
+            409,
+            "本步已确认。请先「重新共创」后再确认；直接确认会覆盖已锁定的计划进度。",
+        )
 
     live_doc = body.live_doc or row.live_doc or {}
     if kind == CocreateKind.stage:

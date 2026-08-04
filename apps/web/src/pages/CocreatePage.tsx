@@ -201,7 +201,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
     kind === 'resources' ? RESOURCE_SUGGESTIONS : kind === 'plan' ? PLAN_SUGGESTIONS : []
 
   async function sendMessage(content: string) {
-    if (!content.trim() || !session || busy) return
+    if (!content.trim() || !session || busy || session.confirmed) return
     setBusy(true)
     setError('')
     try {
@@ -259,6 +259,10 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
   }
 
   async function confirm() {
+    if (!session || session.confirmed) {
+      setError('本步已确认。请先点「重新共创」后再确认。')
+      return
+    }
     setBusy(true)
     setError('')
     try {
@@ -270,10 +274,10 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
         }
         await api.confirmCocreate(themeId, kind, {
           selected_level: selectedLevel,
-          live_doc: { ...session?.live_doc, selected_level: selectedLevel },
+          live_doc: { ...session.live_doc, selected_level: selectedLevel },
         })
       } else {
-        await api.confirmCocreate(themeId, kind, { live_doc: session?.live_doc })
+        await api.confirmCocreate(themeId, kind, { live_doc: session.live_doc })
       }
       nav(info.nextPath(themeId))
     } catch (err) {
@@ -296,10 +300,13 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
     return 'titlebar__step'
   }
 
-  const lockDisabled = kind === 'plan' && (busy || !session)
+  const revisionView = Boolean(revisionMode || session?.confirmed)
+  const lockDisabled = kind === 'plan' && (busy || !session || revisionView)
+  const composeDisabled = busy || !session || revisionView
+  const confirmDisabled = busy || !session || revisionView
   const rationale = session?.live_doc.rationale ? String(session.live_doc.rationale) : ''
   const messages = session?.messages || []
-  const showRevisionBanner = revisionMode || (reviseRequested && session?.confirmed)
+  const showRevisionBanner = revisionView || (reviseRequested && Boolean(session?.confirmed))
 
   return (
     <>
@@ -332,15 +339,18 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           {kind === 'plan' && session ? (
             <button
               className={`titlebar__lock-btn${lockDisabled ? ' is-disabled' : ''}`}
-              data-state="unlocked"
+              data-state={revisionView ? 'locked' : 'unlocked'}
               type="button"
               disabled={lockDisabled}
+              title={revisionView ? '已确认。请先重新共创后再锁定' : undefined}
               onClick={() => void confirm()}
             >
               <span className="lock-icon">
                 <Icon name="lock" size={14} className="icon" />
               </span>
-              <span className="lock-text">{busy ? '锁定中…' : '锁定计划'}</span>
+              <span className="lock-text">
+                {busy ? '锁定中…' : revisionView ? '已锁定' : '锁定计划'}
+              </span>
             </button>
           ) : null}
         </div>
@@ -443,7 +453,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           </div>
 
           <div className="composer-wrap">
-            {session && suggestions.length > 0 ? (
+            {session && suggestions.length > 0 && !revisionView ? (
               <div className="suggest-chips">
                 <span className="pref-chips__label">快速提意见</span>
                 {suggestions.map((text) => (
@@ -463,9 +473,11 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
             <form className="ds-composer" onSubmit={(e) => void send(e)}>
               <textarea
                 className="ds-composer__input"
-                placeholder={info.placeholder}
+                placeholder={
+                  revisionView ? '本步已确认，请先点「重新共创」后再对话' : info.placeholder
+                }
                 value={input}
-                disabled={busy || !session}
+                disabled={composeDisabled}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onComposerKey}
               />
@@ -481,7 +493,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                     className="ds-composer__send"
                     type="submit"
                     title="发送"
-                    disabled={busy || !session || !input.trim()}
+                    disabled={composeDisabled || !input.trim()}
                   >
                     <Icon name="send" size={16} className="icon" />
                   </button>
@@ -512,7 +524,8 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                 <StageDoc
                   levels={levels}
                   selectedLevel={selectedLevel}
-                  onSelect={setSelectedLevel}
+                  onSelect={revisionView ? () => undefined : setSelectedLevel}
+                  readOnly={revisionView}
                 />
               )}
               {kind === 'resources' && <ResourcesDoc doc={session?.live_doc || {}} />}
@@ -522,15 +535,17 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
 
           {kind !== 'plan' ? (
             <div className="confirm-bar">
-              <span className="confirm-bar__hint">{info.confirmHint}</span>
+              <span className="confirm-bar__hint">
+                {revisionView ? '本步已确认。若要修改请先重新共创。' : info.confirmHint}
+              </span>
               <button
                 className="ds-btn ds-btn--brand"
                 type="button"
-                disabled={busy || !session}
+                disabled={confirmDisabled}
                 onClick={() => void confirm()}
               >
-                <span>{info.confirmLabel}</span>
-                <Icon name="arrow-right" size={12} className="icon" />
+                <span>{revisionView ? '已确认' : info.confirmLabel}</span>
+                {!revisionView ? <Icon name="arrow-right" size={12} className="icon" /> : null}
               </button>
             </div>
           ) : null}
@@ -544,10 +559,12 @@ function StageDoc({
   levels,
   selectedLevel,
   onSelect,
+  readOnly = false,
 }: {
   levels: Array<Record<string, unknown>>
   selectedLevel: number | null
   onSelect: (n: number) => void
+  readOnly?: boolean
 }) {
   return (
     <section className="doc-section">
@@ -557,7 +574,7 @@ function StageDoc({
           <Icon name="layers" size={14} className="ic icon" />
           学习阶梯定位
         </h3>
-        <span className="ds-tag ds-tag--brand">点击选择</span>
+        <span className="ds-tag ds-tag--brand">{readOnly ? '已确认' : '点击选择'}</span>
       </div>
       <div className="ladder">
         {levels.map((lv) => {
@@ -569,7 +586,8 @@ function StageDoc({
               key={level}
               className={`ladder__row${selected ? ' is-selected' : ''}`}
               data-level={level}
-              onClick={() => onSelect(level)}
+              onClick={readOnly ? undefined : () => onSelect(level)}
+              style={readOnly ? { cursor: 'default' } : undefined}
             >
               <div className="ladder__lvl">L{level}</div>
               <div>

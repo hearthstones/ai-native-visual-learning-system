@@ -72,14 +72,19 @@ export function HomePage() {
   }, [])
 
   async function toggleTodayTask(taskId: string, done: boolean) {
-    await api.toggleTask(taskId, done)
-    setData((prev) => {
-      if (!prev) return prev
-      return {
-        ...prev,
-        today_tasks: prev.today_tasks.map((t) => (t.id === taskId ? { ...t, done } : t)),
-      }
-    })
+    setError('')
+    try {
+      await api.toggleTask(taskId, done)
+      setData((prev) => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          today_tasks: prev.today_tasks.map((t) => (t.id === taskId ? { ...t, done } : t)),
+        }
+      })
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    }
   }
 
   const active = useMemo(
@@ -103,7 +108,7 @@ export function HomePage() {
     )
   }
 
-  if (error) {
+  if (error && !data) {
     return (
       <div className="home-page">
         <div className="ds-alert ds-alert--danger" style={{ marginBottom: 16 }}>
@@ -128,6 +133,13 @@ export function HomePage() {
   if (active.length === 0) {
     return (
       <div className="home-empty-page">
+        {error ? (
+          <div className="ds-alert ds-alert--danger" style={{ marginBottom: 16 }}>
+            <div className="ds-alert__content">
+              <div className="ds-alert__desc">{error}</div>
+            </div>
+          </div>
+        ) : null}
         <div className="home-empty__icon">
           <Icon name="sparkles" size={28} />
         </div>
@@ -176,6 +188,13 @@ export function HomePage() {
 
   return (
     <div className="home-page">
+      {error ? (
+        <div className="ds-alert ds-alert--danger" style={{ marginBottom: 16 }}>
+          <div className="ds-alert__content">
+            <div className="ds-alert__desc">{error}</div>
+          </div>
+        </div>
+      ) : null}
       <div className="home-header">
         <div className="home-header__title-group">
           <div className="home-header__title">今天</div>

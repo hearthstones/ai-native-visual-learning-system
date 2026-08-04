@@ -34,10 +34,12 @@ export function ThemePlanPage() {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [advanceOpen, setAdvanceOpen] = useState(false)
+  const [completeOpen, setCompleteOpen] = useState(false)
   const [focusWarnOpen, setFocusWarnOpen] = useState(false)
   const [focusErrorOpen, setFocusErrorOpen] = useState(false)
   const [slotFullOpen, setSlotFullOpen] = useState(false)
   const [archiveOpen, setArchiveOpen] = useState(false)
+  const [ok, setOk] = useState('')
 
   const items = useMemo(() => getSliceItems(slice, theme), [slice, theme])
   const currentLevel = useMemo(() => getCurrentLevel(theme), [theme])
@@ -99,6 +101,24 @@ export function ThemePlanPage() {
     }
   }
 
+  async function confirmComplete() {
+    if (!theme) return
+    setBusy(true)
+    setError('')
+    setOk('')
+    try {
+      await api.updateTheme(theme.id, { status: 'completed' })
+      setCompleteOpen(false)
+      setOk('已标记完成，主题不再占槽')
+      nav(`/themes?tab=completed`)
+    } catch (e) {
+      setCompleteOpen(false)
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setBusy(false)
+    }
+  }
+
   async function setFocus(next: boolean) {
     if (!theme) return
     setBusy(true)
@@ -152,7 +172,9 @@ export function ThemePlanPage() {
 
   const currentIdx = phaseIndex(theme.phase)
   const phaseLabel = PHASES[currentIdx]?.label ?? theme.phase
-  const canAdvance = theme.phase !== 'application'
+  const canAdvance = theme.phase !== 'application' && theme.status === 'active'
+  const canComplete =
+    theme.status === 'active' && theme.phase === 'application'
   const done = items.filter((it) => it.done).length
   const focusedThemes = themes.filter((t) => t.is_focus && t.status === 'active')
   const occupyingByPhase = (key: ThemePhase) =>
@@ -164,6 +186,7 @@ export function ThemePlanPage() {
       <div className="phase-main">
         <div className="phase-left" id="phaseLeft">
           {error && <div className="error-banner" style={{ marginBottom: 16 }}>{error}</div>}
+          {ok && <div className="ok-banner" style={{ marginBottom: 16 }}>{ok}</div>}
 
           <div style={{ marginBottom: 16 }}>
             <Link to={`/themes/${theme.id}/work`} className="ds-btn ds-btn--tertiary ds-btn--sm">
@@ -268,6 +291,21 @@ export function ThemePlanPage() {
                     onClick={() => tryAdvance()}
                   >
                     进入下一阶段 <Icon name="arrow-right" size={14} className="icon" />
+                  </button>
+                </div>
+              ) : null}
+              {canComplete ? (
+                <div className="slice-card__foot">
+                  <p className="text-tertiary" style={{ fontSize: 12, margin: '0 0 8px' }}>
+                    应用期可长尾续跑；若已随心所欲，可标记完成并释放槽位。
+                  </p>
+                  <button
+                    type="button"
+                    className="ds-btn ds-btn--brand"
+                    disabled={busy}
+                    onClick={() => setCompleteOpen(true)}
+                  >
+                    标记完成（毕业）
                   </button>
                 </div>
               ) : null}
@@ -476,6 +514,37 @@ export function ThemePlanPage() {
               onClick={() => void confirmAdvance()}
             >
               确认
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className={`modal-overlay${completeOpen ? ' is-open' : ''}`} id="modalCompleteTheme">
+        <div className="ds-dialog">
+          <div className="ds-dialog__head">
+            <span className="ds-dialog__title">确认标记完成</span>
+            <button type="button" className="ds-dialog__close" onClick={() => setCompleteOpen(false)}>
+              <Icon name="x" size={14} alt="close" />
+            </button>
+          </div>
+          <div className="ds-dialog__body">
+            将「{theme.title}」标记为完成（毕业）：释放应用槽位，主题进入「完成」列表，之后仍可回看或重开。
+          </div>
+          <div className="ds-dialog__foot">
+            <button
+              type="button"
+              className="ds-btn ds-btn--secondary"
+              onClick={() => setCompleteOpen(false)}
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              className="ds-btn ds-btn--brand"
+              disabled={busy}
+              onClick={() => void confirmComplete()}
+            >
+              确认完成
             </button>
           </div>
         </div>

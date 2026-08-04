@@ -12,6 +12,7 @@ import { SettingsPage } from './pages/SettingsPage'
 import { ThemeOverviewPage } from './pages/ThemeOverviewPage'
 import { ThemePlanPage } from './pages/ThemePlanPage'
 import { ThemePracticePage } from './pages/ThemePracticePage'
+import { ThemesPage } from './pages/ThemesPage'
 import { ThemeWorkPage } from './pages/ThemeWorkPage'
 
 function ShellLayout() {
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="create/:themeId/stage" element={<CocreatePage kind="stage" />} />
           <Route path="create/:themeId/resources" element={<CocreatePage kind="resources" />} />
           <Route path="create/:themeId/plan" element={<CocreatePage kind="plan" />} />
+          <Route path="themes" element={<ThemesPage />} />
           <Route path="themes/:themeId" element={<ThemeOverviewPage />} />
           <Route path="themes/:themeId/summary" element={<CreateSummaryPage />} />
           <Route path="themes/:themeId/work" element={<ThemeWorkPage />} />

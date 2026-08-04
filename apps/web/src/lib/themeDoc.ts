@@ -59,6 +59,31 @@ export function getCurrentLevel(theme: Theme | null | undefined): LadderLevel | 
   return levels.find((l) => l.level === selected) || levels[0] || null
 }
 
+function hasDocContent(doc: Record<string, unknown> | null | undefined): boolean {
+  return !!doc && Object.keys(doc).length > 0
+}
+
+/** 草稿主题应续创的共创步骤路径 */
+export function draftResumePath(theme: Theme): string {
+  if (!hasDocContent(theme.ladder_doc) && theme.current_ladder_level == null) {
+    return `/create/${theme.id}/stage`
+  }
+  if (!hasDocContent(theme.resources_doc)) {
+    return `/create/${theme.id}/resources`
+  }
+  return `/create/${theme.id}/plan`
+}
+
+export function draftResumeLabel(theme: Theme): string {
+  if (!hasDocContent(theme.ladder_doc) && theme.current_ladder_level == null) {
+    return '继续阶梯共创'
+  }
+  if (!hasDocContent(theme.resources_doc)) {
+    return '继续资料共创'
+  }
+  return '继续计划共创'
+}
+
 /** 计划切片条目：优先用锁定后的活动列表 */
 export function getSliceItems(
   slice: ActiveSlice | null | undefined,

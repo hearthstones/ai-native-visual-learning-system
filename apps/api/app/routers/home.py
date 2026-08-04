@@ -32,18 +32,33 @@ def home(session: Session = Depends(get_session)) -> HomeOut:
         ).all()
     )
     today = date.today().isoformat()
+    active_ids = {t.id for t in themes if t.status == ThemeStatus.active}
     for t in themes:
         if t.status == ThemeStatus.active:
             domain_svc.ensure_today_tasks(session, t)
+
+    # 非进行中主题的今日任务不再展示，并顺手清理残留
+    stale = list(
+        session.exec(select(DailyTask).where(DailyTask.task_date == today)).all()
+    )
+    for task in stale:
+        if task.theme_id not in active_ids:
+            session.delete(task)
     session.commit()
 
-    tasks = list(
-        session.exec(
-            select(DailyTask)
-            .where(DailyTask.task_date == today)
-            .order_by(col(DailyTask.sort_order))
-        ).all()
-    )
+    if not active_ids:
+        tasks: list[DailyTask] = []
+    else:
+        tasks = list(
+            session.exec(
+                select(DailyTask)
+                .where(
+                    DailyTask.task_date == today,
+                    col(DailyTask.theme_id).in_(active_ids),
+                )
+                .order_by(col(DailyTask.sort_order))
+            ).all()
+        )
     drifts = session.exec(
         select(DriftEvent).order_by(DriftEvent.created_at.desc()).limit(10)
     ).all()

@@ -1,6 +1,13 @@
 export type ThemeType = 'general' | 'tech'
 export type ThemePhase = 'learning' | 'practice' | 'application'
-export type ThemeStatus = 'draft' | 'active' | 'dormant' | 'archived'
+export type ThemeStatus =
+  | 'draft'
+  | 'active'
+  | 'dormant'
+  | 'completed'
+  | 'abandoned'
+  | 'archived'
+  | 'deleted'
 export type CocreateKind = 'stage' | 'resources' | 'plan'
 
 export interface Theme {
@@ -11,6 +18,7 @@ export interface Theme {
   phase: ThemePhase
   status: ThemeStatus
   is_focus: boolean
+  previous_status?: ThemeStatus | null
   current_ladder_level: number | null
   ladder_doc: Record<string, unknown>
   resources_doc: Record<string, unknown>
@@ -144,6 +152,10 @@ export const api = {
     request<LlmSettings>('/api/settings', { method: 'PATCH', body: JSON.stringify(body) }),
   home: () => request<HomeData>('/api/home'),
   slots: () => request<Record<string, { used: number; max: number }>>('/api/slots'),
+  listThemes: (status?: ThemeStatus) => {
+    const q = status ? `?status=${encodeURIComponent(status)}` : ''
+    return request<Theme[]>(`/api/themes${q}`)
+  },
   createTheme: (body: { title: string; theme_type: ThemeType; goal?: string }) =>
     request<Theme>('/api/themes', { method: 'POST', body: JSON.stringify(body) }),
   getTheme: (id: string) => request<Theme>(`/api/themes/${id}`),
@@ -151,6 +163,10 @@ export const api = {
     id: string,
     body: Partial<Pick<Theme, 'title' | 'goal' | 'status' | 'is_focus' | 'current_ladder_level'>>,
   ) => request<Theme>(`/api/themes/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
+  restoreTheme: (id: string) =>
+    request<Theme>(`/api/themes/${id}/restore`, { method: 'POST' }),
+  purgeTheme: (id: string) =>
+    request<void>(`/api/themes/${id}`, { method: 'DELETE' }),
   advancePhase: (id: string) =>
     request<Theme>(`/api/themes/${id}/advance-phase`, { method: 'POST' }),
   startCocreate: (themeId: string, kind: CocreateKind, options: StartCocreateOptions = {}) =>

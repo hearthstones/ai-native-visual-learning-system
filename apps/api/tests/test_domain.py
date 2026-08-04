@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime
+
 import pytest
 from sqlmodel import Session, SQLModel, create_engine, select
 
@@ -186,3 +188,134 @@ def test_set_focus_records_drift_with_flush(session: Session):
     assert "2" in ev.message
     drifts = session.exec(select(DriftEvent)).all()
     assert len(drifts) == 1
+
+
+def test_restore_dormant_respects_learning_slot(session: Session):
+    active = Theme(
+        title="占用学习槽",
+        status=ThemeStatus.active,
+        phase=ThemePhase.learning,
+        locked_at=datetime.utcnow(),
+    )
+    dormant = Theme(
+        title="休眠主题",
+        status=ThemeStatus.dormant,
+        phase=ThemePhase.learning,
+        is_focus=False,
+        locked_at=datetime.utcnow(),
+    )
+    session.add(active)
+    session.add(dormant)
+    session.commit()
+    session.refresh(dormant)
+
+    with pytest.raises(ValueError, match="槽位已满"):
+        domain_svc.apply_theme_status(session, dormant, ThemeStatus.active)
+
+    # Free the slot, then restore succeeds
+    domain_svc.apply_theme_status(session, active, ThemeStatus.dormant)
+    session.commit()
+    domain_svc.apply_theme_status(session, dormant, ThemeStatus.active)
+    session.commit()
+    session.refresh(dormant)
+    assert dormant.status == ThemeStatus.active
+
+
+def test_draft_cannot_activate_via_status(session: Session):
+    draft = Theme(title="草稿", status=ThemeStatus.draft)
+    session.add(draft)
+    session.commit()
+    session.refresh(draft)
+    with pytest.raises(ValueError, match="草稿"):
+        domain_svc.apply_theme_status(session, draft, ThemeStatus.active)
+
+
+def test_complete_requires_application_phase(session: Session):
+    theme = Theme(
+        title="学习中",
+        status=ThemeStatus.active,
+        phase=ThemePhase.learning,
+        locked_at=datetime.utcnow(),
+    )
+    session.add(theme)
+    session.commit()
+    session.refresh(theme)
+    with pytest.raises(ValueError, match="应用期"):
+        domain_svc.apply_theme_status(session, theme, ThemeStatus.completed)
+
+    theme.phase = ThemePhase.application
+    session.add(theme)
+    session.commit()
+    domain_svc.apply_theme_status(session, theme, ThemeStatus.completed)
+    session.commit()
+    session.refresh(theme)
+    assert theme.status == ThemeStatus.completed
+    assert theme.is_focus is False
+
+
+def test_archive_only_from_completed_or_abandoned(session: Session):
+    active = Theme(
+        title="进行中",
+        status=ThemeStatus.active,
+        phase=ThemePhase.application,
+        locked_at=datetime.utcnow(),
+    )
+    session.add(active)
+    session.commit()
+    session.refresh(active)
+    with pytest.raises(ValueError, match="完成或废弃"):
+        domain_svc.apply_theme_status(session, active, ThemeStatus.archived)
+
+    domain_svc.apply_theme_status(session, active, ThemeStatus.completed)
+    session.commit()
+    domain_svc.apply_theme_status(session, active, ThemeStatus.archived)
+    session.commit()
+    session.refresh(active)
+    assert active.status == ThemeStatus.archived
+    assert active.previous_status == ThemeStatus.completed
+
+    restored = domain_svc.restore_theme(session, active)
+    session.commit()
+    assert restored == ThemeStatus.completed
+    session.refresh(active)
+    assert active.status == ThemeStatus.completed
+
+
+def test_leave_active_clears_today_tasks(session: Session):
+    theme = Theme(title="t", status=ThemeStatus.draft)
+    session.add(theme)
+    session.commit()
+    session.refresh(theme)
+    domain_svc.lock_theme_plan(session, theme, _plan_doc("A1", "A2"))
+    session.commit()
+    tasks = session.exec(select(DailyTask).where(DailyTask.theme_id == theme.id)).all()
+    assert len(tasks) >= 1
+
+    domain_svc.apply_theme_status(session, theme, ThemeStatus.dormant)
+    session.commit()
+    left = session.exec(select(DailyTask).where(DailyTask.theme_id == theme.id)).all()
+    assert left == []
+
+
+def test_soft_delete_and_purge(session: Session):
+    theme = Theme(title="待删", status=ThemeStatus.draft)
+    session.add(theme)
+    session.commit()
+    session.refresh(theme)
+
+    domain_svc.apply_theme_status(session, theme, ThemeStatus.deleted)
+    session.commit()
+    session.refresh(theme)
+    assert theme.status == ThemeStatus.deleted
+    assert theme.previous_status == ThemeStatus.draft
+
+    restored = domain_svc.restore_theme(session, theme)
+    session.commit()
+    assert restored == ThemeStatus.draft
+
+    domain_svc.apply_theme_status(session, theme, ThemeStatus.deleted)
+    session.commit()
+    tid = theme.id
+    domain_svc.purge_theme(session, theme)
+    session.commit()
+    assert session.get(Theme, tid) is None

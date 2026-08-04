@@ -40,6 +40,16 @@
 .home-section {
   margin-bottom: var(--spacer-32);
 }
+.home-section__label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacer-12);
+  margin-bottom: var(--spacer-12);
+}
+.home-section__label-row .home-section__label {
+  margin-bottom: 0;
+}
 .home-section__label {
   font-size: var(--body-xs-font-size);
   font-weight: var(--font-weight-medium);
@@ -47,6 +57,58 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: var(--spacer-12);
+}
+.home-section__link {
+  font-size: var(--body-sm-font-size);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.home-section__link:hover {
+  color: var(--text-brand);
+}
+.home-draft-card {
+  margin-top: var(--spacer-12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacer-16);
+  padding: var(--spacer-16) var(--spacer-20);
+  border-radius: var(--radius-6);
+  background: var(--bg-base-secondary);
+  border: 1px solid var(--border-neutral-l2);
+}
+.home-draft-card__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-4);
+}
+.home-draft-card__eyebrow {
+  font-size: var(--body-xs-font-size);
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.home-draft-card__title {
+  font-size: var(--body-base-font-size);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-default);
+}
+.home-draft-card__desc {
+  font-size: var(--body-sm-font-size);
+  color: var(--text-secondary);
+}
+.home-draft-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacer-8);
+  flex-shrink: 0;
+}
+@media (max-width: 720px) {
+  .home-draft-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 /* ── Today Task List ──────────────────────────────────────── */

@@ -23,10 +23,19 @@ class ThemePhase(str, Enum):
 
 
 class ThemeStatus(str, Enum):
+    """主题生命周期状态。
+
+    draft 草稿 · active 进行 · dormant 休眠 · completed 完成
+    abandoned 废弃 · archived 归档 · deleted 回收站（软删）
+    """
+
     draft = "draft"
     active = "active"
     dormant = "dormant"
+    completed = "completed"
+    abandoned = "abandoned"
     archived = "archived"
+    deleted = "deleted"
 
 
 class SliceStatus(str, Enum):
@@ -64,6 +73,8 @@ class Theme(SQLModel, table=True):
     phase: ThemePhase = ThemePhase.learning
     status: ThemeStatus = ThemeStatus.draft
     is_focus: bool = False
+    # 进入 archived / deleted 前的状态，用于恢复
+    previous_status: Optional[ThemeStatus] = None
     current_ladder_level: Optional[int] = None
     ladder_doc: dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
     resources_doc: dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))

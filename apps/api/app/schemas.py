@@ -33,6 +33,7 @@ class ThemeOut(BaseModel):
     phase: ThemePhase
     status: ThemeStatus
     is_focus: bool
+    previous_status: Optional[ThemeStatus] = None
     current_ladder_level: Optional[int]
     ladder_doc: dict[str, Any]
     resources_doc: dict[str, Any]

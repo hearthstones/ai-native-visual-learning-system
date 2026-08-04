@@ -9,6 +9,7 @@ function projectLabel(pathname: string) {
   if (pathname.startsWith('/settings')) return '设置'
   if (pathname.startsWith('/create')) return '新建主题'
   if (pathname.startsWith('/review')) return '周复盘'
+  if (pathname === '/themes') return '我的主题'
   if (pathname.startsWith('/themes')) return '主题执行'
   const d = new Date()
   const y = d.getFullYear()
@@ -40,7 +41,8 @@ export function AppShell({
     )
   }
 
-  const themeActive = pathname.startsWith('/themes')
+  const themesManageActive = pathname === '/themes'
+  const themeActive = pathname.startsWith('/themes/')
   const settingsActive = pathname.startsWith('/settings')
 
   return (
@@ -80,21 +82,22 @@ export function AppShell({
         <NavLink
           to="/"
           end
-          className={({ isActive }) => `ds-activityrail__btn${isActive && !themeActive ? ' is-active' : ''}`}
+          className={({ isActive }) =>
+            `ds-activityrail__btn${isActive && !themesManageActive && !themeActive ? ' is-active' : ''}`
+          }
           title="今天"
           aria-label="今天"
         >
           <Icon name="home" size={16} />
         </NavLink>
-        <button
-          className={`ds-activityrail__btn${themeActive ? ' is-active' : ''}`}
-          type="button"
+        <NavLink
+          to="/themes"
+          className={`ds-activityrail__btn${themesManageActive || themeActive ? ' is-active' : ''}`}
           title="我的主题"
           aria-label="我的主题"
-          onClick={noop}
         >
           <Icon name="layers" size={16} />
-        </button>
+        </NavLink>
         <button
           className="ds-activityrail__btn"
           type="button"

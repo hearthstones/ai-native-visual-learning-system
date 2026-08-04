@@ -60,7 +60,7 @@ export function CreateInterceptPage() {
       } else if (choice === 'hibernate') {
         await api.updateTheme(theme.id, { status: 'dormant' })
       } else {
-        await api.updateTheme(theme.id, { status: 'archived' })
+        await api.updateTheme(theme.id, { status: 'abandoned' })
       }
       nav('/create')
     } catch (e) {

@@ -1,6 +1,7 @@
 from datetime import datetime
+from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, col, select
 
 from app.db import get_session
@@ -19,8 +20,14 @@ router = APIRouter(prefix="/themes", tags=["themes"])
 
 
 @router.get("", response_model=list[ThemeOut])
-def list_themes(session: Session = Depends(get_session)) -> list[Theme]:
-    return list(session.exec(select(Theme).order_by(Theme.updated_at.desc())).all())
+def list_themes(
+    status: Optional[ThemeStatus] = Query(default=None),
+    session: Session = Depends(get_session),
+) -> list[Theme]:
+    stmt = select(Theme).order_by(Theme.updated_at.desc())
+    if status is not None:
+        stmt = stmt.where(Theme.status == status)
+    return list(session.exec(stmt).all())
 
 
 @router.post("", response_model=ThemeOut)
@@ -57,16 +64,29 @@ def update_theme(
     if not theme:
         raise HTTPException(404, "主题不存在")
     data = body.model_dump(exclude_unset=True)
+
+    if "title" in data and data["title"] is not None:
+        title = str(data["title"]).strip()
+        if not title:
+            raise HTTPException(400, "主题名称不能为空")
+        data["title"] = title
+    if "goal" in data and data["goal"] is not None:
+        data["goal"] = str(data["goal"]).strip()
+
+    if "status" in data:
+        try:
+            domain_svc.apply_theme_status(session, theme, data.pop("status"))
+        except ValueError as e:
+            raise HTTPException(409, str(e)) from e
+
     if "is_focus" in data:
+        if theme.status != ThemeStatus.active:
+            raise HTTPException(400, "仅进行中的主题可设置主焦点")
         try:
             domain_svc.set_focus(session, theme, bool(data.pop("is_focus")))
         except ValueError as e:
             raise HTTPException(409, str(e)) from e
-    if "status" in data and data["status"] in (
-        ThemeStatus.dormant,
-        ThemeStatus.archived,
-    ):
-        theme.is_focus = False
+
     for k, v in data.items():
         setattr(theme, k, v)
     theme.updated_at = datetime.utcnow()
@@ -74,6 +94,35 @@ def update_theme(
     session.commit()
     session.refresh(theme)
     return theme
+
+
+@router.post("/{theme_id}/restore", response_model=ThemeOut)
+def restore_theme(theme_id: str, session: Session = Depends(get_session)) -> Theme:
+    """从回收站或归档恢复。"""
+    theme = session.get(Theme, theme_id)
+    if not theme:
+        raise HTTPException(404, "主题不存在")
+    try:
+        domain_svc.restore_theme(session, theme)
+    except ValueError as e:
+        raise HTTPException(409, str(e)) from e
+    session.add(theme)
+    session.commit()
+    session.refresh(theme)
+    return theme
+
+
+@router.delete("/{theme_id}", status_code=204)
+def delete_theme_permanently(theme_id: str, session: Session = Depends(get_session)) -> None:
+    """永久删除（仅回收站）。"""
+    theme = session.get(Theme, theme_id)
+    if not theme:
+        raise HTTPException(404, "主题不存在")
+    try:
+        domain_svc.purge_theme(session, theme)
+    except ValueError as e:
+        raise HTTPException(409, str(e)) from e
+    session.commit()
 
 
 @router.post("/{theme_id}/advance-phase", response_model=ThemeOut)

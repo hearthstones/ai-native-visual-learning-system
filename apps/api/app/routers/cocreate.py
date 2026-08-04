@@ -72,7 +72,16 @@ def start_cocreate(
             kind=body.kind.value,
         )
     except Exception as e:
-        raise HTTPException(502, f"LLM 调用失败: {e}") from e
+        # Transient network / provider blips — one quick retry
+        try:
+            result = chat_json(
+                settings,
+                system=system,
+                messages=context_msgs,
+                kind=body.kind.value,
+            )
+        except Exception as e2:
+            raise HTTPException(502, f"LLM 调用失败: {e2}") from e2
 
     assistant_message = str(result.get("assistant_message") or "已生成初稿，请看右侧文档。")
     live_doc = result.get("live_doc") or {}

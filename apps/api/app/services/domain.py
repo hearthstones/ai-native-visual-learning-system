@@ -46,7 +46,20 @@ def assert_slot_available(
     limit = PHASE_SLOT_LIMITS[phase]
     used = count_active_in_phase(session, phase, exclude_theme_id=exclude_theme_id)
     if used >= limit:
-        raise ValueError(f"{phase.value} 槽位已满（{used}/{limit}），请先推进/休眠/废弃腾槽。")
+        rows = session.exec(
+            select(Theme).where(
+                Theme.status == ThemeStatus.active,
+                Theme.phase == phase,
+            )
+        ).all()
+        if exclude_theme_id:
+            rows = [r for r in rows if r.id != exclude_theme_id]
+        occupying = "、".join(f"「{r.title}」" for r in rows[:3]) if rows else ""
+        suffix = f"，当前占用：{occupying}" if occupying else ""
+        raise ValueError(
+            f"{phase.value} 槽位已满（{used}/{limit}）{suffix}。"
+            "请先推进/休眠/废弃腾槽后再锁定计划。"
+        )
 
 
 def count_focus(session: Session) -> int:

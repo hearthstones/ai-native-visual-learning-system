@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'
@@ -12,6 +12,32 @@ export function CreateInfoPage() {
   const [goal, setGoal] = useState('建立可持续的主题阅读方法')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [checkingSlot, setCheckingSlot] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    void api
+      .slots()
+      .then((slots) => {
+        if (cancelled) return
+        const used = slots.learning?.used ?? 0
+        const max = slots.learning?.max ?? 1
+        if (used >= max) {
+          nav('/create/intercept', { replace: true })
+          return
+        }
+        setCheckingSlot(false)
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : String(e))
+          setCheckingSlot(false)
+        }
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [nav])
 
   async function onSubmit(e?: FormEvent) {
     e?.preventDefault()
@@ -19,6 +45,13 @@ export function CreateInfoPage() {
     setBusy(true)
     setError('')
     try {
+      const slots = await api.slots()
+      const used = slots.learning?.used ?? 0
+      const max = slots.learning?.max ?? 1
+      if (used >= max) {
+        nav('/create/intercept', { replace: true })
+        return
+      }
       const theme = await api.createTheme({ title: title.trim(), theme_type: themeType, goal })
       nav(`/create/${theme.id}/stage`)
     } catch (err) {
@@ -26,6 +59,14 @@ export function CreateInfoPage() {
     } finally {
       setBusy(false)
     }
+  }
+
+  if (checkingSlot) {
+    return (
+      <div className="create-page">
+        <p className="text-secondary">检查学习槽位…</p>
+      </div>
+    )
   }
 
   return (

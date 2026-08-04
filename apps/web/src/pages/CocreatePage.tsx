@@ -108,10 +108,36 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [planPrefs, setPlanPrefs] = useState<PlanPrefs>(DEFAULT_PLAN_PREFS)
+  const [slotBlocker, setSlotBlocker] = useState<Theme | null>(null)
 
   useEffect(() => {
     void api.getTheme(themeId).then(setTheme).catch(() => setTheme(null))
   }, [themeId])
+
+  useEffect(() => {
+    if (kind !== 'plan') {
+      setSlotBlocker(null)
+      return
+    }
+    let cancelled = false
+    void api
+      .home()
+      .then((home) => {
+        if (cancelled) return
+        const used = home.slots.learning?.used ?? 0
+        const max = home.slots.learning?.max ?? 1
+        const occupying = home.themes.find(
+          (t) => t.status === 'active' && t.phase === 'learning' && t.id !== themeId,
+        )
+        setSlotBlocker(used >= max && occupying ? occupying : null)
+      })
+      .catch(() => {
+        if (!cancelled) setSlotBlocker(null)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [kind, themeId])
 
   useEffect(() => {
     let cancelled = false
@@ -214,7 +240,12 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
       }
       nav(info.nextPath(themeId))
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+      const msg = err instanceof Error ? err.message : String(err)
+      if (kind === 'plan' && /槽位已满|slot/i.test(msg)) {
+        setError(`${msg} 可先去腾出学习槽位，再回来锁定。`)
+      } else {
+        setError(msg)
+      }
     } finally {
       setBusy(false)
     }
@@ -287,7 +318,38 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           </div>
 
           <div className="chat-scroll">
-            {error ? <div className="error-banner">{error}</div> : null}
+            {slotBlocker ? (
+              <div className="error-banner" style={{ display: 'grid', gap: 8 }}>
+                <div>
+                  学习槽位已被「{slotBlocker.title}」占用（1/1）。现在可以共创计划，但锁定前需先腾槽。
+                </div>
+                <div>
+                  <button
+                    className="ds-btn ds-btn--secondary ds-btn--sm"
+                    type="button"
+                    onClick={() => nav('/create/intercept')}
+                  >
+                    去腾出学习槽位
+                  </button>
+                </div>
+              </div>
+            ) : null}
+            {error ? (
+              <div className="error-banner" style={{ display: 'grid', gap: 8 }}>
+                <div>{error}</div>
+                {kind === 'plan' && /槽位已满|slot/i.test(error) ? (
+                  <div>
+                    <button
+                      className="ds-btn ds-btn--secondary ds-btn--sm"
+                      type="button"
+                      onClick={() => nav('/create/intercept')}
+                    >
+                      去腾出学习槽位
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
 
             {(session?.messages || []).map((m, i) => (
               <div key={`${m.role}-${i}`} className={`msg msg--${m.role === 'user' ? 'user' : 'ai'}`}>
@@ -584,7 +646,13 @@ function ResourcesDoc({ doc }: { doc: Record<string, unknown> }) {
 }
 
 function PlanDoc({ doc }: { doc: Record<string, unknown> }) {
-  const core = (doc.core_20 as string[]) || []
+  const core = (Array.isArray(doc.core_20) ? doc.core_20 : [])
+    .map((c) => {
+      if (typeof c === 'string') return c
+      if (c && typeof c === 'object' && 'title' in c) return String((c as { title: unknown }).title)
+      return String(c ?? '')
+    })
+    .filter(Boolean)
   const phases =
     (doc.phases as Record<
       string,

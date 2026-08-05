@@ -167,6 +167,14 @@ class ActiveSliceOut(BaseModel):
     daily_minutes: int = plan_defaults.DEFAULT_DAILY_MINUTES
 
 
+class PlanDocumentOut(BaseModel):
+    """Read-only theme plan book: ladder + resources + full plan_doc."""
+
+    theme: ThemeOut
+    plan_doc: dict[str, Any] = Field(default_factory=dict)
+    locked: bool = False
+
+
 class ActivityToggle(BaseModel):
     done: bool
 

@@ -1,30 +1,76 @@
 import { Icon } from '../Icon'
 
-export function ResourcesDoc({ doc }: { doc: Record<string, unknown> }) {
+/** 过滤共创里误写入的主题元数据约束 */
+function displayConstraints(raw: string[]): string[] {
+  return raw.filter((c) => !/^(主题|类型|目标|当前阶梯)\s*[：:]/.test(c.trim()))
+}
+
+function typeZh(type: unknown): string {
+  const t = String(type || '').trim()
+  const map: Record<string, string> = {
+    book: '书',
+    article: '文章',
+    video: '视频',
+    course: '课程',
+    tool: '工具',
+    docs: '文档',
+    doc: '文档',
+  }
+  return map[t.toLowerCase()] || t
+}
+
+function difficultyZh(value: unknown): string {
+  const t = String(value || '').trim()
+  const map: Record<string, string> = {
+    beginner: '入门',
+    easy: '简单',
+    intermediate: '中级',
+    medium: '中等',
+    advanced: '进阶',
+    hard: '较难',
+  }
+  return map[t.toLowerCase()] || t
+}
+
+export function ResourcesDoc({
+  doc,
+  embedded = false,
+}: {
+  doc: Record<string, unknown>
+  embedded?: boolean
+}) {
   const resources = (doc.resources as Array<Record<string, unknown>>) || []
-  const constraints = (doc.constraints as string[]) || []
+  const constraints = displayConstraints((doc.constraints as string[]) || [])
   const path7d = String(doc.path_7d || '')
   const rationale = String(doc.rationale || '')
 
   return (
     <>
-      <section className="doc-section">
-        <div className="doc-section__head">
-          <span className="doc-section__index">A</span>
-          <h3 className="doc-section__title">资料范围</h3>
-          {constraints[0] ? (
-            <span className="ds-tag ds-tag--brand" style={{ marginLeft: 'auto' }}>
-              {constraints[0]}
-            </span>
-          ) : null}
-        </div>
-        <div className="constraint-tags">
-          {(constraints.length ? constraints : ['高杠杆优先']).map((c) => (
-            <span key={c} className="constraint-tag">
-              {c}
-            </span>
-          ))}
-        </div>
+      <section className={`doc-section${embedded ? ' doc-section--embedded' : ''}`}>
+        {!embedded ? (
+          <div className="doc-section__head">
+            <span className="doc-section__index">A</span>
+            <h3 className="doc-section__title">资料范围</h3>
+            {constraints[0] ? (
+              <span className="ds-tag ds-tag--brand" style={{ marginLeft: 'auto' }}>
+                {constraints[0]}
+              </span>
+            ) : null}
+          </div>
+        ) : null}
+        {constraints.length ? (
+          <div className="constraint-tags">
+            {constraints.map((c) => (
+              <span key={c} className="constraint-tag">
+                {c}
+              </span>
+            ))}
+          </div>
+        ) : !embedded ? (
+          <div className="constraint-tags">
+            <span className="constraint-tag">高杠杆优先</span>
+          </div>
+        ) : null}
         {rationale ? (
           <p className="text-secondary" style={{ marginTop: 12, fontSize: 12 }}>
             {rationale}
@@ -37,14 +83,20 @@ export function ResourcesDoc({ doc }: { doc: Record<string, unknown> }) {
         ) : null}
       </section>
 
-      <section className="doc-section">
-        <div className="doc-section__head">
-          <span className="doc-section__index">B</span>
-          <h3 className="doc-section__title">学习资源（{resources.length} 份）</h3>
-          <span className="ds-tag" style={{ marginLeft: 'auto' }}>
-            已排序
-          </span>
-        </div>
+      <section className={`doc-section${embedded ? ' doc-section--embedded' : ''}`}>
+        {!embedded ? (
+          <div className="doc-section__head">
+            <span className="doc-section__index">B</span>
+            <h3 className="doc-section__title">学习资源（{resources.length} 份）</h3>
+            <span className="ds-tag" style={{ marginLeft: 'auto' }}>
+              已排序
+            </span>
+          </div>
+        ) : (
+          <div className="doc-section__head doc-section__head--subtle">
+            <h3 className="doc-section__title">学习资源（{resources.length} 份）</h3>
+          </div>
+        )}
         <div className="resources">
           {resources.map((r, i) => (
             <div key={i} className="resource-card">
@@ -54,7 +106,7 @@ export function ResourcesDoc({ doc }: { doc: Record<string, unknown> }) {
                 </span>
                 <div>
                   <div className="resource-card__title">{String(r.name || `资源 ${i + 1}`)}</div>
-                  <div className="resource-card__author">{String(r.type || '')}</div>
+                  <div className="resource-card__author">{typeZh(r.type)}</div>
                 </div>
                 <div className="resource-card__tags">
                   {i < 2 ? (
@@ -63,7 +115,7 @@ export function ResourcesDoc({ doc }: { doc: Record<string, unknown> }) {
                     <span className="ds-tag">补充</span>
                   )}
                   {r.weread_readable ? <span className="ds-tag">微信读书可读</span> : null}
-                  {r.difficulty ? <span className="ds-tag">{String(r.difficulty)}</span> : null}
+                  {r.difficulty ? <span className="ds-tag">{difficultyZh(r.difficulty)}</span> : null}
                 </div>
               </div>
               <div className="resource-card__body">
@@ -76,7 +128,7 @@ export function ResourcesDoc({ doc }: { doc: Record<string, unknown> }) {
                 {r.difficulty ? (
                   <div className="resource-field">
                     <div className="resource-field__label">难度</div>
-                    <div className="resource-field__value">{String(r.difficulty)}</div>
+                    <div className="resource-field__value">{difficultyZh(r.difficulty)}</div>
                   </div>
                 ) : null}
                 {r.covers ? (

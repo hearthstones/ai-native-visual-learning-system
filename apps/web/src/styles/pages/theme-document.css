@@ -1,0 +1,199 @@
+/* 主题计划书 · 只读通读页 */
+
+.docbook-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--spacer-32) var(--spacer-32) var(--spacer-40);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-24);
+}
+
+.docbook-page .doc-panel {
+  background: transparent;
+  border: none;
+  padding: 0;
+  overflow: visible;
+}
+
+.docbook-page .doc-section--embedded {
+  margin-top: 0;
+}
+
+.docbook-page .doc-section--embedded + .doc-section--embedded {
+  margin-top: var(--spacer-16);
+}
+
+.docbook-page .doc-section__head--subtle {
+  margin-bottom: var(--spacer-8);
+}
+
+.docbook-page .ladder__row--readonly {
+  grid-template-columns: 44px 1fr;
+}
+
+.docbook-page .ladder__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacer-8);
+}
+
+.docbook-page .ladder__badge {
+  font-size: 10px;
+}
+
+.docbook-page .ladder__desc .row {
+  display: grid;
+  grid-template-columns: 4.5em minmax(0, 1fr);
+  gap: 4px 10px;
+  margin-bottom: 6px;
+  align-items: start;
+}
+
+.docbook-page .ladder__desc .k {
+  white-space: nowrap;
+}
+
+.docbook-page .resource-field__label {
+  min-width: 4.5em;
+}
+
+/* 阅读页不要被共创布局的 html/body overflow:hidden 牵连出双滚动异常观感 */
+.docbook-page {
+  min-height: 0;
+}
+
+.docbook-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacer-12);
+  flex-wrap: wrap;
+}
+
+.docbook-toolbar__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacer-6);
+  color: var(--text-secondary);
+  font-size: var(--body-sm-font-size);
+  text-decoration: none;
+}
+
+.docbook-toolbar__back:hover {
+  color: var(--text-default);
+}
+
+.docbook-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-8);
+}
+
+.docbook-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-8);
+}
+
+.docbook-header__eyebrow {
+  font-size: var(--body-sm-font-size);
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+}
+
+.docbook-header__title {
+  margin: 0;
+  font-family: var(--heading-lg-font-family);
+  font-size: var(--heading-lg-font-size);
+  font-weight: var(--heading-lg-font-weight);
+  line-height: var(--heading-lg-line-height);
+  color: var(--text-default);
+}
+
+.docbook-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacer-8);
+  color: var(--text-secondary);
+  font-size: var(--body-sm-font-size);
+}
+
+.docbook-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacer-8) var(--spacer-16);
+  padding: var(--spacer-12) 0;
+  border-top: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.docbook-toc a {
+  color: var(--text-secondary);
+  font-size: var(--body-sm-font-size);
+  text-decoration: none;
+}
+
+.docbook-toc a:hover {
+  color: var(--text-brand);
+}
+
+.docbook-chapter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-16);
+  scroll-margin-top: var(--spacer-24);
+}
+
+.docbook-chapter__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacer-8);
+}
+
+.docbook-chapter__index {
+  font-family: var(--font-family-mono, ui-monospace, monospace);
+  font-size: var(--body-sm-font-size);
+  color: var(--text-tertiary);
+}
+
+.docbook-chapter__title {
+  margin: 0;
+  font-size: var(--heading-sm-font-size, 16px);
+  font-weight: 600;
+  color: var(--text-default);
+}
+
+.docbook-empty {
+  padding: var(--spacer-16);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-8);
+  color: var(--text-tertiary);
+  font-size: var(--body-sm-font-size);
+}
+
+.docbook-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacer-8);
+  padding-top: var(--spacer-16);
+  border-top: 1px solid var(--border-default);
+  color: var(--text-tertiary);
+  font-size: var(--body-sm-font-size);
+}
+
+.docbook-foot a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.docbook-foot a:hover {
+  color: var(--text-brand);
+}
+
+.docbook-foot__sep {
+  opacity: 0.5;
+}

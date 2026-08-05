@@ -1,7 +1,17 @@
 import { Icon } from '../Icon'
 import { DEFAULT_PLAN_PREFS } from '../../lib/planPrefs'
 
-export function PlanDoc({ doc }: { doc: Record<string, unknown> }) {
+export function PlanDoc({
+  doc,
+  showReadyCard = true,
+  embedded = false,
+}: {
+  doc: Record<string, unknown>
+  /** 共创确认时显示「计划已就绪」；阅读/导出页关闭 */
+  showReadyCard?: boolean
+  /** 计划书阅读态：弱化共创分区序号 */
+  embedded?: boolean
+}) {
   const core = (Array.isArray(doc.core_20) ? doc.core_20 : [])
     .map((c) => {
       if (typeof c === 'string') return c
@@ -69,14 +79,19 @@ export function PlanDoc({ doc }: { doc: Record<string, unknown> }) {
 
   return (
     <>
-      <section className="doc-section">
-        <div className="doc-section__head">
-          <span className="doc-section__index">A</span>
+      <section className={`doc-section${embedded ? ' doc-section--embedded' : ''}`}>
+        <div className={`doc-section__head${embedded ? ' doc-section__head--subtle' : ''}`}>
+          {!embedded ? <span className="doc-section__index">A</span> : null}
           <span className="doc-section__title">
             <Icon name="sparkles" size={14} className="ic icon" />
             核心精神
           </span>
         </div>
+        {doc.goal ? (
+          <p className="text-secondary" style={{ marginBottom: 10, fontSize: 12 }}>
+            目标 · {String(doc.goal)}
+          </p>
+        ) : null}
         <div className="core20">
           {core.map((c) => (
             <div key={c} className="core20__item">
@@ -91,11 +106,6 @@ export function PlanDoc({ doc }: { doc: Record<string, unknown> }) {
             {rationale}
           </p>
         ) : null}
-        {doc.goal ? (
-          <p className="text-secondary" style={{ marginTop: 8, fontSize: 12 }}>
-            {String(doc.goal)}
-          </p>
-        ) : null}
       </section>
 
       {phaseMeta.map(({ key, index, fallback, badgeClass, defaultMin }) => {
@@ -105,17 +115,25 @@ export function PlanDoc({ doc }: { doc: Record<string, unknown> }) {
         const phaseMin = Number(phaseMinutes[key]) || defaultMin
         const badge = `${shortLabel[key]} · ${duration}`
         return (
-          <section key={key} className="doc-section">
-            <div className="doc-section__head">
-              <span className="doc-section__index">{index}</span>
+          <section key={key} className={`doc-section${embedded ? ' doc-section--embedded' : ''}`}>
+            <div className={`doc-section__head${embedded ? ' doc-section__head--subtle' : ''}`}>
+              {!embedded ? <span className="doc-section__index">{index}</span> : null}
               <span className="doc-section__title">{phase?.title || key}</span>
               <span className={`phase-block__badge ${badgeClass}`}>{badge}</span>
             </div>
             <div className="phase-block">
-              <div className="phase-block__head">
-                <span className={`phase-block__badge ${badgeClass}`}>{phase?.title || key}</span>
-                <span className="phase-block__title">{phase?.summary || ''}</span>
-              </div>
+              {embedded ? (
+                phase?.summary ? (
+                  <p className="text-secondary" style={{ margin: '0 0 12px', fontSize: 12 }}>
+                    {phase.summary}
+                  </p>
+                ) : null
+              ) : (
+                <div className="phase-block__head">
+                  <span className={`phase-block__badge ${badgeClass}`}>{phase?.title || key}</span>
+                  <span className="phase-block__title">{phase?.summary || ''}</span>
+                </div>
+              )}
               <div className="sessions">
                 {acts.map((a, i) => {
                   const mins = Number(a.minutes) || phaseMin
@@ -146,35 +164,38 @@ export function PlanDoc({ doc }: { doc: Record<string, unknown> }) {
         )
       })}
 
-      <div className="validation-card">
-        <div className="validation-card__head">
-          <span className="validation-card__icon">
-            <Icon name="check-circle" size={16} className="icon" />
-          </span>
-          <span className="validation-card__title">计划已就绪</span>
+      {showReadyCard ? (
+        <div className="validation-card">
+          <div className="validation-card__head">
+            <span className="validation-card__icon">
+              <Icon name="check-circle" size={16} className="icon" />
+            </span>
+            <span className="validation-card__title">计划已就绪</span>
+          </div>
+          <div className="validation-card__desc">确认无误后锁定计划，今日任务将自动生成。</div>
+          <div className="validation-card__meta">
+            <span className="m">
+              <Icon name="clock" size={12} className="ic icon" />
+              学每节 2 小时 · 练/用每天约 {fallbackDaily} 分钟
+            </span>
+            <span className="m">
+              <Icon name="layers" size={12} className="ic icon" />
+              {core.length || 0} 条核心精神
+            </span>
+            <span className="m">
+              <Icon name="check-circle" size={12} className="ic icon" />
+              学{' '}
+              {durations.learning || phases.learning?.duration || DEFAULT_PLAN_PREFS.learning_duration}{' '}
+              · 练{' '}
+              {durations.practice || phases.practice?.duration || DEFAULT_PLAN_PREFS.practice_duration}{' '}
+              · 用{' '}
+              {durations.application ||
+                phases.application?.duration ||
+                DEFAULT_PLAN_PREFS.application_duration}
+            </span>
+          </div>
         </div>
-        <div className="validation-card__desc">确认无误后锁定计划，今日任务将自动生成。</div>
-        <div className="validation-card__meta">
-          <span className="m">
-            <Icon name="clock" size={12} className="ic icon" />
-            学每节 2 小时 · 练/用每天约 {fallbackDaily} 分钟
-          </span>
-          <span className="m">
-            <Icon name="layers" size={12} className="ic icon" />
-            {core.length || 0} 条核心精神
-          </span>
-          <span className="m">
-            <Icon name="check-circle" size={12} className="ic icon" />
-            学 {durations.learning || phases.learning?.duration || DEFAULT_PLAN_PREFS.learning_duration}{' '}
-            · 练{' '}
-            {durations.practice || phases.practice?.duration || DEFAULT_PLAN_PREFS.practice_duration} ·
-            用{' '}
-            {durations.application ||
-              phases.application?.duration ||
-              DEFAULT_PLAN_PREFS.application_duration}
-          </span>
-        </div>
-      </div>
+      ) : null}
     </>
   )
 }

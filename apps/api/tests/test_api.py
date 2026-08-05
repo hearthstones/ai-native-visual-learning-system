@@ -15,10 +15,13 @@ from app.models import (
     CocreateKind,
     CocreateSession,
     DailyTask,
+    PlanSlice,
+    SliceStatus,
     Theme,
     ThemePhase,
     ThemeStatus,
 )
+from app.services import domain as domain_svc
 
 
 @pytest.fixture()
@@ -116,6 +119,60 @@ def test_theme_status_transition_via_api(client: TestClient, db: Session):
     db.refresh(draft)
     bad = client.patch(f"/api/themes/{draft.id}", json={"status": "active"})
     assert bad.status_code == 409
+
+
+def test_plan_document_returns_full_learning_plan(client: TestClient, db: Session):
+    theme = Theme(
+        title="Flutter 入门",
+        status=ThemeStatus.draft,
+        ladder_doc={"levels": [{"level": 1, "name": "入门"}], "selected_level": 1},
+        resources_doc={"resources": [{"name": "官方文档"}], "constraints": ["中文优先"]},
+        current_ladder_level=1,
+    )
+    db.add(theme)
+    db.commit()
+    db.refresh(theme)
+
+    plan_doc = {
+        "goal": "一周入门 Flutter",
+        "core_20": ["Widget", "State"],
+        "phases": {
+            "learning": {
+                "title": "学习期",
+                "activities": [{"title": "搭环境", "description": "", "activity_type": "learn"}],
+            },
+            "practice": {"title": "练习期", "activities": [{"title": "小 demo"}]},
+            "application": {"title": "应用期", "activities": [{"title": "落地页"}]},
+        },
+    }
+    domain_svc.lock_theme_plan(db, theme, plan_doc)
+    db.commit()
+
+    # Advance so active slice is practice (truncated doc); plan-document must still return full plan.
+    domain_svc.advance_phase(db, theme)
+    db.commit()
+
+    res = client.get(f"/api/themes/{theme.id}/plan-document")
+    assert res.status_code == 200
+    body = res.json()
+    assert body["locked"] is True
+    assert body["theme"]["title"] == "Flutter 入门"
+    assert body["theme"]["ladder_doc"]["levels"][0]["name"] == "入门"
+    assert body["theme"]["resources_doc"]["resources"][0]["name"] == "官方文档"
+    assert body["plan_doc"]["goal"] == "一周入门 Flutter"
+    assert "learning" in body["plan_doc"]["phases"]
+    assert "practice" in body["plan_doc"]["phases"]
+    assert body["plan_doc"]["core_20"] == ["Widget", "State"]
+
+    active = db.exec(
+        select(PlanSlice).where(
+            PlanSlice.theme_id == theme.id,
+            PlanSlice.slice_status == SliceStatus.active,
+        )
+    ).first()
+    assert active is not None
+    assert active.phase == ThemePhase.practice
+    assert "phases" not in (active.doc or {})
 
 
 def test_confirm_rejects_already_confirmed_session(client: TestClient, db: Session):

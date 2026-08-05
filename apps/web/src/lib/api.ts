@@ -89,6 +89,12 @@ export interface ActiveSlice {
   daily_minutes?: number
 }
 
+export interface PlanDocument {
+  theme: Theme
+  plan_doc: Record<string, unknown>
+  locked: boolean
+}
+
 export interface WeeklyReviewInput {
   answers?: string[]
   mastery?: Array<{ name: string; score: number }>
@@ -206,6 +212,8 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ done }),
     }),
+  getPlanDocument: (themeId: string) =>
+    request<PlanDocument>(`/api/themes/${themeId}/plan-document`),
   getActiveSlice: (themeId: string) =>
     request<ActiveSlice>(`/api/themes/${themeId}/active-slice`),
   toggleActivity: (activityId: string, done: boolean) =>

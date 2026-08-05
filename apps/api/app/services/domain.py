@@ -104,6 +104,23 @@ def get_active_slice(session: Session, theme_id: str) -> PlanSlice | None:
     ).first()
 
 
+def get_learning_plan_doc(session: Session, theme_id: str) -> dict[str, Any]:
+    """Full plan document from the learning-phase PlanSlice (not the active-slice truncation)."""
+    rows = session.exec(
+        select(PlanSlice)
+        .where(
+            PlanSlice.theme_id == theme_id,
+            PlanSlice.phase == ThemePhase.learning,
+        )
+        .order_by(col(PlanSlice.created_at).desc())
+    ).all()
+    for row in rows:
+        doc = row.doc or {}
+        if isinstance(doc, dict) and (doc.get("phases") or doc.get("core_20") or doc.get("goal")):
+            return doc
+    return {}
+
+
 def clear_today_tasks(session: Session, theme_id: str) -> None:
     today = date.today().isoformat()
     existing = session.exec(

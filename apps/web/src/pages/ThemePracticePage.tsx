@@ -197,6 +197,15 @@ export function ThemePracticePage() {
       </section>
 
       <nav className="ov-secondary">
+        <Link
+          to={`/themes/${theme.id}/document`}
+          className="ov-secondary__link"
+          data-dom-id="btn-plan-document"
+        >
+          <Icon name="file-text" size={12} />
+          主题计划书
+        </Link>
+        <span className="ov-secondary__sep">·</span>
         <Link to={`/themes/${theme.id}/plan`} className="ov-secondary__link" data-dom-id="btn-plan">
           <Icon name="layout" size={12} />
           调整计划

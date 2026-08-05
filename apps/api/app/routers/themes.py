@@ -10,6 +10,7 @@ from app.schemas import (
     ActiveSliceOut,
     ActivityOut,
     ActivityToggle,
+    PlanDocumentOut,
     ThemeCreate,
     ThemeOut,
     ThemeUpdate,
@@ -140,6 +141,20 @@ def advance_phase(theme_id: str, session: Session = Depends(get_session)) -> The
     session.commit()
     session.refresh(theme)
     return theme
+
+
+@router.get("/{theme_id}/plan-document", response_model=PlanDocumentOut)
+def get_plan_document(theme_id: str, session: Session = Depends(get_session)) -> PlanDocumentOut:
+    """主题计划书：阶梯 + 资料 + 完整学习计划（不含任务/复盘）。"""
+    theme = session.get(Theme, theme_id)
+    if not theme:
+        raise HTTPException(404, "主题不存在")
+    plan_doc = domain_svc.get_learning_plan_doc(session, theme_id)
+    return PlanDocumentOut(
+        theme=ThemeOut.model_validate(theme),
+        plan_doc=plan_doc,
+        locked=theme.locked_at is not None,
+    )
 
 
 @router.get("/{theme_id}/active-slice", response_model=ActiveSliceOut)

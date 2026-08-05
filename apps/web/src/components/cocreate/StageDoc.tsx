@@ -1,3 +1,4 @@
+import type { LadderLevel } from '../../lib/themeDoc'
 import { Icon } from '../Icon'
 
 export function StageDoc({
@@ -5,22 +6,27 @@ export function StageDoc({
   selectedLevel,
   onSelect,
   readOnly = false,
+  embedded = false,
 }: {
-  levels: Array<Record<string, unknown>>
+  levels: Array<LadderLevel | Record<string, unknown>>
   selectedLevel: number | null
   onSelect: (n: number) => void
   readOnly?: boolean
+  /** 计划书阅读态：去掉共创小节与选择按钮 */
+  embedded?: boolean
 }) {
   return (
-    <section className="doc-section">
-      <div className="doc-section__head">
-        <span className="doc-section__index">A</span>
-        <h3 className="doc-section__title">
-          <Icon name="layers" size={14} className="ic icon" />
-          学习阶梯定位
-        </h3>
-        <span className="ds-tag ds-tag--brand">{readOnly ? '已确认' : '点击选择'}</span>
-      </div>
+    <section className={`doc-section${embedded ? ' doc-section--embedded' : ''}`}>
+      {!embedded ? (
+        <div className="doc-section__head">
+          <span className="doc-section__index">A</span>
+          <h3 className="doc-section__title">
+            <Icon name="layers" size={14} className="ic icon" />
+            学习阶梯定位
+          </h3>
+          <span className="ds-tag ds-tag--brand">{readOnly ? '已确认' : '点击选择'}</span>
+        </div>
+      ) : null}
       <div className="ladder">
         {levels.map((lv) => {
           const level = Number(lv.level)
@@ -29,14 +35,17 @@ export function StageDoc({
           return (
             <div
               key={level}
-              className={`ladder__row${selected ? ' is-selected' : ''}`}
+              className={`ladder__row${selected ? ' is-selected' : ''}${embedded ? ' ladder__row--readonly' : ''}`}
               data-level={level}
-              onClick={readOnly ? undefined : () => onSelect(level)}
-              style={readOnly ? { cursor: 'default' } : undefined}
+              onClick={readOnly || embedded ? undefined : () => onSelect(level)}
+              style={readOnly || embedded ? { cursor: 'default' } : undefined}
             >
               <div className="ladder__lvl">L{level}</div>
               <div>
-                <div className="ladder__name">{String(lv.name || '')}</div>
+                <div className="ladder__name">
+                  {String(lv.name || '')}
+                  {embedded && selected ? <span className="ds-tag ds-tag--brand ladder__badge">当前定位</span> : null}
+                </div>
                 <div className="ladder__desc">
                   {lv.understand ? (
                     <div className="row">
@@ -76,17 +85,19 @@ export function StageDoc({
                   ) : null}
                 </div>
               </div>
-              <button
-                className="ladder__select-btn"
-                type="button"
-                disabled={readOnly}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  if (!readOnly) onSelect(level)
-                }}
-              >
-                {selected ? '✓ 已选定' : '我在这里'}
-              </button>
+              {!embedded ? (
+                <button
+                  className="ladder__select-btn"
+                  type="button"
+                  disabled={readOnly}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (!readOnly) onSelect(level)
+                  }}
+                >
+                  {selected ? '✓ 已选定' : '我在这里'}
+                </button>
+              ) : null}
             </div>
           )
         })}

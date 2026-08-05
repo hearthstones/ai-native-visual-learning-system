@@ -117,9 +117,18 @@ export function CreateSummaryPage() {
           {theme.current_ladder_level ? ` · L${theme.current_ladder_level}` : ''}
         </div>
         <Link
+          to={`/themes/${theme.id}/document`}
+          className="core-oneliner__link"
+          data-dom-id="btn-view-plan-document"
+        >
+          查看主题计划书
+          <Icon name="arrow-right" size={12} />
+        </Link>
+        <Link
           to={`/themes/${theme.id}`}
           className="core-oneliner__link"
           data-dom-id="btn-view-overview"
+          style={{ marginTop: 8 }}
         >
           查看完整进度
           <Icon name="arrow-right" size={12} />

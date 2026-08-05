@@ -155,10 +155,15 @@
 }
 
 @media (max-width: 720px) {
-  .app-shell { grid-template-columns: 1fr; }
-  .ds-activityrail { display: none; }
   .create-page { padding: 48px 16px; }
+  .create-stepper {
+    flex-wrap: wrap;
+    gap: 6px 8px;
+  }
   .radio-group { grid-template-columns: 1fr; }
   .create-actions { flex-direction: column; align-items: stretch; gap: 12px; }
   .create-actions__hint { text-align: left; }
+  .create-actions .ds-btn {
+    width: 100%;
+  }
 }

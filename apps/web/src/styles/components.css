@@ -33,7 +33,7 @@
       background: transparent;
       border: none;
       cursor: pointer;
-      color: var(--text-tertiary);
+      color: var(--text-secondary);
       text-decoration: none;
     }
     .ds-activityrail__btn:hover { background: var(--bg-overlay-l2); color: var(--text-default); }
@@ -1450,3 +1450,51 @@
     }
     .ds-wbtitlebar__iconbtn:hover { background: var(--bg-overlay-l2); }
     .ds-wbtitlebar .icon { display: block; }
+
+/* ===== Responsive (shared components) ===== */
+@media (max-width: 720px) {
+  /* 覆盖本文件前面的 rail / lights 基线，避免压过 shared 窄屏规则 */
+  .ds-activityrail { display: none; }
+  .ds-wbtitlebar__lights { display: none; }
+
+  .ds-settingrow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacer-12);
+    padding: var(--spacer-12) var(--spacer-16);
+  }
+  .ds-settingrow__control {
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .ds-settingrow__select {
+    min-width: 0;
+    width: 100%;
+  }
+  .ds-pagehead {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacer-12);
+    padding: var(--spacer-16) 0;
+  }
+  .ds-pagehead__actions {
+    flex-wrap: wrap;
+  }
+  .ds-statcard {
+    min-width: 0;
+  }
+  .ds-alert {
+    flex-wrap: wrap;
+  }
+  .ds-dialog {
+    margin: var(--spacer-16);
+    max-width: calc(100vw - 32px);
+  }
+  .ds-dialog__foot {
+    flex-wrap: wrap;
+  }
+  .ds-dialog__foot .ds-btn {
+    flex: 1;
+  }
+}

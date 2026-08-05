@@ -42,9 +42,14 @@
 .core-oneliner__link { display: inline-flex; align-items: center; gap: 4px; margin-top: 16px; font-size: var(--body-xs-font-size); color: var(--text-tertiary); text-decoration: none; transition: color .12s; }
 .core-oneliner__link:hover { color: var(--text-secondary); }
 
-@media (max-width: 600px) {
-  .app-shell { grid-template-columns: 1fr; }
-  .ds-activityrail { display: none; }
-  .overview-first-page { padding: 60px 16px 40px; }
+@media (max-width: 720px) {
+  .overview-first-page { padding: 48px 16px 40px; }
   .first-cta-card { flex-direction: column; }
+  .first-cta-card__action {
+    width: 100%;
+    align-items: stretch;
+  }
+  .first-cta-card__action .ds-btn {
+    width: 100%;
+  }
 }

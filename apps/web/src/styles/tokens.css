@@ -180,7 +180,8 @@
   --text-secondary: #9599A6;
   --text-secondary-hover: #D1D3DB;
   --text-secondary-active: #D1D3DB;
-  --text-tertiary: #666B75;
+  /* 暗色底上略提亮，避免标签/脚注几乎不可读 */
+  --text-tertiary: #8B909C;
   --text-disabled: #666B75;
   --text-onbrand: #0C0C0D;
   --text-onaccent: #0C0C0D;
@@ -203,7 +204,7 @@
   --icon-secondary: #9599A6;
   --icon-secondary-hover: #D1D3DB;
   --icon-secondary-active: #D1D3DB;
-  --icon-tertiary: #666B75;
+  --icon-tertiary: #8B909C;
   --icon-disabled: #666B75;
   --icon-onbrand: #0C0C0D;
   --icon-onaccent: #0C0C0D;
@@ -218,6 +219,8 @@
   --border-neutral-l3: rgba(224, 226, 242, 0.2);
   --border-contrast: #FFFFFF;
   --border-brand: #32F08C;
+  /* 页面样式别名；缺失时 border 声明会整段失效 */
+  --border-default: var(--border-neutral-l1);
   --color-border: var(--border-neutral-l1);
   --color-border-strong: var(--border-neutral-l2);
   --color-border-stronger: var(--border-neutral-l3);

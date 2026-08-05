@@ -6,8 +6,25 @@ body { background: var(--bg-base-default); margin: 0; font-family: var(--body-ba
 /* Two-column layout */
 .phase-main { display: grid; grid-template-columns: 65% 35%; height: 100%; overflow: hidden; }
 
-@media (max-width: 600px) {
-  .phase-main { grid-template-columns: 1fr; height: auto; overflow: visible; }
+@media (max-width: 720px) {
+  .phase-main {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+  .phase-left {
+    border-right: none;
+    border-bottom: 1px solid var(--border-neutral-l1);
+    padding: var(--spacer-16);
+  }
+  .phase-right {
+    padding: var(--spacer-16);
+  }
+  .phase-timeline {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--spacer-8);
+  }
 }
 .phase-left { padding: var(--spacer-24); border-right: 1px solid var(--border-neutral-l1); overflow-y: auto; min-width: 0; }
 .phase-right { padding: var(--spacer-24); overflow-y: auto; background: var(--bg-base-tertiary); min-width: 0; }

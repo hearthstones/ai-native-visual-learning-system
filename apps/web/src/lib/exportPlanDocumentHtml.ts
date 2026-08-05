@@ -285,7 +285,7 @@ const STYLES = `
   --bg-brand-popup: rgba(50, 240, 140, 0.12);
   --text-default: #D1D3DB;
   --text-secondary: #9599A6;
-  --text-tertiary: #666B75;
+  --text-tertiary: #8B909C;
   --text-brand: #32F08C;
   --text-onbrand: #0C0C0D;
   --border-neutral-l1: rgba(224, 226, 242, 0.1);

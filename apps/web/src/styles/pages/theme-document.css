@@ -197,3 +197,28 @@
 .docbook-foot__sep {
   opacity: 0.5;
 }
+
+@media (max-width: 720px) {
+  .docbook-page {
+    padding: var(--spacer-16) var(--spacer-16) var(--spacer-32);
+    gap: var(--spacer-16);
+  }
+  .docbook-header__title {
+    font-size: var(--heading-md-font-size);
+    line-height: var(--heading-md-line-height);
+  }
+  .docbook-page .ladder__desc .row {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .docbook-page .resource-field__label {
+    min-width: 0;
+  }
+  .docbook-page .session-card__grid,
+  .docbook-page .resource-card__body {
+    grid-template-columns: 1fr;
+  }
+  .docbook-toolbar__actions {
+    flex-wrap: wrap;
+  }
+}

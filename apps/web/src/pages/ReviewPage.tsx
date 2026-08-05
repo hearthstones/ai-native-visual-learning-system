@@ -459,14 +459,7 @@ export function ReviewPage() {
         </div>
       ) : null}
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          gap: 'var(--spacer-12)',
-          marginTop: 'var(--spacer-24)',
-        }}
-      >
+      <div className="review-actions">
         <button className="ds-btn ds-btn--secondary" type="button" onClick={saveDraft}>
           保存草稿
         </button>

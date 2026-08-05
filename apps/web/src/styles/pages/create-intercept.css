@@ -103,3 +103,25 @@ body { background: var(--bg-base-default); }
         line-height: var(--body-xs-line-height);
       }
       .ds-dialog__foot { gap: var(--spacer-8); }
+
+@media (max-width: 720px) {
+  .intercept-wrap {
+    padding: var(--spacer-24) var(--spacer-16);
+    align-items: stretch;
+  }
+  .intercept-top {
+    max-width: none;
+  }
+  .ds-dialog {
+    max-width: none;
+  }
+  .radio-option__title {
+    word-break: break-word;
+  }
+  .ds-dialog__foot {
+    flex-wrap: wrap;
+  }
+  .ds-dialog__foot .ds-btn {
+    flex: 1;
+  }
+}

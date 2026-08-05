@@ -69,3 +69,16 @@
 
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;}
 .modal-overlay.is-open{display:flex;}
+
+@media (max-width: 720px) {
+  .work-page{padding:var(--spacer-16);}
+  .work-layout{grid-template-columns:1fr;gap:var(--spacer-16);}
+  .breadcrumb{flex-wrap:wrap;}
+  .ds-tabs{flex-wrap:wrap;}
+  .slice-card{padding:var(--spacer-16);}
+  .slice-card__header{flex-direction:column;align-items:stretch;}
+  .plan-actions{width:100%;}
+  .plan-footer,
+  .review-footer{flex-direction:column;align-items:stretch;gap:var(--spacer-12);}
+  .task-item{padding:var(--spacer-12);}
+}

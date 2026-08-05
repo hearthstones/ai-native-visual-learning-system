@@ -4,6 +4,12 @@ body,
   height: 100%;
 }
 
+html {
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
+  background: var(--bg-base-default);
+  color: var(--text-default);
 }

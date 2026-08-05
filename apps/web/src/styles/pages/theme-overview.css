@@ -294,11 +294,11 @@
   color: var(--text-default);
 }
 .ov-secondary__link img {
-  filter: brightness(0.5);
-  transition: filter .12s;
+  opacity: 0.55;
+  transition: opacity .12s;
 }
 .ov-secondary__link:hover img {
-  filter: brightness(0.7);
+  opacity: 0.9;
 }
 .ov-secondary__sep {
   color: var(--text-tertiary);
@@ -329,9 +329,7 @@
 }
 
 /* ── Responsive ───────────────────────── */
-@media (max-width: 600px) {
-  .app-shell { grid-template-columns: 1fr; }
-  .ds-activityrail { display: none; }
+@media (max-width: 720px) {
   .ov-page { padding: var(--spacer-24) var(--spacer-16); }
   .ov-cta {
     flex-direction: column;
@@ -339,6 +337,16 @@
   }
   .ov-cta .ds-btn {
     align-self: stretch;
+  }
+  .ov-progress__meta {
+    flex-wrap: wrap;
+  }
+  .ov-secondary {
+    flex-wrap: wrap;
+    gap: var(--spacer-8) var(--spacer-12);
+  }
+  .ov-secondary__sep {
+    display: none;
   }
 }
 

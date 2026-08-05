@@ -8,4 +8,29 @@ body { background: var(--bg-base-default); }
 .question-block { margin-bottom: var(--spacer-24); }
 .question-label { display: block; margin-bottom: var(--spacer-8); font-weight: 500; }
 .char-count { text-align: right; margin-top: var(--spacer-4); }
-@media (max-width: 720px) { .kpi-grid { grid-template-columns: 1fr; } .mastery-row { grid-template-columns: 1fr; gap: var(--spacer-8); } }
+.review-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacer-12);
+  margin-top: var(--spacer-24);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .review-wrap { padding: var(--spacer-16); }
+  .review-top {
+    flex-wrap: wrap;
+    gap: var(--spacer-8);
+    align-items: flex-start;
+  }
+  .kpi-grid { grid-template-columns: 1fr; }
+  .mastery-row { grid-template-columns: 1fr; gap: var(--spacer-8); }
+  .review-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .review-actions .ds-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

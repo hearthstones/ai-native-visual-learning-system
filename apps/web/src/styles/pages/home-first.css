@@ -17,7 +17,7 @@
 .today-item:hover .today-item__enter { color: var(--text-brand); }
 .today-item__enter img { display: block; transition: transform .12s ease; }
 .today-item:hover .today-item__enter img { transform: translateX(2px); }
-.theme-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+/* theme-grid 以 home.css 为准，避免后加载的 1fr 覆盖桌面双列 */
 .theme-card { display: flex; flex-direction: column; gap: 12px; padding: 24px; background: var(--bg-base-secondary); border: 1px solid var(--border-neutral-l1); border-radius: var(--radius-6); transition: background .12s ease, border-color .12s ease; }
 .theme-card:hover { border-color: var(--border-neutral-l2); }
 .theme-card__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -32,7 +32,5 @@
 .slot-bar__item { font-family: var(--code-editor-font-family); font-size: var(--body-xs-font-size); color: var(--text-tertiary); }
 .slot-bar__label { color: var(--text-tertiary); font-size: var(--body-xs-font-size); }
 @media (max-width: 720px) {
-  .app-shell { grid-template-columns: 1fr; }
-  .ds-activityrail { display: none; }
   .home-page { padding: 24px 16px; }
 }

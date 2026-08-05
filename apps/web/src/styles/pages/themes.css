@@ -287,6 +287,10 @@
     padding: var(--spacer-24) var(--spacer-16) 64px;
   }
 
+  .themes-header {
+    flex-wrap: wrap;
+  }
+
   .themes-row {
     flex-direction: column;
   }
@@ -294,5 +298,17 @@
   .themes-row__actions {
     max-width: none;
     justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .themes-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .themes-tabs::-webkit-scrollbar {
+    display: none;
   }
 }

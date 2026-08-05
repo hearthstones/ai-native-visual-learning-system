@@ -61,7 +61,5 @@
 }
 
 @media (max-width: 720px) {
-  .app-shell { grid-template-columns: 1fr; }
-  .ds-activityrail { display: none; }
   .home-empty-page { padding: 80px var(--spacer-16) var(--spacer-24); }
 }

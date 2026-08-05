@@ -219,7 +219,7 @@
   flex-shrink: 0;
 }
 .ov-path__connector img {
-  filter: brightness(0.4);
+  opacity: 0.45;
 }
 
 /* ── E. 辅地图 · 核心掌握（一行可展开） ─────────── */
@@ -341,11 +341,11 @@
   color: var(--text-secondary);
 }
 .ov-secondary__link img {
-  filter: brightness(0.5);
-  transition: filter .12s;
+  opacity: 0.55;
+  transition: opacity .12s;
 }
 .ov-secondary__link:hover img {
-  filter: brightness(0.7);
+  opacity: 0.9;
 }
 .ov-secondary__sep {
   color: var(--text-tertiary);
@@ -376,9 +376,7 @@
 }
 
 /* ── Responsive ───────────────────────── */
-@media (max-width: 600px) {
-  .app-shell { grid-template-columns: 1fr; }
-  .ds-activityrail { display: none; }
+@media (max-width: 720px) {
   .ov-page { padding: var(--spacer-24) var(--spacer-16); }
   .ov-cta {
     flex-direction: column;
@@ -390,6 +388,16 @@
   .ov-path { flex-wrap: wrap; }
   .ov-path__connector { display: none; }
   .ov-path__stage { flex: 1 1 100%; }
+  .ov-progress__meta {
+    flex-wrap: wrap;
+  }
+  .ov-secondary {
+    flex-wrap: wrap;
+    gap: var(--spacer-8) var(--spacer-12);
+  }
+  .ov-secondary__sep {
+    display: none;
+  }
 }
 
 /* ── Utility ──────────────────────────── */

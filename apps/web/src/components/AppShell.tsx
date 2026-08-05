@@ -28,6 +28,68 @@ function SlotChip({ slots }: { slots?: SlotMap }) {
   )
 }
 
+type NavItem = {
+  to: string
+  end?: boolean
+  title: string
+  label: string
+  ariaLabel: string
+  icon: 'home' | 'layers' | 'scroll-text' | 'settings'
+  isActive: boolean
+}
+
+function NavButton({
+  item,
+  btnClass,
+  labelClass,
+}: {
+  item: NavItem
+  btnClass: string
+  labelClass: string
+}) {
+  return (
+    <NavLink
+      to={item.to}
+      end={item.end}
+      className={`${btnClass}${item.isActive ? ' is-active' : ''}`}
+      title={item.title}
+      aria-label={item.ariaLabel}
+    >
+      <Icon name={item.icon} size={16} />
+      <span className={labelClass}>{item.label}</span>
+    </NavLink>
+  )
+}
+
+function ActivityRail({ items }: { items: NavItem[] }) {
+  const [home, themes, review, settings] = items
+  return (
+    <nav className="ds-activityrail" aria-label="主导航">
+      <NavButton item={home} btnClass="ds-activityrail__btn" labelClass="ds-activityrail__label" />
+      <NavButton item={themes} btnClass="ds-activityrail__btn" labelClass="ds-activityrail__label" />
+      <div className="ds-activityrail__divider" />
+      <div className="ds-activityrail__spacer" />
+      <NavButton item={review} btnClass="ds-activityrail__btn" labelClass="ds-activityrail__label" />
+      <NavButton item={settings} btnClass="ds-activityrail__btn" labelClass="ds-activityrail__label" />
+    </nav>
+  )
+}
+
+function MobileTabBar({ items }: { items: NavItem[] }) {
+  return (
+    <nav className="ds-mobile-tabbar" aria-label="底部导航">
+      {items.map((item) => (
+        <NavButton
+          key={item.to}
+          item={item}
+          btnClass="ds-mobile-tabbar__btn"
+          labelClass="ds-mobile-tabbar__label"
+        />
+      ))}
+    </nav>
+  )
+}
+
 export function AppShell({
   title = '刻意练习',
   slots,
@@ -37,12 +99,52 @@ export function AppShell({
 }) {
   const { pathname } = useLocation()
   const isCocreate = /^\/create\/[^/]+\/(stage|resources|plan)\/?$/.test(pathname)
-  const hideChrome =
-    pathname.startsWith('/create/intercept') ||
-    pathname.startsWith('/review') ||
-    isCocreate
+  const isIntercept = pathname.startsWith('/create/intercept')
+  const isReview = pathname.startsWith('/review')
 
-  if (hideChrome) {
+  const themesManageActive = pathname === '/themes'
+  const themeActive = pathname.startsWith('/themes/')
+  const settingsActive = pathname.startsWith('/settings')
+  const homeActive = pathname === '/' && !themesManageActive && !themeActive
+
+  const navItems: NavItem[] = [
+    {
+      to: '/',
+      end: true,
+      title: '今天',
+      label: '今天',
+      ariaLabel: '今天',
+      icon: 'home',
+      isActive: homeActive,
+    },
+    {
+      to: '/themes',
+      title: '主题',
+      label: '主题',
+      ariaLabel: '我的主题',
+      icon: 'layers',
+      isActive: themesManageActive || themeActive,
+    },
+    {
+      to: '/review',
+      title: '复盘',
+      label: '复盘',
+      ariaLabel: '周复盘',
+      icon: 'scroll-text',
+      isActive: isReview,
+    },
+    {
+      to: '/settings',
+      title: '设置',
+      label: '设置',
+      ariaLabel: '设置',
+      icon: 'settings',
+      isActive: settingsActive,
+    },
+  ]
+
+  /* 共创 / 拦截：全屏聚焦，不带壳层导航 */
+  if (isCocreate || isIntercept) {
     return (
       <div className={`app-shell app-shell--bare${isCocreate ? ' app-shell--cocreate' : ''}`}>
         <main className="app-main app-main--bare">
@@ -52,10 +154,17 @@ export function AppShell({
     )
   }
 
-  const themesManageActive = pathname === '/themes'
-  const themeActive = pathname.startsWith('/themes/')
-  const settingsActive = pathname.startsWith('/settings')
-  const homeActive = pathname === '/' && !themesManageActive && !themeActive
+  /* 复盘：桌面无侧栏，手机保留底部 Tab */
+  if (isReview) {
+    return (
+      <div className="app-shell app-shell--bare app-shell--with-tabbar">
+        <main className="app-main app-main--bare">
+          <Outlet />
+        </main>
+        <MobileTabBar items={navItems} />
+      </div>
+    )
+  }
 
   return (
     <div className="app-shell" data-viewport-mode="app-shell">
@@ -74,51 +183,13 @@ export function AppShell({
         </div>
       </header>
 
-      <nav className="ds-activityrail" aria-label="主导航">
-        <NavLink
-          to="/"
-          end
-          className={() => `ds-activityrail__btn${homeActive ? ' is-active' : ''}`}
-          title="今天"
-          aria-label="今天"
-        >
-          <Icon name="home" size={16} />
-          <span className="ds-activityrail__label">今天</span>
-        </NavLink>
-        <NavLink
-          to="/themes"
-          className={`ds-activityrail__btn${themesManageActive || themeActive ? ' is-active' : ''}`}
-          title="主题"
-          aria-label="我的主题"
-        >
-          <Icon name="layers" size={16} />
-          <span className="ds-activityrail__label">主题</span>
-        </NavLink>
-        <div className="ds-activityrail__divider" />
-        <div className="ds-activityrail__spacer" />
-        <NavLink
-          to="/review"
-          className={({ isActive }) => `ds-activityrail__btn${isActive ? ' is-active' : ''}`}
-          title="复盘"
-          aria-label="周复盘"
-        >
-          <Icon name="scroll-text" size={16} />
-          <span className="ds-activityrail__label">复盘</span>
-        </NavLink>
-        <NavLink
-          to="/settings"
-          className={`ds-activityrail__btn${settingsActive ? ' is-active' : ''}`}
-          title="设置"
-          aria-label="设置"
-        >
-          <Icon name="settings" size={16} />
-          <span className="ds-activityrail__label">设置</span>
-        </NavLink>
-      </nav>
+      <ActivityRail items={navItems} />
 
       <main className="app-main" data-scroll-region="primary">
         <Outlet />
       </main>
+
+      <MobileTabBar items={navItems} />
     </div>
   )
 }

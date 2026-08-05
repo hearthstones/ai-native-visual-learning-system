@@ -29,6 +29,9 @@ img{display:block;}
   overflow:auto;
 }
 .app-shell.app-shell--cocreate > .app-main--bare{
+  /* titlebar + .main 用 flex 分高，避免 vh/dvh 与写死 40px 不一致导致裁切 */
+  display:flex !important;
+  flex-direction:column !important;
   overflow:hidden !important;
   height:100dvh !important;
   min-height:100dvh;

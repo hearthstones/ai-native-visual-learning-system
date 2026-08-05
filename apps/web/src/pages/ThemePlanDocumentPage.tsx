@@ -42,7 +42,10 @@ export function ThemePlanDocumentPage() {
   const levels = useMemo(() => (theme ? getLadderLevels(theme) : []), [theme])
   const selectedLevel = useMemo(() => (theme ? getSelectedLevel(theme) : null), [theme])
   const hasPlan = !!(data?.plan_doc && Object.keys(data.plan_doc).length)
-  const hasResources = !!(theme?.resources_doc && Object.keys(theme.resources_doc).length)
+  const resourceList = Array.isArray(theme?.resources_doc?.resources)
+    ? (theme.resources_doc.resources as unknown[])
+    : []
+  const hasResources = resourceList.length > 0
   const canExport = !!(theme && data?.locked && (levels.length || hasResources || hasPlan))
 
   function onExport() {

@@ -627,5 +627,6 @@ export function downloadPlanDocumentHtml(
   document.body.appendChild(a)
   a.click()
   a.remove()
-  URL.revokeObjectURL(url)
+  // 延后 revoke：部分 WebKit 在 click 同步 revoke 时下载尚未开始
+  window.setTimeout(() => URL.revokeObjectURL(url), 2000)
 }

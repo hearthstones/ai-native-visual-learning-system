@@ -103,9 +103,12 @@ img { display: block; }
 .titlebar__lock-btn.is-disabled:hover .tt { opacity: 1; }
 
 /* ===== Main two-column split ===== */
+/* 高度由共创壳 flex 分配剩余空间，勿再用 100vh/写死减 40px */
 .main {
   display: flex;
-  height: calc(100vh - 40px);
+  flex: 1;
+  min-height: 0;
+  height: auto;
   overflow: hidden;
 }
 
@@ -804,7 +807,9 @@ img { display: block; }
 
   .main {
     flex-direction: column;
-    height: calc(100dvh - 40px);
+    flex: 1;
+    min-height: 0;
+    height: auto;
     overflow: hidden;
   }
   .chat-panel {

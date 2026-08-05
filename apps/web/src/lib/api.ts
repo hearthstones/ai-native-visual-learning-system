@@ -70,6 +70,22 @@ export interface WeeklyReview {
   adjustments: unknown[]
 }
 
+export interface ExecutionStep {
+  id: string
+  text: string
+  done: boolean
+}
+
+export interface ExecutionDoc {
+  goal?: string
+  steps?: ExecutionStep[]
+  resource_ref?: { index?: number | null; name?: string } | null
+  outcome?: string
+  minutes?: number
+  messages?: Array<{ role: string; content: string }>
+  updated_at?: string | null
+}
+
 export interface SliceActivity {
   id: string
   title: string
@@ -77,6 +93,7 @@ export interface SliceActivity {
   activity_type: string | null
   done: boolean
   sort_order: number
+  execution_doc?: ExecutionDoc
 }
 
 export interface ActiveSlice {
@@ -218,6 +235,36 @@ export const api = {
     request<ActiveSlice>(`/api/themes/${themeId}/active-slice`),
   toggleActivity: (activityId: string, done: boolean) =>
     request<SliceActivity>(`/api/themes/activities/${activityId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ done }),
+    }),
+  expandActivity: (activityId: string) =>
+    request<SliceActivity>(`/api/themes/activities/${activityId}/expand`, {
+      method: 'POST',
+      body: '{}',
+    }),
+  messageActivityExpand: (activityId: string, content: string) =>
+    request<SliceActivity>(`/api/themes/activities/${activityId}/expand/message`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    }),
+  patchActivityExecution: (
+    activityId: string,
+    body: {
+      goal?: string
+      steps?: Array<{ id?: string; text: string; done?: boolean }>
+      resource_ref?: { index?: number | null; name?: string } | null
+      outcome?: string
+      minutes?: number
+      clear?: boolean
+    },
+  ) =>
+    request<SliceActivity>(`/api/themes/activities/${activityId}/execution`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }),
+  toggleExecutionStep: (activityId: string, stepId: string, done: boolean) =>
+    request<SliceActivity>(`/api/themes/activities/${activityId}/execution/steps/${stepId}`, {
       method: 'PATCH',
       body: JSON.stringify({ done }),
     }),

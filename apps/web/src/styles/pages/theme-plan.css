@@ -50,7 +50,7 @@ body { background: var(--bg-base-default); margin: 0; font-family: var(--body-ba
 .slice-card__body { padding: var(--spacer-8) var(--spacer-16) var(--spacer-16); }
 
 /* Checklist items */
-.checklist-item { display: flex; align-items: center; gap: var(--spacer-8); padding: var(--spacer-6) var(--spacer-4); border-radius: var(--radius-4); transition: background .12s ease; position: relative; }
+.checklist-item { display: flex; align-items: flex-start; gap: var(--spacer-8); padding: var(--spacer-6) var(--spacer-4); border-radius: var(--radius-4); transition: background .12s ease; position: relative; }
 .checklist-item:hover { background: var(--bg-overlay-l1); }
 .checklist-item__check { flex-shrink: 0; }
 .checklist-item__content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }

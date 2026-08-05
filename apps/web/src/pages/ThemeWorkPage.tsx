@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { ActivityExpandPanel } from '../components/ActivityExpandPanel'
 import { Icon } from '../components/Icon'
-import { api, type ActiveSlice, type DailyTask, type Theme } from '../lib/api'
+import { api, type ActiveSlice, type DailyTask, type SliceActivity, type Theme } from '../lib/api'
 import {
   getCoreConcepts,
   getCurrentLevel,
@@ -12,6 +13,7 @@ import {
 } from '../lib/themeDoc'
 import '../styles/pages/theme-work.css'
 import '../styles/components.css'
+import '../styles/components/activity-expand.css'
 
 const DRAFT_KEY = 'weekly-review-draft'
 type Mode = 'execute' | 'plan' | 'review'
@@ -32,6 +34,7 @@ export function ThemeWorkPage() {
   const [error, setError] = useState('')
   const [note, setNote] = useState('')
   const [cocreateOpen, setCocreateOpen] = useState(false)
+  const [expandId, setExpandId] = useState<string | null>(null)
 
   useEffect(() => {
     void (async () => {
@@ -57,6 +60,25 @@ export function ThemeWorkPage() {
   const dailyMinutes = getDailyMinutes(slice, theme)
   const nextItem = sliceItems.find((it) => !it.done)
   const materialHint = theme?.goal || level?.understand || '围绕主题目标推进当前切片'
+  const expandItem = sliceItems.find((it) => it.activityId === expandId)
+  const activityById = useMemo(() => {
+    const map = new Map<string, (typeof sliceItems)[number]>()
+    for (const it of sliceItems) {
+      if (it.activityId) map.set(it.activityId, it)
+    }
+    return map
+  }, [sliceItems])
+
+  function mergeActivity(act: SliceActivity) {
+    setSlice((prev) =>
+      prev
+        ? {
+            ...prev,
+            activities: prev.activities.map((a) => (a.id === act.id ? { ...a, ...act } : a)),
+          }
+        : prev,
+    )
+  }
 
   function setMode(next: Mode) {
     setSearchParams({ mode: next }, { replace: true })
@@ -202,34 +224,93 @@ export function ThemeWorkPage() {
                   今日暂无该主题任务。
                 </p>
               )}
-              {tasks.map((task) => (
-                <div key={task.id} className={`task-item${task.done ? ' is-done' : ''}`}>
-                  <label className="ds-check task-item__check">
-                    <input
-                      type="checkbox"
-                      checked={task.done}
-                      onChange={async (e) => {
-                        const done = e.target.checked
-                        await api.toggleTask(task.id, done)
-                        setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, done } : t)))
-                      }}
-                    />
-                    <span className="ds-check__box" />
-                  </label>
-                  <div className="task-item__body">
-                    <p className="task-item__text">{task.title}</p>
-                    <div className="task-item__meta">
-                      <span className="task-item__source">
-                        <Icon name="layers" size={12} />
-                        {sliceTitle}
-                      </span>
-                      {task.description ? (
-                        <span className="task-item__source">{task.description}</span>
+              {tasks.map((task) => {
+                const linked = task.activity_id ? activityById.get(task.activity_id) : undefined
+                const exe = linked?.executionDoc
+                const steps = exe?.steps || []
+                return (
+                  <div key={task.id} className={`task-item${task.done ? ' is-done' : ''}`}>
+                    <label className="ds-check task-item__check">
+                      <input
+                        type="checkbox"
+                        checked={task.done}
+                        onChange={async (e) => {
+                          const done = e.target.checked
+                          await api.toggleTask(task.id, done)
+                          setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, done } : t)))
+                        }}
+                      />
+                      <span className="ds-check__box" />
+                    </label>
+                    <div className="task-item__body">
+                      <p className="task-item__text">{task.title}</p>
+                      {exe?.goal ? (
+                        <p className="task-item__goal">{exe.goal}</p>
+                      ) : null}
+                      <div className="task-item__meta">
+                        <span className="task-item__source">
+                          <Icon name="layers" size={12} />
+                          {sliceTitle}
+                        </span>
+                        {typeof exe?.minutes === 'number' ? (
+                          <span className="task-item__source">{exe.minutes} 分钟</span>
+                        ) : null}
+                        {!linked?.expanded && task.description ? (
+                          <span className="task-item__source">{task.description}</span>
+                        ) : null}
+                      </div>
+                      {steps.length > 0 ? (
+                        <ul className="task-steps">
+                          {steps.map((step) => (
+                            <li key={step.id} className={`task-step${step.done ? ' is-done' : ''}`}>
+                              <label className="ds-check task-step__check">
+                                <input
+                                  type="checkbox"
+                                  checked={step.done}
+                                  onChange={async (e) => {
+                                    if (!task.activity_id) return
+                                    const updated = await api.toggleExecutionStep(
+                                      task.activity_id,
+                                      step.id,
+                                      e.target.checked,
+                                    )
+                                    mergeActivity(updated)
+                                  }}
+                                />
+                                <span className="ds-check__box" />
+                              </label>
+                              <span className="task-step__text">{step.text}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                      {exe?.resource_ref?.name ? (
+                        <p className="task-item__hint">
+                          <span className="task-item__hint-label">资料</span>
+                          {exe.resource_ref.name}
+                        </p>
+                      ) : null}
+                      {exe?.outcome ? (
+                        <p className="task-item__hint">
+                          <span className="task-item__hint-label">验收</span>
+                          {exe.outcome}
+                        </p>
+                      ) : null}
+                      {task.activity_id ? (
+                        <button
+                          type="button"
+                          className="ds-btn ds-btn--secondary ds-btn--sm"
+                          style={{ marginTop: 10 }}
+                          onClick={() => setExpandId(task.activity_id)}
+                        >
+                          <Icon name="sparkles" size={12} className="icon" />
+                          任务拆分
+                        </button>
                       ) : null}
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
             <div style={{ marginTop: 'var(--spacer-24)' }}>
               <div
@@ -332,12 +413,28 @@ export function ThemeWorkPage() {
               sliceItems.map((item, i) => (
                 <div key={item.id} className="slice-item">
                   <span className="slice-item__num">{String(i + 1).padStart(2, '0')}</span>
-                  <span>
-                    {item.label}
-                    <span className="text-tertiary" style={{ marginLeft: 8, fontSize: 11 }}>
-                      {item.done ? '已完成' : item.desc}
+                  <div className="slice-item__main">
+                    <span>
+                      {item.label}
+                      <span className="text-tertiary" style={{ marginLeft: 8, fontSize: 11 }}>
+                        {item.done
+                          ? '已完成'
+                          : item.expanded
+                            ? `已拆分 · ${(item.executionDoc?.steps || []).length} 步`
+                            : item.desc}
+                      </span>
                     </span>
-                  </span>
+                  </div>
+                  {item.activityId ? (
+                    <button
+                      type="button"
+                      className="ds-btn ds-btn--secondary ds-btn--sm expand-entry"
+                      onClick={() => setExpandId(item.activityId || null)}
+                    >
+                      <Icon name="sparkles" size={12} className="icon" />
+                      任务拆分
+                    </button>
+                  ) : null}
                 </div>
               ))
             )}
@@ -446,6 +543,18 @@ export function ThemeWorkPage() {
           </div>
         </div>
       </div>
+
+      {expandId ? (
+        <ActivityExpandPanel
+          key={expandId}
+          open
+          activityId={expandId}
+          activityTitle={expandItem?.label || '计划活动'}
+          initialDoc={expandItem?.executionDoc}
+          onClose={() => setExpandId(null)}
+          onUpdated={mergeActivity}
+        />
+      ) : null}
     </div>
   )
 }

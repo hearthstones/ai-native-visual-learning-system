@@ -86,18 +86,36 @@ export function draftResumeLabel(theme: Theme): string {
 }
 
 /** 计划切片条目：优先用锁定后的活动列表 */
+const EMPTY_EXECUTION: import('./api').ExecutionDoc = {}
+
 export function getSliceItems(
   slice: ActiveSlice | null | undefined,
   theme?: Theme | null,
-): Array<{ id: string; label: string; desc: string; done?: boolean; activityId?: string }> {
+): Array<{
+  id: string
+  label: string
+  desc: string
+  done?: boolean
+  activityId?: string
+  executionDoc?: import('./api').ExecutionDoc
+  expanded?: boolean
+}> {
   if (slice?.activities?.length) {
-    return slice.activities.map((a) => ({
-      id: a.id,
-      activityId: a.id,
-      label: a.title,
-      desc: a.description || (a.activity_type ? `活动 · ${a.activity_type}` : slice.title || '计划活动'),
-      done: a.done,
-    }))
+    return slice.activities.map((a) => {
+      const executionDoc = a.execution_doc || EMPTY_EXECUTION
+      const expanded = Boolean(
+        (executionDoc.goal || '').trim() || (executionDoc.steps && executionDoc.steps.length > 0),
+      )
+      return {
+        id: a.id,
+        activityId: a.id,
+        label: a.title,
+        desc: a.description || (a.activity_type ? `活动 · ${a.activity_type}` : slice.title || '计划活动'),
+        done: a.done,
+        executionDoc,
+        expanded,
+      }
+    })
   }
   if (slice?.core_points?.length) {
     return slice.core_points.map((p, i) => ({

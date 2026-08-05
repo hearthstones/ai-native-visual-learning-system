@@ -45,9 +45,31 @@ def _migrate_theme_status_v2() -> None:
             )
 
 
+def _migrate_activity_execution_v1() -> None:
+    """为已有库补齐 Activity.execution_doc。"""
+    with engine.begin() as conn:
+        tables = {
+            r[0]
+            for r in conn.execute(
+                text("SELECT name FROM sqlite_master WHERE type='table'")
+            ).fetchall()
+        }
+        if "activity" not in tables:
+            return
+        cols = {
+            r[1]
+            for r in conn.execute(text("PRAGMA table_info(activity)")).fetchall()
+        }
+        if "execution_doc" not in cols:
+            conn.execute(
+                text("ALTER TABLE activity ADD COLUMN execution_doc JSON DEFAULT '{}'")
+            )
+
+
 def init_db() -> None:
     SQLModel.metadata.create_all(engine)
     _migrate_theme_status_v2()
+    _migrate_activity_execution_v1()
 
 
 def get_session() -> Generator[Session, None, None]:

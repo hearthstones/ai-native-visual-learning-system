@@ -4,20 +4,51 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, col, select
 
+from app.config import Settings, get_settings
 from app.db import get_session
 from app.models import Activity, Theme, ThemeStatus
 from app.schemas import (
     ActiveSliceOut,
+    ActivityExpandMessageIn,
+    ActivityExecutionPatch,
     ActivityOut,
+    ActivityStepToggle,
     ActivityToggle,
     PlanDocumentOut,
     ThemeCreate,
     ThemeOut,
     ThemeUpdate,
 )
+from app.services import activity_expand as expand_svc
 from app.services import domain as domain_svc
 
 router = APIRouter(prefix="/themes", tags=["themes"])
+
+
+def _activity_out(act: Activity) -> ActivityOut:
+    return ActivityOut(
+        id=act.id,
+        title=act.title,
+        description=act.description,
+        activity_type=act.activity_type.value if act.activity_type else None,
+        done=act.done,
+        sort_order=act.sort_order,
+        execution_doc=act.execution_doc if isinstance(act.execution_doc, dict) else {},
+    )
+
+
+def _daily_minutes_for_theme(session: Session, theme: Theme) -> int:
+    slice_row = domain_svc.get_active_slice(session, theme.id)
+    if not slice_row:
+        return 30
+    doc = slice_row.doc or {}
+    daily = doc.get("daily_minutes")
+    if not isinstance(daily, (int, float)) or daily <= 0:
+        parent = (doc.get("parent_plan") or {}) if isinstance(doc, dict) else {}
+        daily = parent.get("daily_minutes") if isinstance(parent, dict) else None
+    if not isinstance(daily, (int, float)) or daily <= 0:
+        return 30
+    return int(daily)
 
 
 @router.get("", response_model=list[ThemeOut])
@@ -185,17 +216,7 @@ def get_active_slice(theme_id: str, session: Session = Depends(get_session)) -> 
         phase=slice_row.phase,
         title=slice_row.title,
         core_points=list(slice_row.core_points or []),
-        activities=[
-            ActivityOut(
-                id=a.id,
-                title=a.title,
-                description=a.description,
-                activity_type=a.activity_type.value if a.activity_type else None,
-                done=a.done,
-                sort_order=a.sort_order,
-            )
-            for a in activities
-        ],
+        activities=[_activity_out(a) for a in activities],
         daily_minutes=int(daily),
     )
 
@@ -205,7 +226,7 @@ def toggle_activity(
     activity_id: str,
     body: ActivityToggle,
     session: Session = Depends(get_session),
-) -> Activity:
+) -> ActivityOut:
     act = session.get(Activity, activity_id)
     if not act:
         raise HTTPException(404, "活动不存在")
@@ -213,11 +234,145 @@ def toggle_activity(
     session.add(act)
     session.commit()
     session.refresh(act)
-    return ActivityOut(
-        id=act.id,
-        title=act.title,
-        description=act.description,
-        activity_type=act.activity_type.value if act.activity_type else None,
-        done=act.done,
-        sort_order=act.sort_order,
+    return _activity_out(act)
+
+
+@router.post("/activities/{activity_id}/expand", response_model=ActivityOut)
+def expand_activity(
+    activity_id: str,
+    session: Session = Depends(get_session),
+    settings: Settings = Depends(get_settings),
+) -> ActivityOut:
+    act = session.get(Activity, activity_id)
+    if not act:
+        raise HTTPException(404, "活动不存在")
+    theme = session.get(Theme, act.theme_id)
+    if not theme:
+        raise HTTPException(404, "主题不存在")
+    try:
+        doc = expand_svc.generate_execution(
+            settings,
+            theme,
+            act,
+            daily_minutes=_daily_minutes_for_theme(session, theme),
+        )
+    except RuntimeError as e:
+        raise HTTPException(400, str(e)) from e
+    except Exception as e:
+        raise HTTPException(502, f"展开失败：{e}") from e
+    if not expand_svc.has_execution(doc):
+        raise HTTPException(502, "模型未返回可用的执行结构，请重试")
+    act.execution_doc = doc
+    session.add(act)
+    session.commit()
+    session.refresh(act)
+    return _activity_out(act)
+
+
+@router.post("/activities/{activity_id}/expand/message", response_model=ActivityOut)
+def expand_activity_message(
+    activity_id: str,
+    body: ActivityExpandMessageIn,
+    session: Session = Depends(get_session),
+    settings: Settings = Depends(get_settings),
+) -> ActivityOut:
+    act = session.get(Activity, activity_id)
+    if not act:
+        raise HTTPException(404, "活动不存在")
+    if not expand_svc.has_execution(act.execution_doc):
+        raise HTTPException(400, "请先展开该活动")
+    theme = session.get(Theme, act.theme_id)
+    if not theme:
+        raise HTTPException(404, "主题不存在")
+    try:
+        doc = expand_svc.revise_execution(
+            settings,
+            theme,
+            act,
+            daily_minutes=_daily_minutes_for_theme(session, theme),
+            user_content=body.content.strip(),
+        )
+    except RuntimeError as e:
+        raise HTTPException(400, str(e)) from e
+    except Exception as e:
+        raise HTTPException(502, f"调整失败：{e}") from e
+    act.execution_doc = doc
+    session.add(act)
+    session.commit()
+    session.refresh(act)
+    return _activity_out(act)
+
+
+@router.patch("/activities/{activity_id}/execution", response_model=ActivityOut)
+def patch_activity_execution(
+    activity_id: str,
+    body: ActivityExecutionPatch,
+    session: Session = Depends(get_session),
+) -> ActivityOut:
+    act = session.get(Activity, activity_id)
+    if not act:
+        raise HTTPException(404, "活动不存在")
+    theme = session.get(Theme, act.theme_id)
+    if not theme:
+        raise HTTPException(404, "主题不存在")
+    if body.clear:
+        act.execution_doc = {}
+        session.add(act)
+        session.commit()
+        session.refresh(act)
+        return _activity_out(act)
+
+    patch: dict = {}
+    if body.goal is not None:
+        patch["goal"] = body.goal
+    if body.steps is not None:
+        patch["steps"] = body.steps
+    if "resource_ref" in body.model_fields_set:
+        patch["resource_ref"] = body.resource_ref
+    if body.outcome is not None:
+        patch["outcome"] = body.outcome
+    if body.minutes is not None:
+        patch["minutes"] = body.minutes
+    if not patch:
+        raise HTTPException(400, "没有可更新的字段")
+
+    act.execution_doc = expand_svc.apply_manual_patch(
+        act.execution_doc,
+        patch,
+        daily_minutes=_daily_minutes_for_theme(session, theme),
     )
+    session.add(act)
+    session.commit()
+    session.refresh(act)
+    return _activity_out(act)
+
+
+@router.patch(
+    "/activities/{activity_id}/execution/steps/{step_id}",
+    response_model=ActivityOut,
+)
+def toggle_execution_step(
+    activity_id: str,
+    step_id: str,
+    body: ActivityStepToggle,
+    session: Session = Depends(get_session),
+) -> ActivityOut:
+    act = session.get(Activity, activity_id)
+    if not act:
+        raise HTTPException(404, "活动不存在")
+    try:
+        act.execution_doc = expand_svc.set_step_done(
+            act.execution_doc, step_id, body.done
+        )
+    except KeyError:
+        raise HTTPException(404, "步骤不存在") from None
+    # 全部步骤完成时同步活动完成态
+    steps = (act.execution_doc or {}).get("steps") or []
+    if steps and all(isinstance(s, dict) and s.get("done") for s in steps):
+        act.done = True
+    elif not body.done:
+        act.done = False
+    session.add(act)
+    session.commit()
+    session.refresh(act)
+    return _activity_out(act)

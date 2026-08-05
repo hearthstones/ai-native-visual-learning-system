@@ -104,6 +104,8 @@ class Activity(SQLModel, table=True):
     activity_type: Optional[ActivityType] = None
     done: bool = False
     sort_order: int = 0
+    # 单条计划的 AI 任务展开（长期复用）；空 = 未展开
+    execution_doc: dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 

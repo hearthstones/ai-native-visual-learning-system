@@ -138,6 +138,8 @@ def system_prompt_for(kind: str) -> str:
         return skill_system_block("ai-learning-step2-resource", RESOURCES_EXTRA)
     if kind == "plan":
         return skill_system_block("ai-learning-step3-plan", PLAN_EXTRA)
+    if kind == "activity_expand":
+        return skill_system_block("ai-learning-activity-expand")
     if kind == "weekly_review":
         return (
             "你是可视化刻意练习系统的复盘教练。"

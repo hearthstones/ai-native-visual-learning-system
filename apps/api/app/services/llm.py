@@ -127,8 +127,8 @@ def chat_json(
     kind: str | None = None,
 ) -> dict[str, Any]:
     client = get_llm_client(settings)
-    # weekly_review 有独立 JSON 契约，不要叠共创的 assistant_message/live_doc 约束
-    if kind in (None, "weekly_review"):
+    # weekly_review / activity_expand 有独立 JSON 契约，不要叠共创的 assistant_message/live_doc 约束
+    if kind in (None, "weekly_review", "activity_expand"):
         system_full = system
     else:
         system_full = f"{system}\n\n{OUTPUT_CONTRACT}"
@@ -153,6 +153,6 @@ def chat_json(
         completion = client.chat.completions.create(**kwargs)
     content = completion.choices[0].message.content or ""
     parsed = extract_json(content)
-    if kind:
+    if kind and kind not in ("weekly_review", "activity_expand"):
         return normalize_cocreate_result(kind, parsed)
     return parsed

@@ -1,10 +1,12 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ActivityExpandPanel } from '../components/ActivityExpandPanel'
 import { Icon } from '../components/Icon'
-import { api, type ActiveSlice, type Theme, type ThemePhase } from '../lib/api'
+import { api, type ActiveSlice, type SliceActivity, type Theme, type ThemePhase } from '../lib/api'
 import { getCurrentLevel, getSliceItems, phaseZh } from '../lib/themeDoc'
 import { isSlotFull, MAX_FOCUS, slotMax, slotUsed, type SlotMap } from '../lib/slots'
 import '../styles/pages/theme-plan.css'
+import '../styles/components/activity-expand.css'
 
 const PHASES: Array<{ key: ThemePhase; label: string }> = [
   { key: 'learning', label: '学习' },
@@ -38,9 +40,11 @@ export function ThemePlanPage() {
   const [slotFullOpen, setSlotFullOpen] = useState(false)
   const [archiveOpen, setArchiveOpen] = useState(false)
   const [ok, setOk] = useState('')
+  const [expandId, setExpandId] = useState<string | null>(null)
 
   const items = useMemo(() => getSliceItems(slice, theme), [slice, theme])
   const currentLevel = useMemo(() => getCurrentLevel(theme), [theme])
+  const expandItem = items.find((it) => it.activityId === expandId)
 
   async function load() {
     const [t, home, s, active] = await Promise.all([
@@ -261,7 +265,24 @@ export function ThemePlanPage() {
                     <div className="checklist-item__content">
                       <span className="checklist-item__label">{item.label}</span>
                       <span className="checklist-item__desc">{item.desc}</span>
+                      {item.expanded ? (
+                        <span className="checklist-item__desc" style={{ color: 'var(--text-brand)' }}>
+                          已拆分 · {(item.executionDoc?.steps || []).length} 步
+                          {item.executionDoc?.minutes ? ` · ${item.executionDoc.minutes} 分钟` : ''}
+                        </span>
+                      ) : null}
                     </div>
+                    {item.activityId ? (
+                      <button
+                        type="button"
+                        className="ds-btn ds-btn--secondary ds-btn--sm expand-entry"
+                        disabled={busy}
+                        onClick={() => setExpandId(item.activityId || null)}
+                      >
+                        <Icon name="sparkles" size={12} className="icon" />
+                        任务拆分
+                      </button>
+                    ) : null}
                   </div>
                 ))}
               </div>
@@ -674,6 +695,27 @@ export function ThemePlanPage() {
           </div>
         </div>
       </div>
+
+      {expandId ? (
+        <ActivityExpandPanel
+          key={expandId}
+          open
+          activityId={expandId}
+          activityTitle={expandItem?.label || '计划活动'}
+          initialDoc={expandItem?.executionDoc}
+          onClose={() => setExpandId(null)}
+          onUpdated={(act: SliceActivity) => {
+            setSlice((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    activities: prev.activities.map((a) => (a.id === act.id ? { ...a, ...act } : a)),
+                  }
+                : prev,
+            )
+          }}
+        />
+      ) : null}
     </>
   )
 }

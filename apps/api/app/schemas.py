@@ -152,6 +152,7 @@ class ActivityOut(BaseModel):
     activity_type: Optional[str] = None
     done: bool
     sort_order: int
+    execution_doc: dict[str, Any] = Field(default_factory=dict)
 
     class Config:
         from_attributes = True
@@ -176,6 +177,23 @@ class PlanDocumentOut(BaseModel):
 
 
 class ActivityToggle(BaseModel):
+    done: bool
+
+
+class ActivityExpandMessageIn(BaseModel):
+    content: str = Field(min_length=1, max_length=2000)
+
+
+class ActivityExecutionPatch(BaseModel):
+    goal: Optional[str] = None
+    steps: Optional[list[Any]] = None
+    resource_ref: Optional[Any] = None
+    outcome: Optional[str] = None
+    minutes: Optional[int] = None
+    clear: bool = False
+
+
+class ActivityStepToggle(BaseModel):
     done: bool
 
 

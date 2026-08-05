@@ -264,6 +264,7 @@ def expand_activity(
         raise HTTPException(502, "模型未返回可用的执行结构，请重试")
     act.execution_doc = doc
     session.add(act)
+    domain_svc.refresh_today_task_for_activity(session, act)
     session.commit()
     session.refresh(act)
     return _activity_out(act)
@@ -298,6 +299,7 @@ def expand_activity_message(
         raise HTTPException(502, f"调整失败：{e}") from e
     act.execution_doc = doc
     session.add(act)
+    domain_svc.refresh_today_task_for_activity(session, act)
     session.commit()
     session.refresh(act)
     return _activity_out(act)
@@ -318,6 +320,7 @@ def patch_activity_execution(
     if body.clear:
         act.execution_doc = {}
         session.add(act)
+        domain_svc.refresh_today_task_for_activity(session, act)
         session.commit()
         session.refresh(act)
         return _activity_out(act)
@@ -342,6 +345,7 @@ def patch_activity_execution(
         daily_minutes=_daily_minutes_for_theme(session, theme),
     )
     session.add(act)
+    domain_svc.refresh_today_task_for_activity(session, act)
     session.commit()
     session.refresh(act)
     return _activity_out(act)
@@ -373,6 +377,7 @@ def toggle_execution_step(
     elif not body.done:
         act.done = False
     session.add(act)
+    domain_svc.refresh_today_task_for_activity(session, act)
     session.commit()
     session.refresh(act)
     return _activity_out(act)

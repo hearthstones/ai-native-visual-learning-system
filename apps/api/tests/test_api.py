@@ -96,6 +96,77 @@ def test_home_auto_focus_and_clears_stale_tasks(client: TestClient, db: Session)
     assert stale == []
 
 
+def test_home_today_tasks_include_execution_summary(client: TestClient, db: Session):
+    from app.models import Activity
+
+    theme = Theme(
+        title="expanded-home",
+        status=ThemeStatus.active,
+        phase=ThemePhase.practice,
+        is_focus=True,
+        locked_at=datetime.utcnow(),
+    )
+    db.add(theme)
+    db.commit()
+    db.refresh(theme)
+
+    slice_row = PlanSlice(
+        theme_id=theme.id,
+        phase=ThemePhase.practice,
+        slice_status=SliceStatus.active,
+        title="练习期",
+        doc={"daily_minutes": 30},
+    )
+    db.add(slice_row)
+    db.commit()
+    db.refresh(slice_row)
+
+    act = Activity(
+        slice_id=slice_row.id,
+        theme_id=theme.id,
+        title="选择实践项目（第1天）",
+        description="粗计划描述很长",
+        sort_order=0,
+        execution_doc={
+            "goal": "选定阅读技能并写出目标",
+            "steps": [
+                {"id": "s1", "text": "列出3个阅读相关技能", "done": False},
+                {"id": "s2", "text": "选一个写下目标", "done": False},
+            ],
+            "minutes": 30,
+        },
+    )
+    db.add(act)
+    db.commit()
+    db.refresh(act)
+
+    today = date.today().isoformat()
+    db.add(
+        DailyTask(
+            theme_id=theme.id,
+            activity_id=act.id,
+            title="旧粗标题",
+            description=act.description,
+            task_date=today,
+            sort_order=0,
+        )
+    )
+    db.commit()
+
+    res = client.get("/api/home")
+    assert res.status_code == 200
+    tasks = res.json()["today_tasks"]
+    mine = [t for t in tasks if t["theme_id"] == theme.id]
+    assert len(mine) >= 1
+    t0 = mine[0]
+    assert t0["title"] == "列出3个阅读相关技能"
+    assert t0["execution_summary"] is not None
+    assert t0["execution_summary"]["expanded"] is True
+    assert t0["execution_summary"]["steps_total"] == 2
+    assert t0["execution_summary"]["next_step"] == "列出3个阅读相关技能"
+    assert t0["execution_summary"]["minutes"] == 30
+
+
 def test_theme_status_transition_via_api(client: TestClient, db: Session):
     theme = Theme(
         title="active",

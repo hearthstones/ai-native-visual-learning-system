@@ -251,16 +251,79 @@ _DAY_RANGE_RE = re.compile(
 )
 
 
+def _clip_title(text: str, limit: int = 48) -> str:
+    text = text.strip()
+    if len(text) <= limit:
+        return text
+    return f"{text[: limit - 1]}…"
+
+
 def format_daily_task_title(activity: Activity) -> str:
-    """把多日切片活动收成「今天可完成」的短句。"""
+    """把活动收成「今天可推进」的短句；已拆分时优先下一步 / goal。"""
+    from app.services import activity_expand as expand_svc
+
+    doc = activity.execution_doc if isinstance(activity.execution_doc, dict) else None
+    if expand_svc.has_execution(doc):
+        next_step = expand_svc.next_undone_step_text(doc)
+        if next_step:
+            return _clip_title(next_step)
+        goal = str((doc or {}).get("goal") or "").strip()
+        if goal:
+            return _clip_title(goal)
+
     desc = (activity.description or "").strip()
     title = (activity.title or "").strip()
     if desc:
         first = re.split(r"[；;。\n]", desc, maxsplit=1)[0].strip()
         if first:
-            return first if len(first) <= 48 else f"{first[:47]}…"
+            return _clip_title(first)
     cleaned = _DAY_RANGE_RE.sub("", title).strip(" ·-—")
     return cleaned or title or "今日推进"
+
+
+def refresh_today_task_for_activity(session: Session, activity: Activity) -> None:
+    """拆分/手改后同步刷新今日关联 DailyTask 的标题文案。"""
+    today = date.today().isoformat()
+    tasks = session.exec(
+        select(DailyTask).where(
+            DailyTask.activity_id == activity.id,
+            DailyTask.task_date == today,
+        )
+    ).all()
+    new_title = format_daily_task_title(activity)
+    new_desc = activity.description or activity.title
+    for t in tasks:
+        if t.title != new_title or t.description != new_desc:
+            t.title = new_title
+            t.description = new_desc
+            session.add(t)
+
+
+def daily_task_out(session: Session, task: DailyTask):
+    """组装带 execution_summary 的 DailyTaskOut。"""
+    from app.schemas import DailyTaskOut, ExecutionSummaryOut
+    from app.services import activity_expand as expand_svc
+
+    summary = None
+    if task.activity_id:
+        act = session.get(Activity, task.activity_id)
+        if act:
+            raw = expand_svc.execution_summary(
+                act.execution_doc if isinstance(act.execution_doc, dict) else None
+            )
+            if raw:
+                summary = ExecutionSummaryOut.model_validate(raw)
+    return DailyTaskOut(
+        id=task.id,
+        theme_id=task.theme_id,
+        activity_id=task.activity_id,
+        title=task.title,
+        description=task.description,
+        task_date=task.task_date,
+        done=task.done,
+        sort_order=task.sort_order,
+        execution_summary=summary,
+    )
 
 
 def ensure_today_tasks(

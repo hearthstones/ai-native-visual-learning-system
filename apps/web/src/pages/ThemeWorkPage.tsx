@@ -228,6 +228,16 @@ export function ThemeWorkPage() {
                 const linked = task.activity_id ? activityById.get(task.activity_id) : undefined
                 const exe = linked?.executionDoc
                 const steps = exe?.steps || []
+                const expanded = Boolean(linked?.expanded && (exe?.goal || steps.length > 0))
+                const primaryText = expanded
+                  ? exe?.goal || task.title
+                  : task.title
+                const planLabel = linked?.label || ''
+                const showPlanMuted =
+                  expanded && planLabel && planLabel !== primaryText && planLabel !== (exe?.goal || '')
+                const expandBtnLabel = expanded
+                  ? `已拆分 · ${steps.length} 步`
+                  : '任务拆分'
                 return (
                   <div key={task.id} className={`task-item${task.done ? ' is-done' : ''}`}>
                     <label className="ds-check task-item__check">
@@ -243,9 +253,9 @@ export function ThemeWorkPage() {
                       <span className="ds-check__box" />
                     </label>
                     <div className="task-item__body">
-                      <p className="task-item__text">{task.title}</p>
-                      {exe?.goal ? (
-                        <p className="task-item__goal">{exe.goal}</p>
+                      <p className="task-item__text">{primaryText}</p>
+                      {showPlanMuted ? (
+                        <p className="task-item__plan">计划：{planLabel}</p>
                       ) : null}
                       <div className="task-item__meta">
                         <span className="task-item__source">
@@ -255,7 +265,7 @@ export function ThemeWorkPage() {
                         {typeof exe?.minutes === 'number' ? (
                           <span className="task-item__source">{exe.minutes} 分钟</span>
                         ) : null}
-                        {!linked?.expanded && task.description ? (
+                        {!expanded && task.description ? (
                           <span className="task-item__source">{task.description}</span>
                         ) : null}
                       </div>
@@ -304,7 +314,7 @@ export function ThemeWorkPage() {
                           onClick={() => setExpandId(task.activity_id)}
                         >
                           <Icon name="sparkles" size={12} className="icon" />
-                          任务拆分
+                          {expandBtnLabel}
                         </button>
                       ) : null}
                     </div>

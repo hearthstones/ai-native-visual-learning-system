@@ -206,7 +206,7 @@ export function HomePage() {
       <section className="home-section">
         <div className="home-section__label-row">
           <div className="home-section__label">今日推进</div>
-          <span className="home-section__hint">当前切片下一批</span>
+          <span className="home-section__hint">未完成活动 · 每主题最多 2 条</span>
         </div>
         <div className="today-list">
           {data.today_tasks.length === 0 && (
@@ -214,10 +214,23 @@ export function HomePage() {
           )}
           {data.today_tasks.map((task) => {
             const theme = themeById(themeMap, task.theme_id)
+            const summary = task.execution_summary
+            const expanded = Boolean(summary?.expanded)
+            const metaParts: string[] = []
+            if (expanded) {
+              metaParts.push(
+                summary && summary.steps_total > 0
+                  ? `已拆分 · ${summary.steps_done}/${summary.steps_total}`
+                  : '已拆分',
+              )
+              if (typeof summary?.minutes === 'number') {
+                metaParts.push(`约${summary.minutes}分钟`)
+              }
+            }
             return (
               <div
                 key={task.id}
-                className={`today-item${task.done ? ' is-done' : ''}`}
+                className={`today-item${task.done ? ' is-done' : ''}${expanded ? ' today-item--expanded' : ''}`}
               >
                 <label className="ds-check today-item__check">
                   <input
@@ -231,9 +244,14 @@ export function HomePage() {
                 </label>
                 <span className={phaseDot[theme?.phase ?? 'learning']} />
                 <span className="ds-tag today-item__topic-tag">{theme?.title ?? '主题'}</span>
-                <Link className="today-item__text" to={`/themes/${task.theme_id}/work`}>
-                  {task.title}
-                </Link>
+                <div className="today-item__main">
+                  <Link className="today-item__text" to={`/themes/${task.theme_id}/work`}>
+                    {task.title}
+                  </Link>
+                  {metaParts.length > 0 ? (
+                    <span className="today-item__meta">{metaParts.join(' · ')}</span>
+                  ) : null}
+                </div>
                 <Link className="today-item__enter" to={`/themes/${task.theme_id}/work`}>
                   <span>进入</span>
                   <Icon name="arrow-right" size={14} />

@@ -27,6 +27,15 @@ export interface Theme {
   locked_at: string | null
 }
 
+export interface ExecutionSummary {
+  expanded: boolean
+  goal?: string | null
+  next_step?: string | null
+  steps_done: number
+  steps_total: number
+  minutes?: number | null
+}
+
 export interface DailyTask {
   id: string
   theme_id: string
@@ -36,6 +45,7 @@ export interface DailyTask {
   task_date: string
   done: boolean
   sort_order: number
+  execution_summary?: ExecutionSummary | null
 }
 
 export interface HomeData {

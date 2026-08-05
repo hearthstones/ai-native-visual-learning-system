@@ -86,7 +86,7 @@ def test_toggle_syncs_activity_done(session: Session):
     assert "A2" in titles and "A3" in titles
 
 
-def test_format_daily_task_title_prefers_first_step():
+def test_format_daily_task_title_prefers_description_first_sentence():
     act = Activity(
         slice_id="s",
         theme_id="t",
@@ -94,6 +94,76 @@ def test_format_daily_task_title_prefers_first_step():
         description="通读原文，标记不懂段落；结合视频解读。",
     )
     assert domain_svc.format_daily_task_title(act) == "通读原文，标记不懂段落"
+
+
+def test_format_daily_task_title_prefers_next_undone_step():
+    act = Activity(
+        slice_id="s",
+        theme_id="t",
+        title="选择实践项目（第1天）",
+        description="基于学习期计划，选择一个具体技能或问题（如写作、编程、沟通），明确实践目标",
+        execution_doc={
+            "goal": "选定一个与阅读相关的具体技能",
+            "steps": [
+                {"id": "a", "text": "列出3个阅读相关技能", "done": True},
+                {"id": "b", "text": "从3个中选1个写下实践目标", "done": False},
+            ],
+            "minutes": 30,
+        },
+    )
+    assert domain_svc.format_daily_task_title(act) == "从3个中选1个写下实践目标"
+
+
+def test_format_daily_task_title_falls_back_to_goal_when_all_steps_done():
+    act = Activity(
+        slice_id="s",
+        theme_id="t",
+        title="粗标题",
+        description="粗描述很长很长",
+        execution_doc={
+            "goal": "完成今日精读验收",
+            "steps": [{"id": "a", "text": "已做完", "done": True}],
+            "minutes": 30,
+        },
+    )
+    assert domain_svc.format_daily_task_title(act) == "完成今日精读验收"
+
+
+def test_refresh_today_task_for_activity(session: Session):
+    theme = Theme(title="t", status=ThemeStatus.active, phase=ThemePhase.learning)
+    session.add(theme)
+    session.commit()
+    session.refresh(theme)
+    act = Activity(
+        slice_id="s",
+        theme_id=theme.id,
+        title="粗标题",
+        description="粗描述第一句；第二句",
+    )
+    session.add(act)
+    session.commit()
+    session.refresh(act)
+    task = DailyTask(
+        theme_id=theme.id,
+        activity_id=act.id,
+        title="旧标题",
+        description="旧",
+        task_date=__import__("datetime").date.today().isoformat(),
+        sort_order=0,
+    )
+    session.add(task)
+    session.commit()
+
+    act.execution_doc = {
+        "goal": "目标",
+        "steps": [{"id": "1", "text": "下一步动作文案", "done": False}],
+        "minutes": 25,
+    }
+    session.add(act)
+    domain_svc.refresh_today_task_for_activity(session, act)
+    session.commit()
+    session.refresh(task)
+    assert task.title == "下一步动作文案"
 
 
 def test_advance_phase_replaces_today_tasks(session: Session):

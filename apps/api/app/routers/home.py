@@ -75,7 +75,7 @@ def home(session: Session = Depends(get_session)) -> HomeOut:
         slots=domain_svc.slot_snapshot(session),
         focus_count=domain_svc.count_focus(session),
         themes=[ThemeOut.model_validate(t) for t in themes],
-        today_tasks=[DailyTaskOut.model_validate(t) for t in tasks],
+        today_tasks=[domain_svc.daily_task_out(session, t) for t in tasks],
         drift_events=[
             {
                 "id": d.id,
@@ -99,7 +99,7 @@ def toggle_task(
     task_id: str,
     body: TaskToggle,
     session: Session = Depends(get_session),
-) -> DailyTask:
+) -> DailyTaskOut:
     task = session.get(DailyTask, task_id)
     if not task:
         raise HTTPException(404, "任务不存在")
@@ -108,7 +108,7 @@ def toggle_task(
     domain_svc.sync_activity_done(session, task, body.done)
     session.commit()
     session.refresh(task)
-    return task
+    return domain_svc.daily_task_out(session, task)
 
 
 @router.post("/reviews/weekly", response_model=WeeklyReviewOut)

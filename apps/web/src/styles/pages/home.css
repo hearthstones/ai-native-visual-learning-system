@@ -170,6 +170,15 @@
   color: var(--text-default);
   transition: background .12s ease, border-color .12s ease;
 }
+.today-item--expanded {
+  align-items: flex-start;
+}
+.today-item--expanded .today-item__check,
+.today-item--expanded .today-item__dot,
+.today-item--expanded .today-item__topic-tag,
+.today-item--expanded .today-item__enter {
+  margin-top: 2px;
+}
 .today-item:hover {
   background: var(--bg-overlay-l2);
   border-color: var(--border-neutral-l2);
@@ -186,16 +195,33 @@
 .today-item__topic-tag {
   flex-shrink: 0;
 }
-.today-item__text {
+.today-item__main {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.today-item__text {
   font-size: var(--body-base-font-size);
   line-height: var(--body-base-line-height);
   color: var(--text-default);
-  min-width: 0;
   text-decoration: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .today-item__text:hover {
   color: var(--text-brand);
+}
+.today-item__meta {
+  font-size: var(--body-xs-font-size);
+  line-height: var(--body-xs-line-height, 1.4);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .today-item__enter {
   display: inline-flex;
@@ -225,6 +251,9 @@
 }
 .today-item.is-done .today-item__text {
   text-decoration: line-through;
+}
+.today-item.is-done .today-item__meta {
+  text-decoration: none;
 }
 
 /* ── Theme Card Grid ───────────────────────────────────────── */

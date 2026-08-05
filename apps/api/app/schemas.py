@@ -105,6 +105,15 @@ class TaskToggle(BaseModel):
     done: bool
 
 
+class ExecutionSummaryOut(BaseModel):
+    expanded: bool = True
+    goal: Optional[str] = None
+    next_step: Optional[str] = None
+    steps_done: int = 0
+    steps_total: int = 0
+    minutes: Optional[int] = None
+
+
 class DailyTaskOut(BaseModel):
     id: str
     theme_id: str
@@ -114,6 +123,7 @@ class DailyTaskOut(BaseModel):
     task_date: str
     done: bool
     sort_order: int
+    execution_summary: Optional[ExecutionSummaryOut] = None
 
     class Config:
         from_attributes = True

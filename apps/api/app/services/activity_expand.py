@@ -33,6 +33,46 @@ def has_execution(doc: dict[str, Any] | None) -> bool:
     return bool(goal) or (isinstance(steps, list) and len(steps) > 0)
 
 
+def next_undone_step_text(doc: dict[str, Any] | None) -> str | None:
+    if not isinstance(doc, dict):
+        return None
+    steps = doc.get("steps")
+    if not isinstance(steps, list):
+        return None
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        if step.get("done"):
+            continue
+        text = str(step.get("text") or "").strip()
+        if text:
+            return text
+    return None
+
+
+def execution_summary(doc: dict[str, Any] | None) -> dict[str, Any] | None:
+    """首页轻量摘要；未展开时返回 None。"""
+    if not has_execution(doc):
+        return None
+    assert isinstance(doc, dict)
+    steps = doc.get("steps") if isinstance(doc.get("steps"), list) else []
+    step_dicts = [s for s in steps if isinstance(s, dict)]
+    steps_total = len(step_dicts)
+    steps_done = sum(1 for s in step_dicts if s.get("done"))
+    goal = str(doc.get("goal") or "").strip() or None
+    next_step = next_undone_step_text(doc)
+    minutes = doc.get("minutes")
+    minutes_out = int(minutes) if isinstance(minutes, (int, float)) and minutes > 0 else None
+    return {
+        "expanded": True,
+        "goal": goal,
+        "next_step": next_step,
+        "steps_done": steps_done,
+        "steps_total": steps_total,
+        "minutes": minutes_out,
+    }
+
+
 def _resource_catalog(theme: Theme) -> list[dict[str, Any]]:
     doc = theme.resources_doc or {}
     resources = doc.get("resources") or []

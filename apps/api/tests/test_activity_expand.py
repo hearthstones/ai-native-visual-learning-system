@@ -25,6 +25,28 @@ def test_normalize_execution_basic():
     assert expand_svc.has_execution(doc)
 
 
+def test_execution_summary_and_next_step():
+    doc = {
+        "goal": "读完第一章",
+        "steps": [
+            {"id": "1", "text": "打开书", "done": True},
+            {"id": "2", "text": "划线三处", "done": False},
+        ],
+        "minutes": 30,
+    }
+    summary = expand_svc.execution_summary(doc)
+    assert summary is not None
+    assert summary["expanded"] is True
+    assert summary["goal"] == "读完第一章"
+    assert summary["next_step"] == "划线三处"
+    assert summary["steps_done"] == 1
+    assert summary["steps_total"] == 2
+    assert summary["minutes"] == 30
+    assert expand_svc.next_undone_step_text(doc) == "划线三处"
+    assert expand_svc.execution_summary({}) is None
+    assert expand_svc.execution_summary(None) is None
+
+
 def test_manual_patch_preserves_step_done():
     current = expand_svc.normalize_execution(
         {

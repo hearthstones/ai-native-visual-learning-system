@@ -561,6 +561,19 @@ img { display: block; }
   font-size: var(--body-xs-font-size);
   color: var(--text-tertiary);
 }
+.resource-card__open {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: var(--body-xs-font-size);
+  color: var(--text-brand);
+  text-decoration: none;
+}
+.resource-card__open:hover {
+  text-decoration: underline;
+}
+.resource-card__open--muted {
+  color: var(--text-tertiary);
+}
 .resource-card__tags { margin-left: auto; display: inline-flex; gap: var(--spacer-6); }
 .resource-card__body {
   display: grid;

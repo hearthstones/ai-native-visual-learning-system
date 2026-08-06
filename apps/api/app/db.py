@@ -66,10 +66,30 @@ def _migrate_activity_execution_v1() -> None:
             )
 
 
+def _migrate_theme_work_note_v1() -> None:
+    """为已有库补齐 Theme.work_note。"""
+    with engine.begin() as conn:
+        tables = {
+            r[0]
+            for r in conn.execute(
+                text("SELECT name FROM sqlite_master WHERE type='table'")
+            ).fetchall()
+        }
+        if "theme" not in tables:
+            return
+        cols = {
+            r[1]
+            for r in conn.execute(text("PRAGMA table_info(theme)")).fetchall()
+        }
+        if "work_note" not in cols:
+            conn.execute(text("ALTER TABLE theme ADD COLUMN work_note TEXT DEFAULT ''"))
+
+
 def init_db() -> None:
     SQLModel.metadata.create_all(engine)
     _migrate_theme_status_v2()
     _migrate_activity_execution_v1()
+    _migrate_theme_work_note_v1()
 
 
 def get_session() -> Generator[Session, None, None]:

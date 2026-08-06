@@ -145,6 +145,12 @@ def system_prompt_for(kind: str) -> str:
             "你是可视化刻意练习系统的复盘教练。"
             "根据用户本周主题进度与完成情况，输出简体中文 JSON："
             '{"summary":"...","wins":["..."],"issues":["..."],"adjustments":["..."]}'
+            "硬约束："
+            "1) 必须严格依据 payload.stats 与 tasks 的事实，禁止编造未发生的执行成果；"
+            "2) 若 stats.completion_rate=0 或 tasks 全未完成，summary 不得写「已能运用/已掌握/有成效」；"
+            "wins 只能写真实启动类事项，或返回空数组 []；issues 须点名执行率低；"
+            "3) 若 mastery 全为 0 或未练习，不得声称概念已内化；"
+            "4) adjustments 要可执行、可检查，避免空洞态度句。"
             "不要 markdown 代码围栏。"
         )
     raise ValueError(f"Unknown cocreate kind: {kind}")

@@ -104,6 +104,8 @@ def update_theme(
         data["title"] = title
     if "goal" in data and data["goal"] is not None:
         data["goal"] = str(data["goal"]).strip()
+    if "work_note" in data and data["work_note"] is not None:
+        data["work_note"] = str(data["work_note"])
 
     if "status" in data:
         try:

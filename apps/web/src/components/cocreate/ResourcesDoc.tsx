@@ -107,6 +107,18 @@ export function ResourcesDoc({
                 <div>
                   <div className="resource-card__title">{String(r.name || `资源 ${i + 1}`)}</div>
                   <div className="resource-card__author">{typeZh(r.type)}</div>
+                  {typeof (r.weread as { deepLink?: string } | undefined)?.deepLink === 'string' ? (
+                    <a
+                      className="resource-card__open"
+                      href={String((r.weread as { deepLink: string }).deepLink)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      打开阅读
+                    </a>
+                  ) : r.weread_readable ? (
+                    <span className="resource-card__open resource-card__open--muted">微信读书可读</span>
+                  ) : null}
                 </div>
                 <div className="resource-card__tags">
                   {i < 2 ? (

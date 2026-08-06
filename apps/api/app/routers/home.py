@@ -123,6 +123,17 @@ def create_weekly_review(
     tasks = session.exec(
         select(DailyTask).where(DailyTask.task_date >= week_start.isoformat())
     ).all()
+    tasks_done = sum(1 for t in tasks if t.done)
+    tasks_total = len(tasks)
+    completion_rate = (tasks_done / tasks_total) if tasks_total else 0.0
+    mastery_scores = [
+        int(m.get("score") or 0)
+        for m in (body.mastery or [])
+        if isinstance(m, dict)
+    ]
+    mastery_avg = (
+        sum(mastery_scores) / len(mastery_scores) if mastery_scores else 0.0
+    )
     payload = {
         "themes": [
             {
@@ -136,6 +147,13 @@ def create_weekly_review(
             {"title": t.title, "done": t.done, "date": t.task_date, "theme_id": t.theme_id}
             for t in tasks
         ],
+        "stats": {
+            "tasks_done": tasks_done,
+            "tasks_total": tasks_total,
+            "completion_rate": round(completion_rate, 3),
+            "mastery_avg": round(mastery_avg, 2),
+            "mastery_all_zero": (not mastery_scores) or all(s <= 0 for s in mastery_scores),
+        },
         "user_answers": [a for a in body.answers if a and str(a).strip()],
         "mastery": body.mastery,
         "draft_notes": body.draft_notes,
@@ -151,6 +169,7 @@ def create_weekly_review(
                         "请基于本周数据与用户填写的复盘内容，生成复盘 JSON。"
                         "必须输出："
                         '{"summary":"...","wins":["..."],"issues":["..."],"adjustments":["..."]}。'
+                        "务必先读 stats；若 completion_rate=0，禁止夸奖已掌握或已运用。"
                         f"数据：{payload}"
                     ),
                 }
@@ -169,6 +188,23 @@ def create_weekly_review(
             "issues": live.get("issues") or [],
             "adjustments": live.get("adjustments") or [],
         }
+
+    # Soft guard: zero completion must not invent mastery wins
+    if completion_rate <= 0:
+        banned = ("已能运用", "已掌握", "有成效", "理论学习有一定成效", "成功应用")
+        wins = result.get("wins") or []
+        if isinstance(wins, list):
+            result["wins"] = [
+                w
+                for w in wins
+                if isinstance(w, str) and not any(b in w for b in banned)
+            ]
+        summary = str(result.get("summary") or "")
+        if any(b in summary for b in banned):
+            result["summary"] = (
+                f"本周今日推进完成 {tasks_done}/{tasks_total}，执行尚未启动；"
+                "先把下一步做成可勾选项，再谈掌握与应用。"
+            )
 
     row = WeeklyReview(
         week_start=week_start.isoformat(),

@@ -90,6 +90,29 @@
 .home-drift-list li + li {
   margin-top: var(--spacer-4);
 }
+.home-drift-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-8);
+  margin-top: var(--spacer-12);
+}
+.home-drift-actions__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacer-12);
+  flex-wrap: wrap;
+}
+.home-drift-actions__name {
+  font-size: var(--body-sm-font-size);
+  color: var(--text-default);
+  min-width: 0;
+}
+.home-drift-actions__btns {
+  display: flex;
+  gap: var(--spacer-8);
+  flex-shrink: 0;
+}
 .home-skeleton {
   display: flex;
   flex-direction: column;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ActivityExpandPanel } from '../components/ActivityExpandPanel'
 import { Icon } from '../components/Icon'
@@ -8,7 +8,10 @@ import {
   getCurrentLevel,
   getDailyMinutes,
   getSliceItems,
+  matchThemeResource,
   phaseZh,
+  resourceDeepLink,
+  resourcesPathHint,
   workNoteKey,
 } from '../lib/themeDoc'
 import '../styles/pages/theme-work.css'
@@ -35,6 +38,9 @@ export function ThemeWorkPage() {
   const [note, setNote] = useState('')
   const [cocreateOpen, setCocreateOpen] = useState(false)
   const [expandId, setExpandId] = useState<string | null>(null)
+  const [openingResource, setOpeningResource] = useState(false)
+  const [noteSaveHint, setNoteSaveHint] = useState('')
+  const noteSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     void (async () => {
@@ -47,7 +53,18 @@ export function ThemeWorkPage() {
         setTheme(t)
         setTasks(home.today_tasks.filter((x) => x.theme_id === themeId))
         setSlice(active)
-        setNote(localStorage.getItem(workNoteKey(themeId)) || '')
+        const localNote = localStorage.getItem(workNoteKey(themeId)) || ''
+        const serverNote = t.work_note || ''
+        // 服务端优先；若服务端空而本机有内容，带上本机并回写
+        if (serverNote) {
+          setNote(serverNote)
+          localStorage.setItem(workNoteKey(themeId), serverNote)
+        } else if (localNote) {
+          setNote(localNote)
+          void api.updateTheme(themeId, { work_note: localNote }).catch(() => undefined)
+        } else {
+          setNote('')
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e))
       }
@@ -58,8 +75,6 @@ export function ThemeWorkPage() {
   const sliceItems = useMemo(() => getSliceItems(slice, theme), [slice, theme])
   const concepts = useMemo(() => getCoreConcepts(theme, 3), [theme])
   const dailyMinutes = getDailyMinutes(slice, theme)
-  const nextItem = sliceItems.find((it) => !it.done)
-  const materialHint = theme?.goal || level?.understand || '围绕主题目标推进当前切片'
   const expandItem = sliceItems.find((it) => it.activityId === expandId)
   const activityById = useMemo(() => {
     const map = new Map<string, (typeof sliceItems)[number]>()
@@ -68,6 +83,37 @@ export function ThemeWorkPage() {
     }
     return map
   }, [sliceItems])
+
+  const focusTask = useMemo(() => {
+    return tasks.find((t) => !t.done) || tasks[0] || null
+  }, [tasks])
+  const focusLinked = focusTask?.activity_id
+    ? activityById.get(focusTask.activity_id)
+    : undefined
+  const focusExe = focusLinked?.executionDoc
+  const nextActionText = useMemo(() => {
+    const steps = focusExe?.steps || []
+    const undone = steps.find((s) => !s.done)?.text?.trim()
+    if (undone) return undone
+    if (focusExe?.goal?.trim()) return focusExe.goal.trim()
+    if (focusTask?.title?.trim()) return focusTask.title.trim()
+    const nextSlice = sliceItems.find((it) => !it.done)
+    return nextSlice?.label || (sliceItems.length ? '当前切片已全部完成' : '暂无计划活动')
+  }, [focusExe, focusTask, sliceItems])
+  const focusResource = useMemo(() => {
+    const ref = focusExe?.resource_ref
+    const matched = matchThemeResource(theme, ref || null)
+    if (matched) return matched
+    // 未绑定资源时，给第一条核心资料如何用
+    return matchThemeResource(theme, { index: 0 }) || null
+  }, [focusExe, theme])
+  const materialHint = useMemo(() => {
+    if (focusResource?.how_to_use?.trim()) return focusResource.how_to_use.trim()
+    if (focusResource?.name) return `优先使用：${focusResource.name}`
+    const pathHint = resourcesPathHint(theme)
+    if (pathHint) return pathHint
+    return '打开主题计划书查看资料清单，或先为今日任务做「任务拆分」绑定资料。'
+  }, [focusResource, theme])
 
   function mergeActivity(act: SliceActivity) {
     setSlice((prev) =>
@@ -82,6 +128,52 @@ export function ThemeWorkPage() {
 
   function setMode(next: Mode) {
     setSearchParams({ mode: next }, { replace: true })
+  }
+
+  function persistNote(v: string) {
+    if (!theme) return
+    localStorage.setItem(workNoteKey(theme.id), v)
+    if (noteSaveTimer.current) clearTimeout(noteSaveTimer.current)
+    noteSaveTimer.current = setTimeout(() => {
+      void api
+        .updateTheme(theme.id, { work_note: v })
+        .then(() => {
+          setNoteSaveHint('已同步到主题')
+          window.setTimeout(() => setNoteSaveHint(''), 1600)
+        })
+        .catch(() => {
+          setNoteSaveHint('同步失败，仍保存在本机')
+          window.setTimeout(() => setNoteSaveHint(''), 2200)
+        })
+    }, 500)
+  }
+
+  async function openResource(ref?: { index?: number | null; name?: string } | null) {
+    const matched = matchThemeResource(theme, ref || null) || focusResource
+    const direct = resourceDeepLink(matched)
+    if (direct) {
+      window.open(direct, '_blank', 'noopener,noreferrer')
+      return
+    }
+    const query = (matched?.weread?.title || matched?.name || ref?.name || '').replace(/[《》]/g, '').trim()
+    if (!query) {
+      nav(`/themes/${themeId}/document#chapter-resources`)
+      return
+    }
+    setOpeningResource(true)
+    try {
+      const { books } = await api.searchWeread(query)
+      const hit = books.find((b) => typeof b.deepLink === 'string' && b.deepLink)
+      if (hit && typeof hit.deepLink === 'string') {
+        window.open(hit.deepLink, '_blank', 'noopener,noreferrer')
+      } else {
+        nav(`/themes/${themeId}/document#chapter-resources`)
+      }
+    } catch {
+      nav(`/themes/${themeId}/document#chapter-resources`)
+    } finally {
+      setOpeningResource(false)
+    }
   }
 
   function takeNoteToReview() {
@@ -297,7 +389,17 @@ export function ThemeWorkPage() {
                       {exe?.resource_ref?.name ? (
                         <p className="task-item__hint">
                           <span className="task-item__hint-label">资料</span>
-                          {exe.resource_ref.name}
+                          <button
+                            type="button"
+                            className="task-item__resource-link"
+                            disabled={openingResource}
+                            onClick={() => void openResource(exe.resource_ref)}
+                          >
+                            {exe.resource_ref.name}
+                            <span className="task-item__resource-action">
+                              {openingResource ? '打开中…' : '打开'}
+                            </span>
+                          </button>
                         </p>
                       ) : null}
                       {exe?.outcome ? (
@@ -346,9 +448,7 @@ export function ThemeWorkPage() {
 
           <aside className="source-sidebar">
             <p className="source-sidebar__title">下一步</p>
-            <p className="source-sidebar__text">
-              {nextItem ? nextItem.label : sliceItems.length ? '当前切片已全部完成' : '暂无计划活动'}
-            </p>
+            <p className="source-sidebar__text">{nextActionText}</p>
             <div
               style={{
                 marginTop: 'var(--spacer-16)',
@@ -357,7 +457,26 @@ export function ThemeWorkPage() {
               }}
             >
               <p className="source-sidebar__title">资料提示</p>
+              {focusResource?.name ? (
+                <p className="source-sidebar__resource-name">{focusResource.name}</p>
+              ) : null}
               <p className="source-sidebar__text">{materialHint}</p>
+              <div className="source-sidebar__actions">
+                <button
+                  type="button"
+                  className="ds-btn ds-btn--secondary ds-btn--sm"
+                  disabled={openingResource || !focusResource}
+                  onClick={() => void openResource(focusExe?.resource_ref || { index: 0 })}
+                >
+                  {openingResource ? '打开中…' : '打开资料'}
+                </button>
+                <Link
+                  className="ds-btn ds-btn--tertiary ds-btn--sm"
+                  to={`/themes/${theme.id}/document#chapter-resources`}
+                >
+                  资料清单
+                </Link>
+              </div>
             </div>
             {concepts.length > 0 ? (
               <div
@@ -499,11 +618,11 @@ export function ThemeWorkPage() {
           onChange={(e) => {
             const v = e.target.value
             setNote(v)
-            localStorage.setItem(workNoteKey(theme.id), v)
+            persistNote(v)
           }}
         />
         <p className="text-tertiary" style={{ fontSize: 'var(--body-xs-font-size)', marginTop: 8 }}>
-          笔记仅保存在本机。系统改进建议请在周复盘中生成。
+          {noteSaveHint || '笔记会同步到主题，换设备可继续；也可带去周复盘。'}
         </p>
 
         <div className="review-footer">

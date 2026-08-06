@@ -155,3 +155,74 @@ export function driftTitle(kind?: string) {
   if (kind === 'phase_stuck') return '阶段可能卡住'
   return '漂移提示'
 }
+
+export type ThemeResource = {
+  name: string
+  type?: string
+  how_to_use?: string
+  covers?: string
+  why?: string
+  weread_readable?: boolean
+  book_hint?: string
+  weread?: {
+    bookId?: string | null
+    title?: string | null
+    author?: string | null
+    deepLink?: string | null
+  } | null
+}
+
+export function listThemeResources(theme: Theme | null | undefined): ThemeResource[] {
+  const raw = theme?.resources_doc?.resources
+  if (!Array.isArray(raw)) return []
+  return raw
+    .filter((x): x is Record<string, unknown> => !!x && typeof x === 'object')
+    .map((r) => {
+      const weread =
+        r.weread && typeof r.weread === 'object'
+          ? (r.weread as ThemeResource['weread'])
+          : null
+      return {
+        name: String(r.name || ''),
+        type: r.type != null ? String(r.type) : undefined,
+        how_to_use: r.how_to_use != null ? String(r.how_to_use) : undefined,
+        covers: r.covers != null ? String(r.covers) : undefined,
+        why: r.why != null ? String(r.why) : undefined,
+        weread_readable: Boolean(r.weread_readable),
+        book_hint: r.book_hint != null ? String(r.book_hint) : undefined,
+        weread,
+      }
+    })
+    .filter((r) => r.name)
+}
+
+export function matchThemeResource(
+  theme: Theme | null | undefined,
+  ref?: { index?: number | null; name?: string } | null,
+): ThemeResource | null {
+  const list = listThemeResources(theme)
+  if (!list.length || !ref) return null
+  if (typeof ref.index === 'number' && ref.index >= 0 && ref.index < list.length) {
+    return list[ref.index]
+  }
+  const name = (ref.name || '').trim()
+  if (!name) return null
+  const exact = list.find((r) => r.name === name)
+  if (exact) return exact
+  const loose = list.find(
+    (r) => r.name.includes(name) || name.includes(r.name.replace(/[《》]/g, '')),
+  )
+  return loose || null
+}
+
+export function resourceDeepLink(resource: ThemeResource | null | undefined): string | null {
+  const link = resource?.weread?.deepLink
+  return typeof link === 'string' && link.trim() ? link.trim() : null
+}
+
+export function resourcesPathHint(theme: Theme | null | undefined): string {
+  const path7d = String(theme?.resources_doc?.path_7d || '').trim()
+  if (!path7d) return ''
+  const first = path7d.split(/[。；;\n]/)[0]?.trim()
+  return first || path7d.slice(0, 80)
+}

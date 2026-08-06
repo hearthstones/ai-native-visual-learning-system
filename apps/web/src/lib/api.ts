@@ -22,6 +22,7 @@ export interface Theme {
   current_ladder_level: number | null
   ladder_doc: Record<string, unknown>
   resources_doc: Record<string, unknown>
+  work_note?: string
   created_at: string
   updated_at: string
   locked_at: string | null
@@ -205,7 +206,9 @@ export const api = {
   getTheme: (id: string) => request<Theme>(`/api/themes/${id}`),
   updateTheme: (
     id: string,
-    body: Partial<Pick<Theme, 'title' | 'goal' | 'status' | 'is_focus' | 'current_ladder_level'>>,
+    body: Partial<
+      Pick<Theme, 'title' | 'goal' | 'status' | 'is_focus' | 'current_ladder_level' | 'work_note'>
+    >,
   ) => request<Theme>(`/api/themes/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
   restoreTheme: (id: string) =>
     request<Theme>(`/api/themes/${id}/restore`, { method: 'POST' }),
@@ -284,4 +287,8 @@ export const api = {
       body: JSON.stringify(body),
     }),
   latestWeeklyReview: () => request<WeeklyReview | null>('/api/reviews/weekly/latest'),
+  searchWeread: (q: string) =>
+    request<{ books: Array<Record<string, unknown>> }>(
+      `/api/weread/search?q=${encodeURIComponent(q)}`,
+    ),
 }

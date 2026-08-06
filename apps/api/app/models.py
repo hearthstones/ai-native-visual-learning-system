@@ -78,6 +78,8 @@ class Theme(SQLModel, table=True):
     current_ladder_level: Optional[int] = None
     ladder_doc: dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
     resources_doc: dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
+    # 作业面笔记（按主题持久化；前端可本地缓存）
+    work_note: str = ""
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     locked_at: Optional[datetime] = None

@@ -83,6 +83,26 @@ export function HomePage() {
     }
   }
 
+  async function clearFocus(themeId: string) {
+    setError('')
+    try {
+      await api.updateTheme(themeId, { is_focus: false })
+      await load()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    }
+  }
+
+  async function dormancyTheme(themeId: string) {
+    setError('')
+    try {
+      await api.updateTheme(themeId, { status: 'dormant' })
+      await load()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    }
+  }
+
   const active = useMemo(
     () => (data ? data.themes.filter((t) => t.status === 'active') : []),
     [data],
@@ -181,7 +201,12 @@ export function HomePage() {
   const isFirst = active.length === 1
   const themeMap = data.themes
   const visibleThemes = active.slice(0, 4)
-  const driftMessages = data.drift_events.slice(0, 3)
+  const focusThemes = active.filter((t) => t.is_focus)
+  // 历史漂移事件可能残留；主焦点已压回 ≤1 时不再展示 focus_over_one
+  const driftMessages = data.drift_events
+    .filter((ev) => !(ev.kind === 'focus_over_one' && focusThemes.length <= 1))
+    .slice(0, 3)
+  const showFocusDriftActions = focusThemes.length > 1
 
   return (
     <div className="home-page">
@@ -345,6 +370,31 @@ export function HomePage() {
                   </ul>
                 )}
               </div>
+              {showFocusDriftActions && focusThemes.length > 1 ? (
+                <div className="home-drift-actions">
+                  {focusThemes.map((t) => (
+                    <div key={t.id} className="home-drift-actions__row">
+                      <span className="home-drift-actions__name">{t.title}</span>
+                      <div className="home-drift-actions__btns">
+                        <button
+                          type="button"
+                          className="ds-btn ds-btn--secondary ds-btn--sm"
+                          onClick={() => void clearFocus(t.id)}
+                        >
+                          取消焦点
+                        </button>
+                        <button
+                          type="button"
+                          className="ds-btn ds-btn--tertiary ds-btn--sm"
+                          onClick={() => void dormancyTheme(t.id)}
+                        >
+                          休眠
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
         </section>

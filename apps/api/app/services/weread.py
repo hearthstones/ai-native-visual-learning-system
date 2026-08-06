@@ -95,6 +95,7 @@ def enrich_resources_with_weread(
                     "bookId": book.get("bookId") or book.get("bookid"),
                     "title": book.get("title") or book.get("bookTitle"),
                     "author": book.get("author"),
+                    "deepLink": book.get("deepLink") or book.get("deeplink"),
                 }
             else:
                 copy["weread_readable"] = False

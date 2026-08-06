@@ -24,6 +24,7 @@ class ThemeUpdate(BaseModel):
     status: Optional[ThemeStatus] = None
     is_focus: Optional[bool] = None
     current_ladder_level: Optional[int] = None
+    work_note: Optional[str] = None
 
 
 class ThemeOut(BaseModel):
@@ -38,6 +39,7 @@ class ThemeOut(BaseModel):
     current_ladder_level: Optional[int]
     ladder_doc: dict[str, Any]
     resources_doc: dict[str, Any]
+    work_note: str = ""
     created_at: datetime
     updated_at: datetime
     locked_at: Optional[datetime]

@@ -448,3 +448,32 @@ def test_soft_delete_and_purge(session: Session):
     domain_svc.purge_theme(session, theme)
     session.commit()
     assert session.get(Theme, tid) is None
+
+
+def test_abandon_then_delete_leaves_abandoned_list(session: Session):
+    """废弃后再删进回收站：status 变为 deleted，不应再出现在废弃列表。"""
+    theme = Theme(title="先废弃再删", status=ThemeStatus.draft)
+    session.add(theme)
+    session.commit()
+    session.refresh(theme)
+
+    domain_svc.apply_theme_status(session, theme, ThemeStatus.abandoned)
+    session.commit()
+    session.refresh(theme)
+    assert theme.status == ThemeStatus.abandoned
+
+    domain_svc.apply_theme_status(session, theme, ThemeStatus.deleted)
+    session.commit()
+    session.refresh(theme)
+    assert theme.status == ThemeStatus.deleted
+    assert theme.previous_status == ThemeStatus.abandoned
+
+    abandoned = session.exec(
+        select(Theme).where(Theme.status == ThemeStatus.abandoned)
+    ).all()
+    assert all(t.id != theme.id for t in abandoned)
+
+    deleted = session.exec(
+        select(Theme).where(Theme.status == ThemeStatus.deleted)
+    ).all()
+    assert any(t.id == theme.id for t in deleted)

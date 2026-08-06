@@ -216,7 +216,21 @@ export function ThemesPage() {
     setError('')
     setOk('')
     try {
-      await fn()
+      const result = await fn()
+      // 状态变更后立刻用返回值更新本地列表，避免 GET 缓存导致「废弃里还在」
+      if (result && typeof result === 'object' && 'id' in result && 'status' in result) {
+        const updated = result as Theme
+        setThemes((prev) => {
+          const idx = prev.findIndex((t) => t.id === updated.id)
+          if (idx < 0) return prev
+          const next = prev.slice()
+          next[idx] = { ...prev[idx], ...updated }
+          return next
+        })
+      } else if (result === undefined) {
+        // 永久删除 204：直接从本地列表移除
+        setThemes((prev) => prev.filter((t) => t.id !== themeId))
+      }
       setOk(successMsg)
       await load({ quiet: true })
       if (followTab) setTab(followTab)

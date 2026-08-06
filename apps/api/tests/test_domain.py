@@ -97,6 +97,22 @@ def test_format_daily_task_title_prefers_description_first_sentence():
     assert domain_svc.format_daily_task_title(act) == "通读原文，标记不懂段落"
 
 
+def test_format_daily_task_title_statusifies_day_marker():
+    act = Activity(
+        slice_id="s",
+        theme_id="t",
+        title="选择实践项目（第1天）",
+        description="",
+    )
+    assert domain_svc.format_daily_task_title(act) == "尚未选择实践项目"
+
+
+def test_statusify_strips_day_range_without_尚未():
+    assert domain_svc.statusify_activity_title("精读原文（第1-3天）") == "精读原文"
+    assert domain_svc.statusify_activity_title("选择实践项目", done=True) == "选择实践项目"
+    assert domain_svc.statusify_activity_title("选择实践项目") == "尚未选择实践项目"
+
+
 def test_format_daily_task_title_prefers_next_undone_step():
     act = Activity(
         slice_id="s",

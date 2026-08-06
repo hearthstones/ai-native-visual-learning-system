@@ -180,7 +180,8 @@ def lock_theme_plan(
         act = Activity(
             slice_id=slice_row.id,
             theme_id=theme.id,
-            title=str(item.get("title") or f"活动 {i+1}"),
+            title=strip_day_markers(str(item.get("title") or f"活动 {i+1}"))
+            or str(item.get("title") or f"活动 {i+1}"),
             description=str(item.get("description") or ""),
             activity_type=_parse_activity_type(item.get("activity_type")),
             sort_order=i,
@@ -245,10 +246,33 @@ def sync_activity_done(session: Session, task: DailyTask, done: bool) -> None:
     session.add(act)
 
 
-_DAY_RANGE_RE = re.compile(
-    r"[（(]?\s*第?\s*\d+\s*[-–—~到至]\s*\d+\s*天\s*[)）]?",
+_DAY_MARKER_RE = re.compile(
+    r"[（(]?\s*第\s*\d+\s*(?:[-–—~到至]\s*\d+\s*)?天\s*[)）]?",
     re.UNICODE,
 )
+_SELECT_VERB_RE = re.compile(r"^(选择|选定|确定|挑定)(.+)$")
+
+
+def strip_day_markers(text: str) -> str:
+    """去掉标题里的日历日序号（第1天 / 第1-3天），避免像逾期。"""
+    cleaned = _DAY_MARKER_RE.sub("", text or "")
+    cleaned = re.sub(r"\s{2,}", " ", cleaned).strip(" ·-—，,")
+    return cleaned
+
+
+def statusify_activity_title(title: str, *, done: bool = False) -> str:
+    """展示用标题：去天数；未完成的选择类改成「尚未…」状态语。"""
+    raw = (title or "").strip()
+    if not raw:
+        return "待推进"
+    base = strip_day_markers(raw) or raw
+    if not done:
+        m = _SELECT_VERB_RE.match(base)
+        if m:
+            rest = m.group(2).strip(" ：:")
+            if rest:
+                return f"尚未{m.group(1)}{rest}"
+    return base
 
 
 def _clip_title(text: str, limit: int = 48) -> str:
@@ -266,19 +290,20 @@ def format_daily_task_title(activity: Activity) -> str:
     if expand_svc.has_execution(doc):
         next_step = expand_svc.next_undone_step_text(doc)
         if next_step:
-            return _clip_title(next_step)
+            return _clip_title(strip_day_markers(next_step))
         goal = str((doc or {}).get("goal") or "").strip()
         if goal:
-            return _clip_title(goal)
+            return _clip_title(strip_day_markers(goal))
 
     desc = (activity.description or "").strip()
     title = (activity.title or "").strip()
     if desc:
         first = re.split(r"[；;。\n]", desc, maxsplit=1)[0].strip()
         if first:
-            return _clip_title(first)
-    cleaned = _DAY_RANGE_RE.sub("", title).strip(" ·-—")
-    return cleaned or title or "今日推进"
+            if _DAY_MARKER_RE.search(first):
+                return _clip_title(statusify_activity_title(first, done=activity.done))
+            return _clip_title(strip_day_markers(first) or first)
+    return statusify_activity_title(title, done=activity.done) or "今日推进"
 
 
 def refresh_today_task_for_activity(session: Session, activity: Activity) -> None:
@@ -596,7 +621,8 @@ def advance_phase(session: Session, theme: Theme) -> PlanSlice:
                     Activity(
                         slice_id=draft.id,
                         theme_id=theme.id,
-                        title=str(item.get("title") or f"活动 {i+1}"),
+                        title=strip_day_markers(str(item.get("title") or f"活动 {i+1}"))
+            or str(item.get("title") or f"活动 {i+1}"),
                         description=str(item.get("description") or ""),
                         activity_type=_parse_activity_type(item.get("activity_type")),
                         sort_order=i,

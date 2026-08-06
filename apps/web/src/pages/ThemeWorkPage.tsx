@@ -84,6 +84,24 @@ export function ThemeWorkPage() {
     return map
   }, [sliceItems])
 
+  const todayLoadMinutes = useMemo(() => {
+    return tasks.reduce((sum, task) => {
+      const linked = task.activity_id ? activityById.get(task.activity_id) : undefined
+      const fromExe = linked?.executionDoc?.minutes
+      if (typeof fromExe === 'number' && fromExe > 0) return sum + fromExe
+      const fromSummary = task.execution_summary?.minutes
+      if (typeof fromSummary === 'number' && fromSummary > 0) return sum + fromSummary
+      return sum
+    }, 0)
+  }, [tasks, activityById])
+
+  const durationMeta =
+    todayLoadMinutes > 0
+      ? todayLoadMinutes > dailyMinutes
+        ? `今日约 ${todayLoadMinutes} 分钟 · 已超预算 ${dailyMinutes}`
+        : `今日约 ${todayLoadMinutes} 分钟 · 预算 ${dailyMinutes}`
+      : `每天约 ${dailyMinutes} 分钟`
+
   const focusTask = useMemo(() => {
     return tasks.find((t) => !t.done) || tasks[0] || null
   }, [tasks])
@@ -251,9 +269,11 @@ export function ThemeWorkPage() {
               {`L${level.level} · ${level.name}`}
             </span>
           ) : null}
-          <span className="page-header__meta-item">
+          <span
+            className={`page-header__meta-item${todayLoadMinutes > dailyMinutes ? ' is-over-budget' : ''}`}
+          >
             <Icon name="clock" size={14} />
-            每天约 {dailyMinutes} 分钟
+            {durationMeta}
           </span>
           <span className="ds-tag ds-tag--brand">{phaseLabel}</span>
         </div>

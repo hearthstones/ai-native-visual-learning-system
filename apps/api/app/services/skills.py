@@ -128,6 +128,8 @@ PLAN_EXTRA = """
     }
   }
 - 冷启动锁定时：仅 learning 可执行；practice/application 先作骨架。
+- activity title/description 用可执行动作或状态（如「选定实践项目」「精读原文并标记疑点」）；
+  禁止写「第 N 天 / 第 N-M 天」等日历序号，避免未完成时像逾期。
 """
 
 

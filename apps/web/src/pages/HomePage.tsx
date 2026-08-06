@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'
 import { api, type HomeData, type Theme } from '../lib/api'
@@ -19,9 +19,6 @@ const phaseDot: Record<string, string> = {
   practice: 'today-item__dot today-item__dot--amber',
   application: 'today-item__dot today-item__dot--teal',
 }
-
-/** 首页可做队列默认只露前 N 条，其余靠「查看更多」展开 */
-const QUEUE_PREVIEW_LIMIT = 5
 
 function formatTodaySubtitle() {
   const d = new Date()
@@ -54,6 +51,7 @@ export function HomePage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [queueExpanded, setQueueExpanded] = useState(false)
+  const prevHasCommitmentsRef = useRef<boolean | null>(null)
 
   async function load() {
     setLoading(true)
@@ -70,6 +68,19 @@ export function HomePage() {
   useEffect(() => {
     void load()
   }, [])
+
+  // 有今日承诺 → 队列默认收起；无承诺 → 默认展开（仅在「有/无承诺」变化时重置）
+  useEffect(() => {
+    if (!data) return
+    const hasCommitments = data.today_tasks.length > 0
+    if (
+      prevHasCommitmentsRef.current === null ||
+      prevHasCommitmentsRef.current !== hasCommitments
+    ) {
+      setQueueExpanded(!hasCommitments)
+    }
+    prevHasCommitmentsRef.current = hasCommitments
+  }, [data])
 
   async function toggleTodayTask(taskId: string, done: boolean) {
     setError('')
@@ -241,6 +252,10 @@ export function HomePage() {
     .filter((ev) => !(ev.kind === 'focus_over_one' && focusThemes.length <= 1))
     .slice(0, 3)
   const showFocusDriftActions = focusThemes.length > 1
+  const commitLoadMinutes = data.today_tasks.reduce((sum, task) => {
+    const m = task.execution_summary?.minutes
+    return typeof m === 'number' && m > 0 ? sum + m : sum
+  }, 0)
 
   return (
     <div className="home-page">
@@ -265,7 +280,10 @@ export function HomePage() {
       <section className="home-section">
         <div className="home-section__label-row">
           <div className="home-section__label">今日承诺</div>
-          <span className="home-section__hint">主动加入今天 · 每主题最多 2 条</span>
+          <span className="home-section__hint">
+            主动加入今天 · 每主题最多 2 条
+            {commitLoadMinutes > 0 ? ` · 合计约 ${commitLoadMinutes} 分钟` : ''}
+          </span>
         </div>
         <div className="today-list">
           {data.today_tasks.length === 0 && (
@@ -346,72 +364,65 @@ export function HomePage() {
 
       <section className="home-section">
         <div className="home-section__label-row">
-          <div className="home-section__label">可做队列</div>
-          <span className="home-section__hint">
-            不跟日期 · 没做完明天还在
-            {(data.queue?.length ?? 0) > QUEUE_PREVIEW_LIMIT
-              ? ` · 共 ${data.queue?.length ?? 0} 条`
-              : ''}
-          </span>
+          <div className="home-section__label-group">
+            <div className="home-section__label">可做队列</div>
+            <span className="home-section__hint">不跟日期 · 没做完明天还在</span>
+          </div>
+          {(data.queue?.length ?? 0) > 0 ? (
+            <button
+              type="button"
+              className="home-section__link"
+              onClick={() => setQueueExpanded((v) => !v)}
+            >
+              {queueExpanded ? '收起' : `展开（${data.queue?.length ?? 0} 条）`}
+            </button>
+          ) : null}
         </div>
-        <div className="today-list">
-          {(data.queue?.length ?? 0) === 0 && (
-            <p className="text-tertiary" style={{ fontSize: 12 }}>
-              {data.today_tasks.length > 0
-                ? '队列里暂时没有更多可承诺项。'
-                : '暂无未完成活动。完成计划锁定后会出现在这里。'}
-            </p>
-          )}
-          {(queueExpanded
-            ? data.queue || []
-            : (data.queue || []).slice(0, QUEUE_PREVIEW_LIMIT)
-          ).map((item) => {
-            const summary = item.execution_summary
-            const metaParts: string[] = []
-            if (summary?.expanded) {
-              metaParts.push(
-                summary.steps_total > 0
-                  ? `已拆分 · ${summary.steps_done}/${summary.steps_total}`
-                  : '已拆分',
-              )
-              if (typeof summary.minutes === 'number') {
-                metaParts.push(`约${summary.minutes}分钟`)
+        {(data.queue?.length ?? 0) === 0 ? (
+          <p className="text-tertiary" style={{ fontSize: 12 }}>
+            {data.today_tasks.length > 0
+              ? '队列里暂时没有更多可承诺项。'
+              : '暂无未完成活动。完成计划锁定后会出现在这里。'}
+          </p>
+        ) : queueExpanded ? (
+          <div className="today-list">
+            {(data.queue || []).map((item) => {
+              const summary = item.execution_summary
+              const metaParts: string[] = []
+              if (summary?.expanded) {
+                metaParts.push(
+                  summary.steps_total > 0
+                    ? `已拆分 · ${summary.steps_done}/${summary.steps_total}`
+                    : '已拆分',
+                )
+                if (typeof summary.minutes === 'number') {
+                  metaParts.push(`约${summary.minutes}分钟`)
+                }
               }
-            }
-            const themeCommitCount = data.today_tasks.filter((t) => t.theme_id === item.theme_id).length
-            const atLimit = themeCommitCount >= 2
-            return (
-              <div key={item.activity_id} className="today-item today-item--queue">
-                <span className={phaseDot[item.phase]} />
-                <span className="ds-tag today-item__topic-tag">{item.theme_title}</span>
-                <div className="today-item__main">
-                  <span className="today-item__text">{item.title}</span>
-                  {metaParts.length > 0 ? (
-                    <span className="today-item__meta">{metaParts.join(' · ')}</span>
-                  ) : null}
+              const themeCommitCount = data.today_tasks.filter((t) => t.theme_id === item.theme_id).length
+              const atLimit = themeCommitCount >= 2
+              return (
+                <div key={item.activity_id} className="today-item today-item--queue">
+                  <span className={phaseDot[item.phase]} />
+                  <span className="ds-tag today-item__topic-tag">{item.theme_title}</span>
+                  <div className="today-item__main">
+                    <span className="today-item__text">{item.title}</span>
+                    {metaParts.length > 0 ? (
+                      <span className="today-item__meta">{metaParts.join(' · ')}</span>
+                    ) : null}
+                  </div>
+                  <button
+                    type="button"
+                    className="ds-btn ds-btn--secondary ds-btn--sm"
+                    disabled={atLimit}
+                    onClick={() => void commitActivity(item.activity_id)}
+                  >
+                    {atLimit ? '已满' : '加入今天'}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="ds-btn ds-btn--secondary ds-btn--sm"
-                  disabled={atLimit}
-                  onClick={() => void commitActivity(item.activity_id)}
-                >
-                  {atLimit ? '已满' : '加入今天'}
-                </button>
-              </div>
-            )
-          })}
-        </div>
-        {(data.queue?.length ?? 0) > QUEUE_PREVIEW_LIMIT ? (
-          <button
-            type="button"
-            className="home-section__more-link"
-            onClick={() => setQueueExpanded((v) => !v)}
-          >
-            {queueExpanded
-              ? '收起'
-              : `查看更多（还有 ${(data.queue?.length ?? 0) - QUEUE_PREVIEW_LIMIT} 条）`}
-          </button>
+              )
+            })}
+          </div>
         ) : null}
       </section>
 

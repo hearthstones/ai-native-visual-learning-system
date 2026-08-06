@@ -47,7 +47,16 @@
   gap: var(--spacer-12);
   margin-bottom: var(--spacer-12);
 }
+.home-section__label-group {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacer-12);
+  min-width: 0;
+}
 .home-section__label-row .home-section__label {
+  margin-bottom: 0;
+}
+.home-section__label-group .home-section__label {
   margin-bottom: 0;
 }
 .home-section__label {
@@ -59,9 +68,15 @@
   margin-bottom: var(--spacer-12);
 }
 .home-section__link {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
   font-size: var(--body-sm-font-size);
   color: var(--text-secondary);
   text-decoration: none;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 .home-section__link:hover {
   color: var(--text-brand);

@@ -88,6 +88,29 @@ export function draftResumeLabel(theme: Theme): string {
 /** 计划切片条目：优先用锁定后的活动列表 */
 const EMPTY_EXECUTION: import('./api').ExecutionDoc = {}
 
+export function stripDayMarkers(text: string): string {
+  return String(text || '')
+    .replace(/[（(]?\s*第\s*\d+\s*(?:[-–—~到至]\s*\d+\s*)?天\s*[)）]?/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/^[ ·\-—，,]+|[ ·\-—，,]+$/g, '')
+    .trim()
+}
+
+/** 展示用：去掉「第N天」；未完成的选择类改成「尚未…」 */
+export function statusifyActivityTitle(title: string, done = false): string {
+  const raw = String(title || '').trim()
+  if (!raw) return '待推进'
+  const base = stripDayMarkers(raw) || raw
+  if (!done) {
+    const m = base.match(/^(选择|选定|确定|挑定)(.+)$/)
+    if (m) {
+      const rest = m[2].replace(/^[ ：:]+/, '').trim()
+      if (rest) return `尚未${m[1]}${rest}`
+    }
+  }
+  return base
+}
+
 export function getSliceItems(
   slice: ActiveSlice | null | undefined,
   theme?: Theme | null,
@@ -109,7 +132,7 @@ export function getSliceItems(
       return {
         id: a.id,
         activityId: a.id,
-        label: a.title,
+        label: statusifyActivityTitle(a.title, Boolean(a.done)),
         desc: a.description || (a.activity_type ? `活动 · ${a.activity_type}` : slice.title || '计划活动'),
         done: a.done,
         executionDoc,

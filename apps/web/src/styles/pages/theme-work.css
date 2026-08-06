@@ -17,6 +17,7 @@
 .page-header__title{font-family:var(--font-family-heading,"SF Pro");font-size:var(--heading-md-font-size);font-weight:600;color:var(--text-default);margin:0 0 var(--spacer-6) 0;}
 .page-header__meta{display:flex;align-items:center;gap:var(--spacer-12);flex-wrap:wrap;}
 .page-header__meta-item{display:inline-flex;align-items:center;gap:var(--spacer-4);font-size:var(--body-sm-font-size);color:var(--text-tertiary);}
+.page-header__meta-item.is-over-budget{color:var(--text-warning, #b45309);}
 
 .mode-panel{display:none;}
 .mode-panel.is-active{display:block;}

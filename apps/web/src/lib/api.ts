@@ -54,6 +54,7 @@ export interface HomeData {
   focus_count: number
   themes: Theme[]
   today_tasks: DailyTask[]
+  queue?: QueueItem[]
   drift_events: Array<{
     id: string
     kind: string
@@ -61,6 +62,16 @@ export interface HomeData {
     theme_id: string | null
     created_at: string
   }>
+}
+
+export interface QueueItem {
+  activity_id: string
+  theme_id: string
+  theme_title: string
+  phase: ThemePhase
+  title: string
+  description: string
+  execution_summary?: ExecutionSummary | null
 }
 
 export interface CocreateSession {
@@ -197,6 +208,18 @@ export const api = {
     ),
   home: () => request<HomeData>('/api/home'),
   slots: () => request<Record<string, { used: number; max: number }>>('/api/slots'),
+  commitToday: (activityId: string) =>
+    request<DailyTask>('/api/commitments', {
+      method: 'POST',
+      body: JSON.stringify({ activity_id: activityId }),
+    }),
+  uncommitToday: (taskId: string) =>
+    request<void>(`/api/commitments/${taskId}`, { method: 'DELETE' }),
+  suggestCommitments: (themeId?: string) =>
+    request<DailyTask[]>('/api/commitments/suggest', {
+      method: 'POST',
+      body: JSON.stringify(themeId ? { theme_id: themeId } : {}),
+    }),
   listThemes: (status?: ThemeStatus) => {
     const q = status ? `?status=${encodeURIComponent(status)}` : ''
     return request<Theme[]>(`/api/themes${q}`)

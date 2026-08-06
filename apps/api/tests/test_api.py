@@ -165,7 +165,9 @@ def test_home_today_tasks_include_execution_summary(client: TestClient, db: Sess
     assert t0["execution_summary"]["steps_total"] == 2
     assert t0["execution_summary"]["next_step"] == "列出3个阅读相关技能"
     assert t0["execution_summary"]["minutes"] == 30
-
+    # 已承诺的活动不应再出现在队列
+    queue = res.json().get("queue") or []
+    assert all(q["activity_id"] != act.id for q in queue)
 
 def test_theme_status_transition_via_api(client: TestClient, db: Session):
     theme = Theme(

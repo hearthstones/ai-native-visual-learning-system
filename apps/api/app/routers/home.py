@@ -7,19 +7,41 @@ from app.config import Settings, get_settings
 from app.db import get_session
 from app.models import DailyTask, DriftEvent, Theme, ThemeStatus, WeeklyReview
 from app.schemas import (
+    CommitmentCreate,
+    CommitmentSuggest,
     DailyTaskOut,
     HomeOut,
+    QueueItemOut,
     TaskToggle,
     ThemeOut,
     WeeklyReviewIn,
     WeeklyReviewOut,
 )
+from app.services import activity_expand as expand_svc
 from app.services import domain as domain_svc
 from app.services.llm import chat_json
 from app.services.skills import system_prompt_for
 from app.services.weread import WereadError, search_books
 
 router = APIRouter(tags=["home"])
+
+
+def _queue_item_out(theme: Theme, act) -> QueueItemOut:
+    from app.schemas import ExecutionSummaryOut
+
+    raw = expand_svc.execution_summary(
+        act.execution_doc if isinstance(act.execution_doc, dict) else None
+    )
+    summary = ExecutionSummaryOut.model_validate(raw) if raw else None
+    return QueueItemOut(
+        activity_id=act.id,
+        theme_id=theme.id,
+        theme_title=theme.title,
+        phase=theme.phase,
+        title=domain_svc.format_daily_task_title(act),
+        description=act.description or act.title,
+        execution_summary=summary,
+    )
 
 
 @router.get("/home", response_model=HomeOut)
@@ -36,7 +58,8 @@ def home(session: Session = Depends(get_session)) -> HomeOut:
     domain_svc.ensure_focus_for_lonely_active(session)
     for t in themes:
         if t.status == ThemeStatus.active:
-            domain_svc.ensure_today_tasks(session, t)
+            # 仅刷新已有承诺，不静默灌今日任务
+            domain_svc.refresh_today_commitments(session, t)
 
     # 非进行中主题的今日任务不再展示，并顺手清理残留
     stale = list(
@@ -68,6 +91,10 @@ def home(session: Session = Depends(get_session)) -> HomeOut:
                 .order_by(col(DailyTask.sort_order))
             ).all()
         )
+    queue = [
+        _queue_item_out(theme, act)
+        for theme, act in domain_svc.list_queue_activities(session)
+    ]
     drifts = session.exec(
         select(DriftEvent).order_by(DriftEvent.created_at.desc()).limit(10)
     ).all()
@@ -76,6 +103,7 @@ def home(session: Session = Depends(get_session)) -> HomeOut:
         focus_count=domain_svc.count_focus(session),
         themes=[ThemeOut.model_validate(t) for t in themes],
         today_tasks=[domain_svc.daily_task_out(session, t) for t in tasks],
+        queue=queue,
         drift_events=[
             {
                 "id": d.id,
@@ -92,6 +120,72 @@ def home(session: Session = Depends(get_session)) -> HomeOut:
 @router.get("/slots")
 def slots(session: Session = Depends(get_session)) -> dict:
     return domain_svc.slot_snapshot(session)
+
+
+@router.post("/commitments", response_model=DailyTaskOut)
+def create_commitment(
+    body: CommitmentCreate,
+    session: Session = Depends(get_session),
+) -> DailyTaskOut:
+    from app.models import Activity
+
+    act = session.get(Activity, body.activity_id)
+    if not act:
+        raise HTTPException(404, "活动不存在")
+    theme = session.get(Theme, act.theme_id)
+    if not theme:
+        raise HTTPException(404, "主题不存在")
+    try:
+        task = domain_svc.commit_activity_today(session, theme, body.activity_id)
+    except ValueError as e:
+        raise HTTPException(409, str(e)) from e
+    session.commit()
+    session.refresh(task)
+    return domain_svc.daily_task_out(session, task)
+
+
+@router.post("/commitments/suggest", response_model=list[DailyTaskOut])
+def suggest_commitments(
+    body: CommitmentSuggest = CommitmentSuggest(),
+    session: Session = Depends(get_session),
+) -> list[DailyTaskOut]:
+    themes: list[Theme]
+    if body.theme_id:
+        theme = session.get(Theme, body.theme_id)
+        if not theme:
+            raise HTTPException(404, "主题不存在")
+        themes = [theme]
+    else:
+        themes = list(
+            session.exec(select(Theme).where(Theme.status == ThemeStatus.active)).all()
+        )
+    out: list[DailyTaskOut] = []
+    for theme in themes:
+        if theme.status != ThemeStatus.active:
+            continue
+        try:
+            tasks = domain_svc.suggest_commitments(session, theme)
+        except ValueError as e:
+            raise HTTPException(409, str(e)) from e
+        out.extend(domain_svc.daily_task_out(session, t) for t in tasks)
+    session.commit()
+    return out
+
+
+@router.delete("/commitments/{task_id}", status_code=204)
+def delete_commitment(
+    task_id: str,
+    session: Session = Depends(get_session),
+) -> None:
+    task = session.get(DailyTask, task_id)
+    if not task:
+        raise HTTPException(404, "承诺不存在")
+    today = date.today().isoformat()
+    if task.task_date != today:
+        raise HTTPException(400, "只能移出今天的承诺")
+    domain_svc.uncommit_today_task(session, task)
+    session.commit()
+    return None
 
 
 @router.patch("/tasks/{task_id}", response_model=DailyTaskOut)

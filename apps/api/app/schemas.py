@@ -131,11 +131,30 @@ class DailyTaskOut(BaseModel):
         from_attributes = True
 
 
+class QueueItemOut(BaseModel):
+    activity_id: str
+    theme_id: str
+    theme_title: str
+    phase: ThemePhase
+    title: str
+    description: str
+    execution_summary: Optional[ExecutionSummaryOut] = None
+
+
+class CommitmentCreate(BaseModel):
+    activity_id: str
+
+
+class CommitmentSuggest(BaseModel):
+    theme_id: Optional[str] = None
+
+
 class HomeOut(BaseModel):
     slots: dict[str, Any]
     focus_count: int
     themes: list[ThemeOut]
     today_tasks: list[DailyTaskOut]
+    queue: list[QueueItemOut] = Field(default_factory=list)
     drift_events: list[dict[str, Any]]
 
 

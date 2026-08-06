@@ -65,7 +65,8 @@ def test_toggle_syncs_activity_done(session: Session):
     domain_svc.lock_theme_plan(session, theme, _plan_doc("A1", "A2", "A3", "A4"))
     session.commit()
 
-    tasks = session.exec(select(DailyTask).where(DailyTask.theme_id == theme.id)).all()
+    tasks = domain_svc.ensure_today_tasks(session, theme, auto_fill=True)
+    session.commit()
     assert len(tasks) == 2
     task = tasks[0]
     domain_svc.sync_activity_done(session, task, True)
@@ -78,7 +79,7 @@ def test_toggle_syncs_activity_done(session: Session):
     # Next generation should skip done activities
     domain_svc.clear_today_tasks(session, theme.id)
     session.commit()
-    new_tasks = domain_svc.ensure_today_tasks(session, theme)
+    new_tasks = domain_svc.ensure_today_tasks(session, theme, auto_fill=True)
     session.commit()
     titles = {t.title for t in new_tasks}
     assert task.title not in titles
@@ -176,7 +177,8 @@ def test_advance_phase_replaces_today_tasks(session: Session):
     session.commit()
     session.refresh(theme)
 
-    learning_tasks = session.exec(select(DailyTask).where(DailyTask.theme_id == theme.id)).all()
+    learning_tasks = domain_svc.ensure_today_tasks(session, theme, auto_fill=True)
+    session.commit()
     assert {t.title for t in learning_tasks} == {"学1", "学2"}
 
     domain_svc.advance_phase(session, theme)
@@ -184,9 +186,34 @@ def test_advance_phase_replaces_today_tasks(session: Session):
     session.refresh(theme)
 
     assert theme.phase == ThemePhase.practice
+    # 推进后清空旧承诺，不再静默灌新阶段任务
     today_tasks = session.exec(select(DailyTask).where(DailyTask.theme_id == theme.id)).all()
-    assert {t.title for t in today_tasks} == {"练1", "练2"}
+    assert today_tasks == []
+    suggested = domain_svc.suggest_commitments(session, theme)
+    session.commit()
+    assert {t.title for t in suggested} == {"练1", "练2"}
 
+
+def test_commit_and_queue_excludes_committed(session: Session):
+    theme = Theme(title="t", status=ThemeStatus.draft)
+    session.add(theme)
+    session.commit()
+    session.refresh(theme)
+    domain_svc.lock_theme_plan(session, theme, _plan_doc("A1", "A2", "A3"))
+    session.commit()
+    session.refresh(theme)
+
+    queue0 = domain_svc.list_queue_activities(session, theme_id=theme.id)
+    assert len(queue0) == 3
+    task = domain_svc.commit_activity_today(session, theme, queue0[0][1].id)
+    session.commit()
+    assert task.title == "A1"
+    queue1 = domain_svc.list_queue_activities(session, theme_id=theme.id)
+    assert [a.title for _, a in queue1] == ["A2", "A3"]
+    domain_svc.uncommit_today_task(session, task)
+    session.commit()
+    queue2 = domain_svc.list_queue_activities(session, theme_id=theme.id)
+    assert len(queue2) == 3
 
 def test_relock_excludes_self_from_slot_and_purges(session: Session):
     theme = Theme(title="t", status=ThemeStatus.draft)
@@ -212,9 +239,12 @@ def test_relock_excludes_self_from_slot_and_purges(session: Session):
     acts = session.exec(select(Activity).where(Activity.theme_id == theme.id)).all()
     assert old_slice_ids.isdisjoint({s.id for s in slices})
     assert old_act_ids.isdisjoint({a.id for a in acts})
+    # 再锁清空旧承诺，但不静默灌新任务
     tasks = session.exec(select(DailyTask).where(DailyTask.theme_id == theme.id)).all()
-    assert {t.title for t in tasks} == {"新1", "新2"}
-    assert len(tasks) == 2
+    assert tasks == []
+    suggested = domain_svc.suggest_commitments(session, theme)
+    session.commit()
+    assert {t.title for t in suggested} == {"新1", "新2"}
     assert theme.phase == ThemePhase.learning
 
 
@@ -370,7 +400,8 @@ def test_leave_active_clears_today_tasks(session: Session):
     session.refresh(theme)
     domain_svc.lock_theme_plan(session, theme, _plan_doc("A1", "A2"))
     session.commit()
-    tasks = session.exec(select(DailyTask).where(DailyTask.theme_id == theme.id)).all()
+    tasks = domain_svc.ensure_today_tasks(session, theme, auto_fill=True)
+    session.commit()
     assert len(tasks) >= 1
 
     domain_svc.apply_theme_status(session, theme, ThemeStatus.dormant)

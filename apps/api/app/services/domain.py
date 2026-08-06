@@ -326,58 +326,204 @@ def daily_task_out(session: Session, task: DailyTask):
     )
 
 
-def ensure_today_tasks(
+def refresh_today_commitments(
     session: Session,
     theme: Theme,
     limit: int = 2,
-    *,
-    replace: bool = False,
 ) -> list[DailyTask]:
-    """生成今日推进：默认取当前切片里下一批未完成活动（最多 2 条）。"""
+    """刷新今日已有承诺：去陈、刷新标题；绝不自动新建。"""
     today = date.today().isoformat()
-    if replace:
-        clear_today_tasks(session, theme.id)
-
     existing = session.exec(
         select(DailyTask).where(
             DailyTask.theme_id == theme.id,
             DailyTask.task_date == today,
         )
     ).all()
-    if existing:
-        # If tasks still point at the current active slice, keep them;
-        # otherwise regenerate (stale after phase change / re-lock without replace).
-        slice_row = get_active_slice(session, theme.id)
-        if slice_row:
-            activity_ids = {
-                a.id
-                for a in session.exec(
-                    select(Activity).where(Activity.slice_id == slice_row.id)
-                ).all()
-            }
-            stale = any(
-                t.activity_id and t.activity_id not in activity_ids for t in existing
-            )
-            if not stale:
-                # 刷新标题语义（多日切片 → 今日短句），不重置完成态
-                ordered = sorted(existing, key=lambda t: t.sort_order)
-                keep = ordered[:limit]
-                for extra in ordered[limit:]:
-                    session.delete(extra)
-                for t in keep:
-                    if not t.activity_id:
-                        continue
-                    act = session.get(Activity, t.activity_id)
-                    if not act:
-                        continue
-                    new_title = format_daily_task_title(act)
-                    new_desc = act.description or act.title
-                    if t.title != new_title or t.description != new_desc:
-                        t.title = new_title
-                        t.description = new_desc
-                        session.add(t)
-                return list(keep)
+    if not existing:
+        return []
+
+    slice_row = get_active_slice(session, theme.id)
+    if not slice_row:
         clear_today_tasks(session, theme.id)
+        return []
+
+    activity_ids = {
+        a.id
+        for a in session.exec(
+            select(Activity).where(Activity.slice_id == slice_row.id)
+        ).all()
+    }
+    stale = any(t.activity_id and t.activity_id not in activity_ids for t in existing)
+    if stale:
+        clear_today_tasks(session, theme.id)
+        return []
+
+    ordered = sorted(existing, key=lambda t: t.sort_order)
+    keep = ordered[:limit]
+    for extra in ordered[limit:]:
+        session.delete(extra)
+    for t in keep:
+        if not t.activity_id:
+            continue
+        act = session.get(Activity, t.activity_id)
+        if not act:
+            continue
+        new_title = format_daily_task_title(act)
+        new_desc = act.description or act.title
+        if t.title != new_title or t.description != new_desc:
+            t.title = new_title
+            t.description = new_desc
+            session.add(t)
+    return list(keep)
+
+
+def _today_committed_activity_ids(session: Session, theme_id: str) -> set[str]:
+    today = date.today().isoformat()
+    rows = session.exec(
+        select(DailyTask).where(
+            DailyTask.theme_id == theme_id,
+            DailyTask.task_date == today,
+        )
+    ).all()
+    return {t.activity_id for t in rows if t.activity_id}
+
+
+def list_queue_activities(
+    session: Session,
+    *,
+    theme_id: str | None = None,
+) -> list[tuple[Theme, Activity]]:
+    """可做队列：进行中主题 · 当前切片未完成且今日未承诺的 Activity。"""
+    themes = list(
+        session.exec(
+            select(Theme)
+            .where(Theme.status == ThemeStatus.active)
+            .order_by(Theme.updated_at.desc())
+        ).all()
+    )
+    if theme_id:
+        themes = [t for t in themes if t.id == theme_id]
+    out: list[tuple[Theme, Activity]] = []
+    for theme in themes:
+        slice_row = get_active_slice(session, theme.id)
+        if not slice_row:
+            continue
+        committed = _today_committed_activity_ids(session, theme.id)
+        activities = session.exec(
+            select(Activity)
+            .where(
+                Activity.slice_id == slice_row.id,
+                Activity.done == False,  # noqa: E712
+            )
+            .order_by(col(Activity.sort_order))
+        ).all()
+        for act in activities:
+            if act.id in committed:
+                continue
+            out.append((theme, act))
+    return out
+
+
+def commit_activity_today(
+    session: Session,
+    theme: Theme,
+    activity_id: str,
+    limit: int = 2,
+) -> DailyTask:
+    """显式承诺：把队列中的活动加入今天。"""
+    if theme.status != ThemeStatus.active:
+        raise ValueError("仅进行中的主题可承诺今日任务")
+    act = session.get(Activity, activity_id)
+    if not act or act.theme_id != theme.id:
+        raise ValueError("活动不存在或不属于该主题")
+    if act.done:
+        raise ValueError("已完成的活动无需再承诺")
+    slice_row = get_active_slice(session, theme.id)
+    if not slice_row or act.slice_id != slice_row.id:
+        raise ValueError("只能承诺当前切片中的活动")
+
+    today = date.today().isoformat()
+    existing = session.exec(
+        select(DailyTask).where(
+            DailyTask.theme_id == theme.id,
+            DailyTask.task_date == today,
+        )
+    ).all()
+    for t in existing:
+        if t.activity_id == activity_id:
+            return t
+    if len(existing) >= limit:
+        raise ValueError(f"该主题今日最多承诺 {limit} 条，请先移出或完成一条")
+
+    task = DailyTask(
+        theme_id=theme.id,
+        activity_id=act.id,
+        title=format_daily_task_title(act),
+        description=act.description or act.title,
+        task_date=today,
+        sort_order=len(existing),
+    )
+    session.add(task)
+    session.flush()
+    return task
+
+
+def uncommit_today_task(session: Session, task: DailyTask) -> None:
+    """移出今天：删除承诺，不改 Activity.done。"""
+    session.delete(task)
+
+
+def suggest_commitments(
+    session: Session,
+    theme: Theme,
+    limit: int = 2,
+) -> list[DailyTask]:
+    """按建议填入：从队列顺序补满至上限（显式动作）。"""
+    today = date.today().isoformat()
+    existing = list(
+        session.exec(
+            select(DailyTask).where(
+                DailyTask.theme_id == theme.id,
+                DailyTask.task_date == today,
+            )
+        ).all()
+    )
+    created: list[DailyTask] = []
+    for _theme, act in list_queue_activities(session, theme_id=theme.id):
+        if len(existing) + len(created) >= limit:
+            break
+        try:
+            task = commit_activity_today(session, theme, act.id, limit=limit)
+        except ValueError:
+            break
+        if all(task.id != t.id for t in existing) and all(task.id != t.id for t in created):
+            created.append(task)
+    return existing + created
+
+
+def ensure_today_tasks(
+    session: Session,
+    theme: Theme,
+    limit: int = 2,
+    *,
+    replace: bool = False,
+    auto_fill: bool = False,
+) -> list[DailyTask]:
+    """今日承诺维护。
+
+    - 默认不自动灌任务（开放队列模式）。
+    - replace=True 时清空今日承诺。
+    - auto_fill=True 时才从队列取前 N 条写入（仅建议/测试路径）。
+    """
+    today = date.today().isoformat()
+    if replace:
+        clear_today_tasks(session, theme.id)
+
+    refreshed = refresh_today_commitments(session, theme, limit=limit)
+    if refreshed:
+        return refreshed
+    if not auto_fill:
+        return []
 
     slice_row = get_active_slice(session, theme.id)
     if not slice_row:

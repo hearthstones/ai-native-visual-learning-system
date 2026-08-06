@@ -20,6 +20,9 @@ const phaseDot: Record<string, string> = {
   application: 'today-item__dot today-item__dot--teal',
 }
 
+/** 首页可做队列默认只露前 N 条，其余靠「查看更多」展开 */
+const QUEUE_PREVIEW_LIMIT = 5
+
 function formatTodaySubtitle() {
   const d = new Date()
   const week = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()]
@@ -50,6 +53,7 @@ export function HomePage() {
   const [data, setData] = useState<HomeData | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const [queueExpanded, setQueueExpanded] = useState(false)
 
   async function load() {
     setLoading(true)
@@ -78,6 +82,36 @@ export function HomePage() {
           today_tasks: prev.today_tasks.map((t) => (t.id === taskId ? { ...t, done } : t)),
         }
       })
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    }
+  }
+
+  async function commitActivity(activityId: string) {
+    setError('')
+    try {
+      await api.commitToday(activityId)
+      await load()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    }
+  }
+
+  async function uncommitTask(taskId: string) {
+    setError('')
+    try {
+      await api.uncommitToday(taskId)
+      await load()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    }
+  }
+
+  async function suggestFill(themeId?: string) {
+    setError('')
+    try {
+      await api.suggestCommitments(themeId)
+      await load()
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
     }
@@ -230,12 +264,25 @@ export function HomePage() {
 
       <section className="home-section">
         <div className="home-section__label-row">
-          <div className="home-section__label">今日推进</div>
-          <span className="home-section__hint">未完成活动 · 每主题最多 2 条</span>
+          <div className="home-section__label">今日承诺</div>
+          <span className="home-section__hint">主动加入今天 · 每主题最多 2 条</span>
         </div>
         <div className="today-list">
           {data.today_tasks.length === 0 && (
-            <p className="text-tertiary" style={{ fontSize: 12 }}>今天还没有任务。</p>
+            <div className="home-empty-commit">
+              <p className="text-tertiary" style={{ fontSize: 12, margin: 0 }}>
+                今天还没有承诺。从下方队列选几条加入，或一键按建议填入。
+              </p>
+              {(data.queue?.length ?? 0) > 0 ? (
+                <button
+                  type="button"
+                  className="ds-btn ds-btn--brand ds-btn--sm"
+                  onClick={() => void suggestFill()}
+                >
+                  按建议填入今天
+                </button>
+              ) : null}
+            </div>
           )}
           {data.today_tasks.map((task) => {
             const theme = themeById(themeMap, task.theme_id)
@@ -277,14 +324,95 @@ export function HomePage() {
                     <span className="today-item__meta">{metaParts.join(' · ')}</span>
                   ) : null}
                 </div>
-                <Link className="today-item__enter" to={`/themes/${task.theme_id}/work`}>
-                  <span>进入</span>
-                  <Icon name="arrow-right" size={14} />
-                </Link>
+                <div className="today-item__actions">
+                  <button
+                    type="button"
+                    className="today-item__uncommit"
+                    onClick={() => void uncommitTask(task.id)}
+                    title="移出今天，回到队列"
+                  >
+                    移出
+                  </button>
+                  <Link className="today-item__enter" to={`/themes/${task.theme_id}/work`}>
+                    <span>进入</span>
+                    <Icon name="arrow-right" size={14} />
+                  </Link>
+                </div>
               </div>
             )
           })}
         </div>
+      </section>
+
+      <section className="home-section">
+        <div className="home-section__label-row">
+          <div className="home-section__label">可做队列</div>
+          <span className="home-section__hint">
+            不跟日期 · 没做完明天还在
+            {(data.queue?.length ?? 0) > QUEUE_PREVIEW_LIMIT
+              ? ` · 共 ${data.queue?.length ?? 0} 条`
+              : ''}
+          </span>
+        </div>
+        <div className="today-list">
+          {(data.queue?.length ?? 0) === 0 && (
+            <p className="text-tertiary" style={{ fontSize: 12 }}>
+              {data.today_tasks.length > 0
+                ? '队列里暂时没有更多可承诺项。'
+                : '暂无未完成活动。完成计划锁定后会出现在这里。'}
+            </p>
+          )}
+          {(queueExpanded
+            ? data.queue || []
+            : (data.queue || []).slice(0, QUEUE_PREVIEW_LIMIT)
+          ).map((item) => {
+            const summary = item.execution_summary
+            const metaParts: string[] = []
+            if (summary?.expanded) {
+              metaParts.push(
+                summary.steps_total > 0
+                  ? `已拆分 · ${summary.steps_done}/${summary.steps_total}`
+                  : '已拆分',
+              )
+              if (typeof summary.minutes === 'number') {
+                metaParts.push(`约${summary.minutes}分钟`)
+              }
+            }
+            const themeCommitCount = data.today_tasks.filter((t) => t.theme_id === item.theme_id).length
+            const atLimit = themeCommitCount >= 2
+            return (
+              <div key={item.activity_id} className="today-item today-item--queue">
+                <span className={phaseDot[item.phase]} />
+                <span className="ds-tag today-item__topic-tag">{item.theme_title}</span>
+                <div className="today-item__main">
+                  <span className="today-item__text">{item.title}</span>
+                  {metaParts.length > 0 ? (
+                    <span className="today-item__meta">{metaParts.join(' · ')}</span>
+                  ) : null}
+                </div>
+                <button
+                  type="button"
+                  className="ds-btn ds-btn--secondary ds-btn--sm"
+                  disabled={atLimit}
+                  onClick={() => void commitActivity(item.activity_id)}
+                >
+                  {atLimit ? '已满' : '加入今天'}
+                </button>
+              </div>
+            )
+          })}
+        </div>
+        {(data.queue?.length ?? 0) > QUEUE_PREVIEW_LIMIT ? (
+          <button
+            type="button"
+            className="home-section__more-link"
+            onClick={() => setQueueExpanded((v) => !v)}
+          >
+            {queueExpanded
+              ? '收起'
+              : `查看更多（还有 ${(data.queue?.length ?? 0) - QUEUE_PREVIEW_LIMIT} 条）`}
+          </button>
+        ) : null}
       </section>
 
       <section className="home-section">
@@ -297,6 +425,7 @@ export function HomePage() {
         <div className="theme-grid">
           {visibleThemes.map((theme) => {
             const todayCount = data.today_tasks.filter((t) => t.theme_id === theme.id).length
+            const queueCount = (data.queue || []).filter((q) => q.theme_id === theme.id).length
             return (
               <div key={theme.id} className="theme-card">
                 <div className="theme-card__head">
@@ -309,12 +438,23 @@ export function HomePage() {
                 </div>
                 <div className="theme-card__footer">
                   <span className="theme-card__task-hint">
-                    今日 {todayCount} 项任务
+                    承诺 {todayCount} · 队列 {queueCount}
                   </span>
-                  <Link className="theme-card__enter" to={`/themes/${theme.id}`}>
-                    <span>进入概览</span>
-                    <Icon name="chevron-right" size={14} />
-                  </Link>
+                  <div className="theme-card__footer-actions">
+                    {queueCount > 0 && todayCount < 2 ? (
+                      <button
+                        type="button"
+                        className="ds-btn ds-btn--tertiary ds-btn--sm"
+                        onClick={() => void suggestFill(theme.id)}
+                      >
+                        建议填入
+                      </button>
+                    ) : null}
+                    <Link className="theme-card__enter" to={`/themes/${theme.id}`}>
+                      <span>进入概览</span>
+                      <Icon name="chevron-right" size={14} />
+                    </Link>
+                  </div>
                 </div>
                 {isFirst && <SlotBar slots={data.slots} />}
               </div>

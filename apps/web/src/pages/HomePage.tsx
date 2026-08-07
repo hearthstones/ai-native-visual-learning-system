@@ -50,11 +50,12 @@ export function HomePage() {
   const [data, setData] = useState<HomeData | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const [busyAction, setBusyAction] = useState(false)
   const [queueExpanded, setQueueExpanded] = useState(false)
   const prevHasCommitmentsRef = useRef<boolean | null>(null)
 
-  async function load() {
-    setLoading(true)
+  async function load(opts?: { quiet?: boolean }) {
+    if (!opts?.quiet) setLoading(true)
     setError('')
     try {
       setData(await api.home())
@@ -98,54 +99,52 @@ export function HomePage() {
     }
   }
 
-  async function commitActivity(activityId: string) {
+  async function withBusy(fn: () => Promise<void>) {
+    if (busyAction) return
+    setBusyAction(true)
     setError('')
     try {
-      await api.commitToday(activityId)
-      await load()
+      await fn()
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setBusyAction(false)
     }
+  }
+
+  async function commitActivity(activityId: string) {
+    await withBusy(async () => {
+      await api.commitToday(activityId)
+      await load({ quiet: true })
+    })
   }
 
   async function uncommitTask(taskId: string) {
-    setError('')
-    try {
+    await withBusy(async () => {
       await api.uncommitToday(taskId)
-      await load()
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-    }
+      await load({ quiet: true })
+    })
   }
 
   async function suggestFill(themeId?: string) {
-    setError('')
-    try {
+    await withBusy(async () => {
       await api.suggestCommitments(themeId)
-      await load()
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-    }
+      await load({ quiet: true })
+    })
   }
 
   async function clearFocus(themeId: string) {
-    setError('')
-    try {
+    await withBusy(async () => {
       await api.updateTheme(themeId, { is_focus: false })
-      await load()
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-    }
+      await load({ quiet: true })
+    })
   }
 
   async function dormancyTheme(themeId: string) {
-    setError('')
-    try {
+    await withBusy(async () => {
       await api.updateTheme(themeId, { status: 'dormant' })
-      await load()
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-    }
+      await load({ quiet: true })
+    })
   }
 
   const active = useMemo(
@@ -295,6 +294,7 @@ export function HomePage() {
                 <button
                   type="button"
                   className="ds-btn ds-btn--brand ds-btn--sm"
+                  disabled={busyAction}
                   onClick={() => void suggestFill()}
                 >
                   按建议填入今天
@@ -344,6 +344,7 @@ export function HomePage() {
                   <button
                     type="button"
                     className="today-item__uncommit"
+                    disabled={busyAction}
                     onClick={() => void uncommitTask(task.id)}
                     title="移出今天，回到队列"
                   >
@@ -416,7 +417,7 @@ export function HomePage() {
                   <button
                     type="button"
                     className="ds-btn ds-btn--secondary ds-btn--sm"
-                    disabled={atLimit}
+                    disabled={busyAction || atLimit}
                     onClick={() => void commitActivity(item.activity_id)}
                   >
                     {atLimit ? '已满' : '加入今天'}
@@ -458,6 +459,7 @@ export function HomePage() {
                       <button
                         type="button"
                         className="ds-btn ds-btn--tertiary ds-btn--sm"
+                        disabled={busyAction}
                         onClick={() => void suggestFill(theme.id)}
                       >
                         建议填入
@@ -532,6 +534,7 @@ export function HomePage() {
                         <button
                           type="button"
                           className="ds-btn ds-btn--secondary ds-btn--sm"
+                          disabled={busyAction}
                           onClick={() => void clearFocus(t.id)}
                         >
                           取消焦点
@@ -539,6 +542,7 @@ export function HomePage() {
                         <button
                           type="button"
                           className="ds-btn ds-btn--tertiary ds-btn--sm"
+                          disabled={busyAction}
                           onClick={() => void dormancyTheme(t.id)}
                         >
                           休眠

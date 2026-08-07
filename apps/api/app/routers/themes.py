@@ -299,6 +299,8 @@ def expand_activity_message(
         raise HTTPException(400, str(e)) from e
     except Exception as e:
         raise HTTPException(502, f"调整失败：{e}") from e
+    if not expand_svc.has_execution(doc):
+        raise HTTPException(502, "模型未返回可用的执行结构，已保留原拆分，请重试")
     act.execution_doc = doc
     session.add(act)
     domain_svc.refresh_today_task_for_activity(session, act)
@@ -321,6 +323,8 @@ def patch_activity_execution(
         raise HTTPException(404, "主题不存在")
     if body.clear:
         act.execution_doc = {}
+        # 清除拆分后活动回到可做态，避免卡在完成且无法再承诺
+        act.done = False
         session.add(act)
         domain_svc.refresh_today_task_for_activity(session, act)
         session.commit()

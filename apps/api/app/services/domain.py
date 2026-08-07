@@ -307,7 +307,7 @@ def format_daily_task_title(activity: Activity) -> str:
 
 
 def refresh_today_task_for_activity(session: Session, activity: Activity) -> None:
-    """拆分/手改后同步刷新今日关联 DailyTask 的标题文案。"""
+    """拆分/手改/步骤勾选后同步今日关联 DailyTask 的标题与完成态。"""
     today = date.today().isoformat()
     tasks = session.exec(
         select(DailyTask).where(
@@ -318,9 +318,15 @@ def refresh_today_task_for_activity(session: Session, activity: Activity) -> Non
     new_title = format_daily_task_title(activity)
     new_desc = activity.description or activity.title
     for t in tasks:
+        changed = False
         if t.title != new_title or t.description != new_desc:
             t.title = new_title
             t.description = new_desc
+            changed = True
+        if t.done != bool(activity.done):
+            t.done = bool(activity.done)
+            changed = True
+        if changed:
             session.add(t)
 
 
@@ -378,16 +384,22 @@ def refresh_today_commitments(
             select(Activity).where(Activity.slice_id == slice_row.id)
         ).all()
     }
-    stale = any(t.activity_id and t.activity_id not in activity_ids for t in existing)
-    if stale:
-        clear_today_tasks(session, theme.id)
-        return []
+    # 只剔除失效承诺，保留仍有效的项（避免一条陈旧拖垮整主题今日）
+    valid: list[DailyTask] = []
+    for t in existing:
+        if t.activity_id and t.activity_id not in activity_ids:
+            session.delete(t)
+            continue
+        valid.append(t)
 
-    ordered = sorted(existing, key=lambda t: t.sort_order)
+    ordered = sorted(valid, key=lambda t: t.sort_order)
     keep = ordered[:limit]
     for extra in ordered[limit:]:
         session.delete(extra)
-    for t in keep:
+    for i, t in enumerate(keep):
+        if t.sort_order != i:
+            t.sort_order = i
+            session.add(t)
         if not t.activity_id:
             continue
         act = session.get(Activity, t.activity_id)

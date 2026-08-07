@@ -71,6 +71,48 @@ def test_manual_patch_preserves_step_done():
     assert patched["steps"][2]["done"] is False
 
 
+def test_normalize_revise_preserves_step_done_by_text():
+    previous = expand_svc.normalize_execution(
+        {
+            "execution": {
+                "goal": "g",
+                "steps": [{"text": "打开书"}, {"text": "划线"}],
+                "outcome": "o",
+                "minutes": 30,
+            }
+        },
+        daily_minutes=30,
+    )
+    previous["steps"][0]["done"] = True
+    revised = expand_svc.normalize_execution(
+        {
+            "assistant_message": "已更新",
+            "execution": {
+                "goal": "g2",
+                "steps": [{"text": "打开书"}, {"text": "划线三处"}],
+                "outcome": "o",
+                "minutes": 30,
+            },
+        },
+        daily_minutes=30,
+        previous=previous,
+        assistant_message="已更新",
+        user_message="改一下",
+        reset_step_done=False,
+    )
+    assert revised["steps"][0]["done"] is True
+    assert revised["steps"][1]["done"] is False
+    assert revised["steps"][1]["text"] == "划线三处"
+
+
+def test_has_execution_rejects_empty():
+    assert expand_svc.has_execution({}) is False
+    assert expand_svc.has_execution({"goal": "", "steps": []}) is False
+    assert expand_svc.has_execution({"messages": [{"role": "user", "content": "x"}]}) is False
+    assert expand_svc.has_execution({"goal": "有目标"}) is True
+    assert expand_svc.has_execution({"steps": [{"text": "一步"}]}) is True
+
+
 def test_set_step_done():
     doc = expand_svc.normalize_execution(
         {"execution": {"goal": "g", "steps": [{"text": "A"}, {"text": "B"}], "outcome": "o"}},

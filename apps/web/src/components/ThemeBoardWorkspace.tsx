@@ -108,6 +108,10 @@ export function ThemeBoardWorkspace() {
           }
         : prev,
     )
+    // 步骤全勾会同步 Activity.done → 今日承诺 done
+    setTodayTasks((prev) =>
+      prev.map((t) => (t.activity_id === act.id ? { ...t, done: act.done } : t)),
+    )
   }
 
   function persistNote(v: string) {
@@ -157,22 +161,29 @@ export function ThemeBoardWorkspace() {
   }
 
   async function toggleOpenItem(activityId: string, done: boolean) {
-    const daily = todayByActivity.get(activityId)
-    if (daily) {
-      await api.toggleTask(daily.id, done)
-      setTodayTasks((prev) => prev.map((t) => (t.id === daily.id ? { ...t, done } : t)))
-      setSlice((prev) =>
-        prev
-          ? {
-              ...prev,
-              activities: prev.activities.map((a) => (a.id === activityId ? { ...a, done } : a)),
-            }
-          : prev,
-      )
-      return
+    setError('')
+    try {
+      const daily = todayByActivity.get(activityId)
+      if (daily) {
+        await api.toggleTask(daily.id, done)
+        setTodayTasks((prev) => prev.map((t) => (t.id === daily.id ? { ...t, done } : t)))
+        setSlice((prev) =>
+          prev
+            ? {
+                ...prev,
+                activities: prev.activities.map((a) =>
+                  a.id === activityId ? { ...a, done } : a,
+                ),
+              }
+            : prev,
+        )
+        return
+      }
+      const updated = await api.toggleActivity(activityId, done)
+      mergeActivity(updated)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
     }
-    const updated = await api.toggleActivity(activityId, done)
-    mergeActivity(updated)
   }
 
   function takeNoteToReview() {
@@ -428,12 +439,19 @@ export function ThemeBoardWorkspace() {
                                     type="checkbox"
                                     checked={step.done}
                                     onChange={async (e) => {
-                                      const updated = await api.toggleExecutionStep(
-                                        activityId,
-                                        step.id,
-                                        e.target.checked,
-                                      )
-                                      mergeActivity(updated)
+                                      setError('')
+                                      try {
+                                        const updated = await api.toggleExecutionStep(
+                                          activityId,
+                                          step.id,
+                                          e.target.checked,
+                                        )
+                                        mergeActivity(updated)
+                                      } catch (err) {
+                                        setError(
+                                          err instanceof Error ? err.message : String(err),
+                                        )
+                                      }
                                     }}
                                   />
                                   <span className="ds-check__box" />

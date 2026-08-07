@@ -288,7 +288,8 @@ def revise_execution(
         previous=current,
         assistant_message=assistant,
         user_message=user_content,
-        reset_step_done=True,
+        # 对话调整保留仍匹配的步骤完成态（与手改一致）
+        reset_step_done=False,
     )
 
 

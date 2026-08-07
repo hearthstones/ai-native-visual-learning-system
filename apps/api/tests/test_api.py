@@ -12,6 +12,7 @@ from sqlmodel import Session, SQLModel, create_engine, select
 from app.db import get_session
 from app.main import app
 from app.models import (
+    Activity,
     CocreateKind,
     CocreateSession,
     DailyTask,
@@ -271,3 +272,104 @@ def test_confirm_rejects_already_confirmed_session(client: TestClient, db: Sessi
     )
     assert res.status_code == 409
     assert "已确认" in res.json()["detail"]
+
+
+def test_toggle_execution_step_syncs_today_commitment(client: TestClient, db: Session):
+    theme = Theme(title="t", status=ThemeStatus.draft)
+    db.add(theme)
+    db.commit()
+    db.refresh(theme)
+    domain_svc.lock_theme_plan(
+        db,
+        theme,
+        {
+            "goal": "g",
+            "core_20": [],
+            "phases": {
+                "learning": {
+                    "title": "学",
+                    "activities": [{"title": "活动A", "description": ""}],
+                },
+                "practice": {"title": "练", "activities": [{"title": "练1"}]},
+                "application": {"title": "用", "activities": [{"title": "用1"}]},
+            },
+        },
+    )
+    db.commit()
+    db.refresh(theme)
+
+    act = db.exec(select(Activity).where(Activity.theme_id == theme.id)).first()
+    assert act is not None
+    act.execution_doc = {
+        "goal": "完成阅读",
+        "steps": [
+            {"id": "s1", "text": "打开书", "done": False},
+            {"id": "s2", "text": "划线", "done": False},
+        ],
+        "minutes": 30,
+    }
+    db.add(act)
+    task = domain_svc.commit_activity_today(db, theme, act.id)
+    db.commit()
+    assert task.done is False
+
+    r1 = client.patch(
+        f"/api/themes/activities/{act.id}/execution/steps/s1",
+        json={"done": True},
+    )
+    assert r1.status_code == 200
+    assert r1.json()["done"] is False
+
+    r2 = client.patch(
+        f"/api/themes/activities/{act.id}/execution/steps/s2",
+        json={"done": True},
+    )
+    assert r2.status_code == 200
+    assert r2.json()["done"] is True
+
+    db.refresh(task)
+    assert task.done is True
+
+
+def test_clear_execution_resets_activity_done(client: TestClient, db: Session):
+    theme = Theme(title="t", status=ThemeStatus.draft)
+    db.add(theme)
+    db.commit()
+    db.refresh(theme)
+    domain_svc.lock_theme_plan(
+        db,
+        theme,
+        {
+            "goal": "g",
+            "core_20": [],
+            "phases": {
+                "learning": {
+                    "title": "学",
+                    "activities": [{"title": "活动A", "description": ""}],
+                },
+                "practice": {"title": "练", "activities": [{"title": "练1"}]},
+                "application": {"title": "用", "activities": [{"title": "用1"}]},
+            },
+        },
+    )
+    db.commit()
+
+    act = db.exec(select(Activity).where(Activity.theme_id == theme.id)).first()
+    assert act is not None
+    act.execution_doc = {
+        "goal": "g",
+        "steps": [{"id": "s1", "text": "一步", "done": True}],
+        "minutes": 30,
+    }
+    act.done = True
+    db.add(act)
+    db.commit()
+
+    res = client.patch(
+        f"/api/themes/activities/{act.id}/execution",
+        json={"clear": True},
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["done"] is False
+    assert body["execution_doc"] == {} or not body["execution_doc"]

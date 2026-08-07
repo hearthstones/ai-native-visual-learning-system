@@ -167,6 +167,7 @@ def test_refresh_today_task_for_activity(session: Session):
         description="旧",
         task_date=__import__("datetime").date.today().isoformat(),
         sort_order=0,
+        done=False,
     )
     session.add(task)
     session.commit()
@@ -181,6 +182,42 @@ def test_refresh_today_task_for_activity(session: Session):
     session.commit()
     session.refresh(task)
     assert task.title == "下一步动作文案"
+
+    act.done = True
+    session.add(act)
+    domain_svc.refresh_today_task_for_activity(session, act)
+    session.commit()
+    session.refresh(task)
+    assert task.done is True
+
+
+def test_refresh_commitments_keeps_valid_when_one_stale(session: Session):
+    theme = Theme(title="t", status=ThemeStatus.draft)
+    session.add(theme)
+    session.commit()
+    session.refresh(theme)
+    domain_svc.lock_theme_plan(session, theme, _plan_doc("A1", "A2"))
+    session.commit()
+    session.refresh(theme)
+
+    acts = session.exec(
+        select(Activity).where(Activity.theme_id == theme.id).order_by(Activity.sort_order)
+    ).all()
+    t1 = domain_svc.commit_activity_today(session, theme, acts[0].id)
+    t2 = domain_svc.commit_activity_today(session, theme, acts[1].id)
+    session.commit()
+
+    # 人为制造一条陈旧 activity_id
+    t2.activity_id = "missing-activity-id"
+    session.add(t2)
+    session.commit()
+
+    kept = domain_svc.refresh_today_commitments(session, theme)
+    session.commit()
+    assert len(kept) == 1
+    assert kept[0].id == t1.id
+    left = session.exec(select(DailyTask).where(DailyTask.theme_id == theme.id)).all()
+    assert [x.id for x in left] == [t1.id]
 
 
 def test_advance_phase_replaces_today_tasks(session: Session):

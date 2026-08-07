@@ -85,6 +85,10 @@ export function ActivityExpandPanel({
 
   async function handleGenerate() {
     if (!activityId) return
+    if (dirty) {
+      setError('有未保存的手改，请先保存或放弃后再生成')
+      return
+    }
     setBusy(true)
     setError('')
     try {
@@ -190,7 +194,8 @@ export function ActivityExpandPanel({
                 <button
                   type="button"
                   className="ds-btn ds-btn--secondary ds-btn--sm"
-                  disabled={busy}
+                  disabled={busy || dirty}
+                  title={dirty ? '请先保存或放弃手改' : undefined}
                   onClick={() => void handleGenerate()}
                 >
                   {busy ? '处理中…' : '再生成'}
@@ -209,6 +214,7 @@ export function ActivityExpandPanel({
                 <span>目标</span>
                 <input
                   value={goal}
+                  disabled={busy}
                   onChange={(e) => {
                     setGoal(e.target.value)
                     setDirty(true)
@@ -221,6 +227,7 @@ export function ActivityExpandPanel({
                 <textarea
                   rows={5}
                   value={stepsText}
+                  disabled={busy}
                   onChange={(e) => {
                     setStepsText(e.target.value)
                     setDirty(true)
@@ -236,6 +243,7 @@ export function ActivityExpandPanel({
                     min={5}
                     max={180}
                     value={minutes}
+                    disabled={busy}
                     onChange={(e) => {
                       setMinutes(Number(e.target.value) || 30)
                       setDirty(true)
@@ -247,6 +255,7 @@ export function ActivityExpandPanel({
                   <input
                     value={resourceName}
                     placeholder="可选"
+                    disabled={busy}
                     onChange={(e) => {
                       setResourceName(e.target.value)
                       setDirty(true)
@@ -259,6 +268,7 @@ export function ActivityExpandPanel({
                 <span>验收</span>
                 <input
                   value={outcome}
+                  disabled={busy}
                   onChange={(e) => {
                     setOutcome(e.target.value)
                     setDirty(true)

@@ -335,9 +335,7 @@ export function HomePage() {
                 <span className={phaseDot[theme?.phase ?? 'learning']} />
                 <span className="ds-tag today-item__topic-tag">{theme?.title ?? '主题'}</span>
                 <div className="today-item__main">
-                  <Link className="today-item__text" to={`/themes/${task.theme_id}/work`}>
-                    {task.title}
-                  </Link>
+                  <span className="today-item__text">{task.title}</span>
                   {metaParts.length > 0 ? (
                     <span className="today-item__meta">{metaParts.join(' · ')}</span>
                   ) : null}
@@ -351,8 +349,12 @@ export function HomePage() {
                   >
                     移出
                   </button>
-                  <Link className="today-item__enter" to={`/themes/${task.theme_id}/work`}>
-                    <span>进入</span>
+                  <Link
+                    className="today-item__enter"
+                    to={`/themes/${task.theme_id}?mode=execute`}
+                    title="进入主题看板"
+                  >
+                    <span>主题</span>
                     <Icon name="arrow-right" size={14} />
                   </Link>
                 </div>
@@ -462,7 +464,7 @@ export function HomePage() {
                       </button>
                     ) : null}
                     <Link className="theme-card__enter" to={`/themes/${theme.id}`}>
-                      <span>进入概览</span>
+                      <span>进入主题</span>
                       <Icon name="chevron-right" size={14} />
                     </Link>
                   </div>
@@ -486,7 +488,7 @@ export function HomePage() {
               <span className="home-draft-card__desc">
                 {drafts.length > 1
                   ? `另有 ${drafts.length - 1} 个草稿待续创`
-                  : '继续阶梯 / 资料 / 计划共创，锁定后进入执行'}
+                  : '继续阶梯 / 资料 / 计划共创，锁定后回到今日看板'}
               </span>
             </div>
             <div className="home-draft-card__actions">

@@ -172,7 +172,7 @@ export function ThemePlanDocumentPage() {
         <span className="docbook-foot__sep">·</span>
         <Link to="/review">周复盘</Link>
         <span className="docbook-foot__sep">·</span>
-        <Link to={`/themes/${theme.id}/work`}>进入执行</Link>
+        <Link to={`/themes/${theme.id}?mode=execute`}>去执行</Link>
       </footer>
     </div>
   )

@@ -99,12 +99,12 @@ export function ThemePracticePage() {
           </div>
         </div>
         <Link
-          to={`/themes/${theme.id}/work`}
+          to={`/themes/${theme.id}?mode=execute`}
           className="ds-btn ds-btn--brand ds-btn--lg"
           data-dom-id="btn-enter-execution"
         >
           <Icon name="play" size={14} className="icon" />
-          进入执行
+          去执行
         </Link>
       </section>
 

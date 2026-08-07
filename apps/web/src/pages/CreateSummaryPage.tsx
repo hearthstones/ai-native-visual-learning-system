@@ -84,7 +84,7 @@ export function CreateSummaryPage() {
             {displayTasks.length === 0 ? (
               <div className="first-cta-card__task">
                 <span className="first-cta-card__task-index">—</span>
-                <span>暂无今日任务（计划活动可能为空，可稍后在作业面查看）</span>
+                <span>暂无今日任务（计划活动可能为空，可稍后在主题看板查看）</span>
               </div>
             ) : (
               displayTasks.slice(0, 4).map((task, i) => (
@@ -101,10 +101,10 @@ export function CreateSummaryPage() {
             className="ds-btn ds-btn--brand ds-btn--lg"
             type="button"
             data-dom-id="btn-enter-execution"
-            onClick={() => nav(`/themes/${theme.id}/work`)}
+            onClick={() => nav('/')}
           >
             <Icon name="play" size={14} className="icon" />
-            <span>开始第一天</span>
+            <span>回到今日看板</span>
           </button>
           <span className="first-cta-card__duration">约 30 分钟</span>
         </div>

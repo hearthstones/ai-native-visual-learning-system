@@ -8,7 +8,7 @@ function contextLabel(pathname: string) {
   if (pathname.startsWith('/review')) return '周复盘'
   if (pathname === '/themes') return '我的主题'
   if (/\/themes\/[^/]+\/document\/?$/.test(pathname)) return '主题计划书'
-  if (pathname.startsWith('/themes')) return '主题执行'
+  if (pathname.startsWith('/themes')) return '主题看板'
   const d = new Date()
   const y = d.getFullYear()
   const m = String(d.getMonth() + 1).padStart(2, '0')

@@ -194,9 +194,9 @@ export function ThemePlanPage() {
           {ok && <div className="ok-banner" style={{ marginBottom: 16 }}>{ok}</div>}
 
           <div style={{ marginBottom: 16 }}>
-            <Link to={`/themes/${theme.id}/work`} className="ds-btn ds-btn--tertiary ds-btn--sm">
+            <Link to={`/themes/${theme.id}?mode=plan`} className="ds-btn ds-btn--tertiary ds-btn--sm">
               <Icon name="arrow-left" size={14} className="icon" />
-              返回作业
+              返回主题看板
             </Link>
           </div>
 

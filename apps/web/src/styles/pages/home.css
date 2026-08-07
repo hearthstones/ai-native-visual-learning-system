@@ -256,9 +256,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.today-item__text:hover {
-  color: var(--text-brand);
-}
+/* 标题就地展示（着陆 B）；主题入口用旁侧「主题」链 */
 .today-item__meta {
   font-size: var(--body-xs-font-size);
   line-height: var(--body-xs-line-height, 1.4);

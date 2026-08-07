@@ -280,7 +280,7 @@ export function ReviewPage() {
             <Icon name="scroll-text" size={16} />
           </span>
           <div className="ds-alert__content" style={{ flex: 1 }}>
-            <div className="ds-alert__title">作业面笔记</div>
+            <div className="ds-alert__title">主题笔记</div>
             <div className="ds-alert__desc" style={{ whiteSpace: 'pre-wrap' }}>
               {workNote.slice(0, 200)}
               {workNote.length > 200 ? '…' : ''}

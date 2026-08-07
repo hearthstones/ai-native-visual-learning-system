@@ -7,6 +7,9 @@ function contextLabel(pathname: string) {
   if (pathname.startsWith('/create')) return '新建主题'
   if (pathname.startsWith('/review')) return '周复盘'
   if (pathname === '/themes') return '我的主题'
+  if (/\/themes\/[^/]+\/document\/ladder\/?$/.test(pathname)) return '学习阶梯'
+  if (/\/themes\/[^/]+\/document\/resources\/?$/.test(pathname)) return '学习资料'
+  if (/\/themes\/[^/]+\/document\/plan\/?$/.test(pathname)) return '学习计划'
   if (/\/themes\/[^/]+\/document\/?$/.test(pathname)) return '主题计划书'
   if (pathname.startsWith('/themes')) return '主题看板'
   const d = new Date()

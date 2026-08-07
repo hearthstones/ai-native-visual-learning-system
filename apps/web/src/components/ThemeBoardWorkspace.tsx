@@ -11,7 +11,6 @@ import {
   matchThemeResource,
   phaseZh,
   resourceDeepLink,
-  resourcesPathHint,
   workNoteKey,
 } from '../lib/themeDoc'
 import '../styles/pages/theme-board.css'
@@ -20,7 +19,7 @@ import '../styles/components/activity-expand.css'
 
 const DRAFT_KEY = 'weekly-review-draft'
 
-/** 主题看板：单列主区（切片未完成队列）+ 折叠计划/复盘 */
+/** 主题看板：单列主区 + 页头计划入口 + 折叠复盘 */
 export function ThemeBoardWorkspace() {
   const { themeId = '' } = useParams()
   const nav = useNavigate()
@@ -37,12 +36,12 @@ export function ThemeBoardWorkspace() {
   const [expandId, setExpandId] = useState<string | null>(null)
   const [openingResource, setOpeningResource] = useState(false)
   const [noteSaveHint, setNoteSaveHint] = useState('')
-  const [planOpen, setPlanOpen] = useState(mode === 'plan')
   const [reviewOpen, setReviewOpen] = useState(mode === 'review')
+  /** 行内展开详情（步骤/资料/验收）；默认收起，同今日列表密度 */
+  const [detailId, setDetailId] = useState<string | null>(null)
   const noteSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    setPlanOpen(mode === 'plan')
     setReviewOpen(mode === 'review')
   }, [mode])
 
@@ -79,14 +78,6 @@ export function ThemeBoardWorkspace() {
   const concepts = useMemo(() => getCoreConcepts(theme, 3), [theme])
   const dailyMinutes = getDailyMinutes(slice, theme)
 
-  const activityById = useMemo(() => {
-    const map = new Map<string, (typeof sliceItems)[number]>()
-    for (const it of sliceItems) {
-      if (it.activityId) map.set(it.activityId, it)
-    }
-    return map
-  }, [sliceItems])
-
   const todayByActivity = useMemo(() => {
     const map = new Map<string, DailyTask>()
     for (const t of todayTasks) {
@@ -95,40 +86,18 @@ export function ThemeBoardWorkspace() {
     return map
   }, [todayTasks])
 
-  /** 本主题可做：当前切片全部未完成 */
-  const openItems = useMemo(
-    () => sliceItems.filter((it) => it.activityId && !it.done),
-    [sliceItems],
-  )
+  /** 本主题可做：未完成；今日承诺置顶 */
+  const openItems = useMemo(() => {
+    const open = sliceItems.filter((it) => it.activityId && !it.done)
+    return [...open].sort((a, b) => {
+      const aToday = a.activityId && todayByActivity.has(a.activityId) ? 0 : 1
+      const bToday = b.activityId && todayByActivity.has(b.activityId) ? 0 : 1
+      return aToday - bToday
+    })
+  }, [sliceItems, todayByActivity])
 
   const todayCommitCount = todayTasks.filter((t) => !t.done).length
   const expandItem = sliceItems.find((it) => it.activityId === expandId)
-
-  const focusItem = openItems[0] || null
-  const focusExe = focusItem?.executionDoc
-  const nextActionText = useMemo(() => {
-    const steps = focusExe?.steps || []
-    const undone = steps.find((s) => !s.done)?.text?.trim()
-    if (undone) return undone
-    if (focusExe?.goal?.trim()) return focusExe.goal.trim()
-    if (focusItem?.label?.trim()) return focusItem.label.trim()
-    return openItems.length ? '继续当前切片' : '暂无未完成活动'
-  }, [focusExe, focusItem, openItems.length])
-
-  const focusResource = useMemo(() => {
-    const ref = focusExe?.resource_ref
-    const matched = matchThemeResource(theme, ref || null)
-    if (matched) return matched
-    return matchThemeResource(theme, { index: 0 }) || null
-  }, [focusExe, theme])
-
-  const materialHint = useMemo(() => {
-    if (focusResource?.how_to_use?.trim()) return focusResource.how_to_use.trim()
-    if (focusResource?.name) return `优先使用：${focusResource.name}`
-    const pathHint = resourcesPathHint(theme)
-    if (pathHint) return pathHint
-    return '打开主题计划书查看资料清单，或先为任务做「任务拆分」绑定资料。'
-  }, [focusResource, theme])
 
   function mergeActivity(act: SliceActivity) {
     setSlice((prev) =>
@@ -160,7 +129,7 @@ export function ThemeBoardWorkspace() {
   }
 
   async function openResource(ref?: { index?: number | null; name?: string } | null) {
-    const matched = matchThemeResource(theme, ref || null) || focusResource
+    const matched = matchThemeResource(theme, ref || null)
     const direct = resourceDeepLink(matched)
     if (direct) {
       window.open(direct, '_blank', 'noopener,noreferrer')
@@ -168,7 +137,7 @@ export function ThemeBoardWorkspace() {
     }
     const query = (matched?.weread?.title || matched?.name || ref?.name || '').replace(/[《》]/g, '').trim()
     if (!query) {
-      nav(`/themes/${themeId}/document#chapter-resources`)
+      nav(`/themes/${themeId}/document/resources`)
       return
     }
     setOpeningResource(true)
@@ -178,10 +147,10 @@ export function ThemeBoardWorkspace() {
       if (hit && typeof hit.deepLink === 'string') {
         window.open(hit.deepLink, '_blank', 'noopener,noreferrer')
       } else {
-        nav(`/themes/${themeId}/document#chapter-resources`)
+        nav(`/themes/${themeId}/document/resources`)
       }
     } catch {
-      nav(`/themes/${themeId}/document#chapter-resources`)
+      nav(`/themes/${themeId}/document/resources`)
     } finally {
       setOpeningResource(false)
     }
@@ -286,21 +255,86 @@ export function ThemeBoardWorkspace() {
             ) : null}
             <span className="tb-sep">·</span>
             <span>每天约 {dailyMinutes} 分钟</span>
+            {sliceTotal > 0 ? (
+              <>
+                <span className="tb-sep">·</span>
+                <span>
+                  切片 {sliceDone}/{sliceTotal}
+                </span>
+              </>
+            ) : null}
           </div>
           {theme.goal ? (
             <p className="text-tertiary" style={{ margin: '4px 0 0', fontSize: 'var(--body-xs-font-size)' }}>
               {theme.goal}
             </p>
           ) : null}
+          <div className="tb-actions" id="panel-plan">
+            <div className="tb-actions__group">
+              <span className="tb-actions__label">查看</span>
+              <Link
+                to={`/themes/${theme.id}/document/ladder`}
+                className="ds-btn ds-btn--tertiary ds-btn--sm"
+                data-dom-id="btn-view-ladder"
+              >
+                <Icon name="layers" size={12} className="icon" />
+                阶梯
+              </Link>
+              <Link
+                to={`/themes/${theme.id}/document/resources`}
+                className="ds-btn ds-btn--tertiary ds-btn--sm"
+                data-dom-id="btn-view-resources"
+              >
+                <Icon name="scroll-text" size={12} className="icon" />
+                资料
+              </Link>
+              <Link
+                to={`/themes/${theme.id}/document/plan`}
+                className="ds-btn ds-btn--tertiary ds-btn--sm"
+                data-dom-id="btn-view-plan-chapter"
+              >
+                <Icon name="list" size={12} className="icon" />
+                计划
+              </Link>
+              <Link
+                to={`/themes/${theme.id}/document`}
+                className="ds-btn ds-btn--secondary ds-btn--sm"
+                data-dom-id="btn-plan-document"
+                title="通读三章并导出带走"
+              >
+                <Icon name="file-text" size={12} className="icon" />
+                主题计划书
+              </Link>
+            </div>
+            <div className="tb-actions__group">
+              <span className="tb-actions__label">调整</span>
+              <Link
+                to={`/themes/${theme.id}/plan`}
+                className="ds-btn ds-btn--tertiary ds-btn--sm"
+                data-dom-id="btn-open-phases"
+                title="学 / 练 / 用阶段与槽位"
+              >
+                <Icon name="layout" size={12} className="icon" />
+                阶段管理
+              </Link>
+              <button
+                type="button"
+                className="ds-btn ds-btn--tertiary ds-btn--sm"
+                data-dom-id="btn-open-cocreate"
+                onClick={() => setCocreateOpen(true)}
+                title="修订已锁定的计划共创"
+              >
+                <Icon name="sparkles" size={12} className="icon" />
+                修订共创
+              </button>
+            </div>
+          </div>
+          {concepts.length > 0 ? (
+            <p className="tb-actions__hint" style={{ margin: '8px 0 0' }}>
+              核心 {concepts.slice(0, 3).join(' · ')}
+            </p>
+          ) : null}
         </div>
-        <Link
-          to={`/themes/${theme.id}/document`}
-          className="ds-btn ds-btn--tertiary ds-btn--sm"
-          data-dom-id="btn-plan-document"
-        >
-          <Icon name="file-text" size={12} className="icon" />
-          主题计划书
-        </Link>
       </header>
 
       <section className="tb-section" id="panel-execute">
@@ -336,12 +370,19 @@ export function ThemeBoardWorkspace() {
               const activityId = item.activityId!
               const exe = item.executionDoc
               const steps = exe?.steps || []
-              const expanded = Boolean(item.expanded && (exe?.goal || steps.length > 0))
-              const primaryText = expanded ? exe?.goal || item.label : item.label
+              const hasDetail = Boolean(
+                steps.length > 0 || exe?.resource_ref?.name || exe?.outcome || item.expanded,
+              )
+              const detailOpen = detailId === activityId
               const daily = todayByActivity.get(activityId)
-              const expandBtnLabel = expanded ? `已拆分 · ${steps.length} 步` : '任务拆分'
+              const metaParts: string[] = []
+              if (item.expanded) {
+                metaParts.push(steps.length > 0 ? `已拆分 · ${steps.filter((s) => s.done).length}/${steps.length}` : '已拆分')
+              }
+              if (typeof exe?.minutes === 'number') metaParts.push(`约${exe.minutes}分钟`)
+
               return (
-                <div key={activityId} className="task-item">
+                <div key={activityId} className={`task-item${detailOpen ? ' is-detail-open' : ''}`}>
                   <label className="ds-check task-item__check">
                     <input
                       type="checkbox"
@@ -353,198 +394,110 @@ export function ThemeBoardWorkspace() {
                     <span className="ds-check__box" />
                   </label>
                   <div className="task-item__body">
-                    <p className="task-item__text">{primaryText}</p>
-                    <div className="task-item__meta">
-                      {daily ? <span className="tb-badge-today">今日</span> : null}
-                      <span className="task-item__source">
-                        <Icon name="layers" size={12} />
-                        {sliceTitle}
-                      </span>
-                      {typeof exe?.minutes === 'number' ? (
-                        <span className="task-item__source">{exe.minutes} 分钟</span>
-                      ) : null}
-                    </div>
-                    {steps.length > 0 ? (
-                      <ul className="task-steps">
-                        {steps.map((step) => (
-                          <li key={step.id} className={`task-step${step.done ? ' is-done' : ''}`}>
-                            <label className="ds-check task-step__check">
-                              <input
-                                type="checkbox"
-                                checked={step.done}
-                                onChange={async (e) => {
-                                  const updated = await api.toggleExecutionStep(
-                                    activityId,
-                                    step.id,
-                                    e.target.checked,
-                                  )
-                                  mergeActivity(updated)
-                                }}
-                              />
-                              <span className="ds-check__box" />
-                            </label>
-                            <span className="task-step__text">{step.text}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-                    {exe?.resource_ref?.name ? (
-                      <p className="task-item__hint">
-                        <span className="task-item__hint-label">资料</span>
-                        <button
-                          type="button"
-                          className="task-item__resource-link"
-                          disabled={openingResource}
-                          onClick={() => void openResource(exe.resource_ref)}
-                        >
-                          {exe.resource_ref.name}
-                          <span className="task-item__resource-action">
-                            {openingResource ? '打开中…' : '打开'}
-                          </span>
-                        </button>
-                      </p>
-                    ) : null}
-                    {exe?.outcome ? (
-                      <p className="task-item__hint">
-                        <span className="task-item__hint-label">验收</span>
-                        {exe.outcome}
-                      </p>
-                    ) : null}
                     <button
                       type="button"
-                      className="ds-btn ds-btn--secondary ds-btn--sm"
-                      style={{ marginTop: 10 }}
-                      onClick={() => setExpandId(activityId)}
+                      className="task-item__title-btn"
+                      onClick={() => setDetailId((id) => (id === activityId ? null : activityId))}
+                      disabled={!hasDetail && !item.activityId}
                     >
-                      <Icon name="sparkles" size={12} className="icon" />
-                      {expandBtnLabel}
+                      <span className="task-item__text">{item.label}</span>
                     </button>
+                    <div className="task-item__meta">
+                      {daily ? <span className="tb-badge-today">今日</span> : null}
+                      {metaParts.length > 0 ? (
+                        <span className="task-item__source">{metaParts.join(' · ')}</span>
+                      ) : (
+                        <span className="task-item__source">{sliceTitle}</span>
+                      )}
+                    </div>
+
+                    {detailOpen ? (
+                      <div className="task-item__detail">
+                        {exe?.goal && exe.goal !== item.label ? (
+                          <p className="task-item__hint">
+                            <span className="task-item__hint-label">目标</span>
+                            {exe.goal}
+                          </p>
+                        ) : null}
+                        {steps.length > 0 ? (
+                          <ul className="task-steps">
+                            {steps.map((step) => (
+                              <li key={step.id} className={`task-step${step.done ? ' is-done' : ''}`}>
+                                <label className="ds-check task-step__check">
+                                  <input
+                                    type="checkbox"
+                                    checked={step.done}
+                                    onChange={async (e) => {
+                                      const updated = await api.toggleExecutionStep(
+                                        activityId,
+                                        step.id,
+                                        e.target.checked,
+                                      )
+                                      mergeActivity(updated)
+                                    }}
+                                  />
+                                  <span className="ds-check__box" />
+                                </label>
+                                <span className="task-step__text">{step.text}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+                        {exe?.resource_ref?.name ? (
+                          <p className="task-item__hint">
+                            <span className="task-item__hint-label">资料</span>
+                            <button
+                              type="button"
+                              className="task-item__resource-link"
+                              disabled={openingResource}
+                              onClick={() => void openResource(exe.resource_ref)}
+                            >
+                              {exe.resource_ref.name}
+                              <span className="task-item__resource-action">
+                                {openingResource ? '打开中…' : '打开'}
+                              </span>
+                            </button>
+                          </p>
+                        ) : null}
+                        {exe?.outcome ? (
+                          <p className="task-item__hint">
+                            <span className="task-item__hint-label">验收</span>
+                            {exe.outcome}
+                          </p>
+                        ) : null}
+                        <div className="task-item__detail-actions">
+                          <button
+                            type="button"
+                            className="ds-btn ds-btn--secondary ds-btn--sm"
+                            onClick={() => setExpandId(activityId)}
+                          >
+                            <Icon name="sparkles" size={12} className="icon" />
+                            {item.expanded ? `任务拆分 · ${steps.length} 步` : '任务拆分'}
+                          </button>
+                          <Link
+                            className="ds-btn ds-btn--tertiary ds-btn--sm"
+                            to={`/themes/${theme.id}/document/resources`}
+                          >
+                            资料清单
+                          </Link>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
+                  {!detailOpen ? (
+                    <button
+                      type="button"
+                      className="ds-btn ds-btn--tertiary ds-btn--sm task-item__more"
+                      onClick={() => setDetailId(activityId)}
+                    >
+                      详情
+                    </button>
+                  ) : null}
                 </div>
               )
             })}
           </div>
         )}
-      </section>
-
-      {openItems.length > 0 ? (
-        <section className="tb-section">
-          <div className="tb-section__label-row">
-            <div className="tb-section__label">下一步与资料</div>
-          </div>
-          <div className="tb-next">
-            <p className="tb-next__title">下一步</p>
-            <p className="tb-next__text">{nextActionText}</p>
-            {focusResource?.name ? (
-              <p className="tb-next__text" style={{ color: 'var(--text-secondary)' }}>
-                {focusResource.name}
-              </p>
-            ) : null}
-            <p className="tb-next__text" style={{ color: 'var(--text-tertiary)', fontSize: 'var(--body-xs-font-size)' }}>
-              {materialHint}
-            </p>
-            <div className="tb-next__actions">
-              <button
-                type="button"
-                className="ds-btn ds-btn--secondary ds-btn--sm"
-                disabled={openingResource || !focusResource}
-                onClick={() => void openResource(focusExe?.resource_ref || { index: 0 })}
-              >
-                {openingResource ? '打开中…' : '打开资料'}
-              </button>
-              <Link
-                className="ds-btn ds-btn--tertiary ds-btn--sm"
-                to={`/themes/${theme.id}/document#chapter-resources`}
-              >
-                资料清单
-              </Link>
-            </div>
-          </div>
-        </section>
-      ) : null}
-
-      <section className={`tb-fold${planOpen ? ' is-open' : ''}`} id="panel-plan">
-        <button
-          type="button"
-          className="tb-fold__toggle"
-          data-dom-id="tab-plan"
-          onClick={() => setPlanOpen((v) => !v)}
-        >
-          <span className="tb-section__label">计划与阶段</span>
-          <span className="tb-section__hint" style={{ marginRight: 'auto', marginLeft: 12 }}>
-            切片 {sliceDone}/{sliceTotal}
-          </span>
-          <Icon name="chevron-down" size={14} className="tb-fold__chevron" />
-        </button>
-        <div className="tb-fold__body">
-          <p className="text-tertiary" style={{ fontSize: 'var(--body-sm-font-size)', margin: '0 0 12px' }}>
-            {sliceTitle}
-            {concepts.length ? ` · 核心：${concepts.join(' · ')}` : ''}
-          </p>
-          {sliceItems.length > 0 ? (
-            <div className="task-list" style={{ marginBottom: 12 }}>
-              {sliceItems.map((item, i) => (
-                <div key={item.id} className={`task-item${item.done ? ' is-done' : ''}`}>
-                  <span className="task-item__source mono" style={{ width: 28, flexShrink: 0 }}>
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <div className="task-item__body">
-                    <p className="task-item__text" style={{ fontSize: 'var(--body-sm-font-size)' }}>
-                      {item.label}
-                    </p>
-                    <div className="task-item__meta">
-                      <span className="task-item__source">
-                        {item.done
-                          ? '已完成'
-                          : item.expanded
-                            ? `已拆分 · ${(item.executionDoc?.steps || []).length} 步`
-                            : item.desc}
-                      </span>
-                    </div>
-                  </div>
-                  {item.activityId && !item.done ? (
-                    <button
-                      type="button"
-                      className="ds-btn ds-btn--secondary ds-btn--sm"
-                      onClick={() => setExpandId(item.activityId || null)}
-                    >
-                      拆分
-                    </button>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-tertiary" style={{ fontSize: 'var(--body-sm-font-size)' }}>
-              暂无切片活动，请先完成计划共创并锁定。
-            </p>
-          )}
-          <div className="tb-plan-links">
-            <Link
-              to={`/themes/${theme.id}/plan`}
-              data-dom-id="btn-open-phases"
-              className="ds-btn ds-btn--secondary ds-btn--sm"
-            >
-              <Icon name="layout" size={12} className="icon" />
-              阶段管理
-            </Link>
-            <button
-              type="button"
-              data-dom-id="btn-open-cocreate"
-              className="ds-btn ds-btn--brand ds-btn--sm"
-              onClick={() => setCocreateOpen(true)}
-            >
-              <Icon name="sparkles" size={12} className="icon" />
-              修订共创
-            </button>
-            <Link
-              to={`/themes/${theme.id}/document`}
-              className="ds-btn ds-btn--tertiary ds-btn--sm"
-            >
-              主题计划书
-            </Link>
-          </div>
-        </div>
       </section>
 
       <section className={`tb-fold${reviewOpen ? ' is-open' : ''}`} id="panel-review">

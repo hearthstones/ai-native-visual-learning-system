@@ -140,6 +140,37 @@
   color: var(--text-brand);
 }
 
+.docbook-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacer-8);
+  padding: var(--spacer-4) 0;
+}
+
+.docbook-switcher__link {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-6, 6px);
+  border: 1px solid var(--border-neutral-l1);
+  background: var(--bg-overlay-l1, rgba(255, 255, 255, 0.04));
+  color: var(--text-secondary);
+  font-size: var(--body-sm-font-size);
+  text-decoration: none;
+}
+
+.docbook-switcher__link:hover {
+  color: var(--text-default);
+  border-color: var(--border-neutral-l2);
+}
+
+.docbook-switcher__link.is-active {
+  color: var(--text-onbrand, #0b1a12);
+  background: var(--bg-brand);
+  border-color: var(--bg-brand);
+}
+
 .docbook-chapter {
   display: flex;
   flex-direction: column;

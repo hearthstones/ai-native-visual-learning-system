@@ -11,7 +11,7 @@ import { HomePage } from './pages/HomePage'
 import { ReviewPage } from './pages/ReviewPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { ThemeOverviewPage } from './pages/ThemeOverviewPage'
-import { ThemePlanDocumentPage } from './pages/ThemePlanDocumentPage'
+import { ThemePlanDocumentPage, ThemeDocChapterPage } from './pages/ThemePlanDocumentPage'
 import { ThemePlanPage } from './pages/ThemePlanPage'
 import { ThemePracticePage } from './pages/ThemePracticePage'
 import { ThemesPage } from './pages/ThemesPage'
@@ -43,6 +43,12 @@ export default function App() {
           <Route path="themes" element={<ThemesPage />} />
           <Route path="themes/:themeId" element={<ThemeOverviewPage />} />
           <Route path="themes/:themeId/summary" element={<CreateSummaryPage />} />
+          <Route path="themes/:themeId/document/ladder" element={<ThemeDocChapterPage chapter="ladder" />} />
+          <Route
+            path="themes/:themeId/document/resources"
+            element={<ThemeDocChapterPage chapter="resources" />}
+          />
+          <Route path="themes/:themeId/document/plan" element={<ThemeDocChapterPage chapter="plan" />} />
           <Route path="themes/:themeId/document" element={<ThemePlanDocumentPage />} />
           <Route path="themes/:themeId/work" element={<ThemeWorkPage />} />
           <Route path="themes/:themeId/plan" element={<ThemePlanPage />} />

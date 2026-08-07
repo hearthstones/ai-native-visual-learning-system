@@ -7,6 +7,7 @@ from typing import Any
 from openai import OpenAI
 
 from app.config import Settings
+from app.services.mock_llm import is_mock_mode, mock_chat_json
 
 
 def get_llm_client(settings: Settings) -> OpenAI:
@@ -14,6 +15,8 @@ def get_llm_client(settings: Settings) -> OpenAI:
         raise RuntimeError(
             "未配置 DEEPSEEK_API_KEY。请在设置页配置，或在仓库根目录 .env 中设置后重启 API。"
         )
+    if is_mock_mode(settings.deepseek_api_key):
+        raise RuntimeError("当前为 mock LLM 模式，不应创建真实客户端。")
     return OpenAI(
         api_key=settings.deepseek_api_key,
         base_url=settings.deepseek_base_url,
@@ -126,6 +129,12 @@ def chat_json(
     temperature: float = 0.4,
     kind: str | None = None,
 ) -> dict[str, Any]:
+    if is_mock_mode(settings.deepseek_api_key):
+        result = mock_chat_json(kind=kind, messages=messages)
+        if kind and kind not in ("weekly_review", "activity_expand"):
+            return normalize_cocreate_result(kind, result)
+        return result
+
     client = get_llm_client(settings)
     # weekly_review / activity_expand 有独立 JSON 契约，不要叠共创的 assistant_message/live_doc 约束
     if kind in (None, "weekly_review", "activity_expand"):

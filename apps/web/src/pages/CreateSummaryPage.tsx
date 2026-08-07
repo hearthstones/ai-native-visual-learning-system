@@ -15,8 +15,10 @@ export function CreateSummaryPage() {
   const nav = useNavigate()
   const [theme, setTheme] = useState<Theme | null>(null)
   const [tasks, setTasks] = useState<DailyTask[]>([])
+  const [queueCount, setQueueCount] = useState(0)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const [filling, setFilling] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -31,6 +33,7 @@ export function CreateSummaryPage() {
         if (cancelled) return
         setTheme(t)
         setTasks((home?.today_tasks || []).filter((task) => task.theme_id === themeId))
+        setQueueCount((home?.queue || []).filter((item) => item.theme_id === themeId).length)
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e))
       } finally {
@@ -42,6 +45,18 @@ export function CreateSummaryPage() {
       cancelled = true
     }
   }, [themeId])
+
+  async function fillTodayThenHome() {
+    setFilling(true)
+    setError('')
+    try {
+      await api.suggestCommitments(themeId)
+      nav('/')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+      setFilling(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -84,7 +99,11 @@ export function CreateSummaryPage() {
             {displayTasks.length === 0 ? (
               <div className="first-cta-card__task">
                 <span className="first-cta-card__task-index">—</span>
-                <span>暂无今日任务（计划活动可能为空，可稍后在主题看板查看）</span>
+                <span>
+                  {queueCount > 0
+                    ? `计划已入可做队列（${queueCount} 条）。今日承诺需主动选择，或一键按建议填入。`
+                    : '暂无今日承诺，也没有可做队列活动——可稍后在主题看板查看计划。'}
+                </span>
               </div>
             ) : (
               displayTasks.slice(0, 4).map((task, i) => (
@@ -97,15 +116,39 @@ export function CreateSummaryPage() {
           </div>
         </div>
         <div className="first-cta-card__action">
-          <button
-            className="ds-btn ds-btn--brand ds-btn--lg"
-            type="button"
-            data-dom-id="btn-enter-execution"
-            onClick={() => nav('/')}
-          >
-            <Icon name="play" size={14} className="icon" />
-            <span>回到今日看板</span>
-          </button>
+          {displayTasks.length === 0 && queueCount > 0 ? (
+            <button
+              className="ds-btn ds-btn--brand ds-btn--lg"
+              type="button"
+              data-dom-id="btn-fill-today-and-home"
+              disabled={filling}
+              onClick={() => void fillTodayThenHome()}
+            >
+              <Icon name="play" size={14} className="icon" />
+              <span>{filling ? '填入中…' : '按建议填入并开始今天'}</span>
+            </button>
+          ) : (
+            <button
+              className="ds-btn ds-btn--brand ds-btn--lg"
+              type="button"
+              data-dom-id="btn-enter-execution"
+              onClick={() => nav('/')}
+            >
+              <Icon name="play" size={14} className="icon" />
+              <span>回到今日看板</span>
+            </button>
+          )}
+          {displayTasks.length === 0 && queueCount > 0 ? (
+            <button
+              className="ds-btn ds-btn--secondary"
+              type="button"
+              data-dom-id="btn-enter-home-empty"
+              disabled={filling}
+              onClick={() => nav('/')}
+            >
+              先回今日看板
+            </button>
+          ) : null}
           <span className="first-cta-card__duration">约 30 分钟</span>
         </div>
       </section>

@@ -24,7 +24,7 @@ export function CreateInterceptPage() {
   const [theme, setTheme] = useState<Theme | null>(null)
   const [slice, setSlice] = useState<ActiveSlice | null>(null)
   const [slots, setSlots] = useState<SlotMap>({})
-  const [choice, setChoice] = useState<Choice>('advance')
+  const [choice, setChoice] = useState<Choice>('hibernate')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -119,7 +119,7 @@ export function CreateInterceptPage() {
               <Icon name="alert-triangle" size={16} />
             </span>
             <span className="ds-dialog__title" id="intercept-title">
-              {full ? '想新建主题？先腾出学习槽位' : '学习槽位可用'}
+              {full ? '学习槽已满 · 先腾位再新建' : '学习槽位可用'}
             </span>
           </div>
           <button
@@ -148,7 +148,7 @@ export function CreateInterceptPage() {
                 </div>
                 <div className="ds-alert__desc">
                   {full
-                    ? `学习阶段最多并发 ${max} 个主题。要新建主题，需先把当前学习期主题推进到练习期、休眠或废弃，腾出学习槽位。`
+                    ? `同时只能有 ${max} 个「学习期」主题。学习期 = 还在学新概念的阶段；推进到练习期、休眠或废弃后才能新建。想最快开新主题，选「休眠」即可。`
                     : '当前学习槽位尚有空位，可直接创建新主题。'}
                 </div>
               </div>
@@ -183,16 +183,33 @@ export function CreateInterceptPage() {
                         <input
                           type="radio"
                           name="intercept-choice"
+                          value="hibernate"
+                          checked={choice === 'hibernate'}
+                          onChange={() => setChoice('hibernate')}
+                        />
+                        <span className="ds-radio__dot" />
+                        <span className="radio-option__title">休眠「{name}」后新建</span>
+                        <span className="ds-tag ds-tag--brand radio-option__tag">最快</span>
+                      </span>
+                    </span>
+                    <span className="radio-option__sub">暂停当前主题，进度保留可恢复，立刻腾出学习槽</span>
+                  </label>
+
+                  <label className="radio-option">
+                    <span className="radio-option__main">
+                      <span className="ds-radio">
+                        <input
+                          type="radio"
+                          name="intercept-choice"
                           value="advance"
                           checked={choice === 'advance'}
                           onChange={() => setChoice('advance')}
                         />
                         <span className="ds-radio__dot" />
                         <span className="radio-option__title">推进「{name}」到练习阶段</span>
-                        <span className="ds-tag ds-tag--brand radio-option__tag">推荐</span>
                       </span>
                     </span>
-                    <span className="radio-option__sub">把学习切片归档，进入练习期，腾出学习槽位后新建</span>
+                    <span className="radio-option__sub">把学习切片归档，进入练习期后再新建</span>
                     {confirmExtra ? (
                       <span className="radio-option__sub" style={{ color: 'var(--status-warning-default)' }}>
                         {confirmExtra}
@@ -207,32 +224,15 @@ export function CreateInterceptPage() {
                         <input
                           type="radio"
                           name="intercept-choice"
-                          value="hibernate"
-                          checked={choice === 'hibernate'}
-                          onChange={() => setChoice('hibernate')}
-                        />
-                        <span className="ds-radio__dot" />
-                        <span className="radio-option__title">休眠当前主题后新建</span>
-                      </span>
-                    </span>
-                    <span className="radio-option__sub">暂停「{name}」，留痕可恢复，腾出槽位</span>
-                  </label>
-
-                  <label className="radio-option">
-                    <span className="radio-option__main">
-                      <span className="ds-radio">
-                        <input
-                          type="radio"
-                          name="intercept-choice"
                           value="abandon"
                           checked={choice === 'abandon'}
                           onChange={() => setChoice('abandon')}
                         />
                         <span className="ds-radio__dot" />
-                        <span className="radio-option__title">废弃当前主题后新建</span>
+                        <span className="radio-option__title">废弃「{name}」后新建</span>
                       </span>
                     </span>
-                    <span className="radio-option__sub">归档收尾「{name}」，不再继续，腾出槽位</span>
+                    <span className="radio-option__sub">归档收尾，不再继续，腾出槽位</span>
                   </label>
                 </div>
               </>

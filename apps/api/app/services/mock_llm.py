@@ -150,10 +150,10 @@ def mock_chat_json(
                 "phases": {
                     "learning": {
                         "title": "学习期",
-                        "duration": "10 节 × 2 小时",
+                        "duration": "约 1–2 周",
                         "activities": [
                             {
-                                "title": "写清目标与边界（一页）",
+                                "title": "写清目标与边界",
                                 "description": "用可验证句子写下学完能演示什么",
                                 "activity_type": "learn",
                             },
@@ -163,8 +163,13 @@ def mock_chat_json(
                                 "activity_type": "learn",
                             },
                             {
-                                "title": "跟做一个最小例子",
+                                "title": "跟做最小例子",
                                 "description": "跑通并截图/笔记证明",
+                                "activity_type": "learn",
+                            },
+                            {
+                                "title": "自检三问",
+                                "description": "用阶梯自检题过一遍卡点",
                                 "activity_type": "learn",
                             },
                         ],
@@ -174,12 +179,12 @@ def mock_chat_json(
                         "duration": "约 4 周",
                         "activities": [
                             {
-                                "title": "每日短循环练习",
+                                "title": "每日短循环",
                                 "description": "30 分钟：做→对照→改一处",
                                 "activity_type": "practice",
                             },
                             {
-                                "title": "错题/卡点本",
+                                "title": "错题本",
                                 "description": "记录反复出错的 3 类问题",
                                 "activity_type": "practice",
                             },
@@ -190,7 +195,7 @@ def mock_chat_json(
                         "duration": "长尾",
                         "activities": [
                             {
-                                "title": "真实场景小项目",
+                                "title": "真实小项目",
                                 "description": "选一个贴近工作/生活的任务落地",
                                 "activity_type": "apply",
                             }
@@ -198,11 +203,11 @@ def mock_chat_json(
                     },
                 },
                 "durations": {
-                    "learning": "10 节 × 2 小时",
+                    "learning": "约 1–2 周",
                     "practice": "约 4 周",
                     "application": "长尾",
                 },
-                "phase_minutes": {"learning": 120, "practice": 30, "application": 30},
+                "phase_minutes": {"learning": 30, "practice": 30, "application": 30},
                 "rationale": "先把目标做成可检查产出，再进入短反馈循环，最后才迁移到真实场景。",
                 "daily_minutes": 30,
             },

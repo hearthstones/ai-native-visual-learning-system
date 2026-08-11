@@ -65,7 +65,7 @@ function NavButton({
 }
 
 function ActivityRail({ items }: { items: NavItem[] }) {
-  const [home, themes, review, settings] = items
+  const [home, themes, review] = items
   return (
     <nav className="ds-activityrail" aria-label="主导航">
       <NavButton item={home} btnClass="ds-activityrail__btn" labelClass="ds-activityrail__label" />
@@ -73,7 +73,6 @@ function ActivityRail({ items }: { items: NavItem[] }) {
       <div className="ds-activityrail__divider" />
       <div className="ds-activityrail__spacer" />
       <NavButton item={review} btnClass="ds-activityrail__btn" labelClass="ds-activityrail__label" />
-      <NavButton item={settings} btnClass="ds-activityrail__btn" labelClass="ds-activityrail__label" />
     </nav>
   )
 }
@@ -110,7 +109,7 @@ export function AppShell({
   const settingsActive = pathname.startsWith('/settings')
   const homeActive = pathname === '/' && !themesManageActive && !themeActive
 
-  const navItems: NavItem[] = [
+  const primaryNav: NavItem[] = [
     {
       to: '/',
       end: true,
@@ -136,14 +135,6 @@ export function AppShell({
       icon: 'scroll-text',
       isActive: isReview,
     },
-    {
-      to: '/settings',
-      title: '设置',
-      label: '设置',
-      ariaLabel: '设置',
-      icon: 'settings',
-      isActive: settingsActive,
-    },
   ]
 
   /* 共创 / 拦截：全屏聚焦，不带壳层导航 */
@@ -157,14 +148,14 @@ export function AppShell({
     )
   }
 
-  /* 复盘：桌面无侧栏，手机保留底部 Tab */
+  /* 复盘：桌面无侧栏，手机保留底部 Tab（不含设置，避免与复盘误触） */
   if (isReview) {
     return (
       <div className="app-shell app-shell--bare app-shell--with-tabbar">
         <main className="app-main app-main--bare">
           <Outlet />
         </main>
-        <MobileTabBar items={navItems} />
+        <MobileTabBar items={primaryNav} />
       </div>
     )
   }
@@ -183,16 +174,25 @@ export function AppShell({
         </div>
         <div className="ds-wbtitlebar__right">
           <SlotChip slots={slots} />
+          <NavLink
+            to="/settings"
+            className={`ds-wbtitlebar__settings${settingsActive ? ' is-active' : ''}`}
+            title="设置"
+            aria-label="设置"
+          >
+            <Icon name="settings" size={14} />
+            <span>设置</span>
+          </NavLink>
         </div>
       </header>
 
-      <ActivityRail items={navItems} />
+      <ActivityRail items={primaryNav} />
 
       <main className="app-main" data-scroll-region="primary">
         <Outlet />
       </main>
 
-      <MobileTabBar items={navItems} />
+      <MobileTabBar items={primaryNav} />
     </div>
   )
 }

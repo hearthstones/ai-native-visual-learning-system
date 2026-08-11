@@ -275,7 +275,7 @@ def statusify_activity_title(title: str, *, done: bool = False) -> str:
     return base
 
 
-def _clip_title(text: str, limit: int = 48) -> str:
+def _clip_title(text: str, limit: int = 22) -> str:
     text = text.strip()
     if len(text) <= limit:
         return text

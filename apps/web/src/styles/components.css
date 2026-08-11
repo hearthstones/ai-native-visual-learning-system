@@ -1449,6 +1449,30 @@
       cursor: pointer;
     }
     .ds-wbtitlebar__iconbtn:hover { background: var(--bg-overlay-l2); }
+    .ds-wbtitlebar__settings {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 28px;
+      padding: 0 8px;
+      margin-left: var(--spacer-4);
+      border-radius: var(--radius-6);
+      background: transparent;
+      border: 1px solid var(--border-neutral-l2);
+      color: var(--text-tertiary);
+      font-size: var(--body-xs-font-size);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .ds-wbtitlebar__settings:hover {
+      background: var(--bg-overlay-l2);
+      color: var(--text-default);
+    }
+    .ds-wbtitlebar__settings.is-active {
+      background: var(--bg-overlay-l3);
+      color: var(--text-default);
+      border-color: var(--border-neutral-l1);
+    }
     .ds-wbtitlebar .icon { display: block; }
 
 /* ===== Responsive (shared components) ===== */

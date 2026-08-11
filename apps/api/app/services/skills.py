@@ -51,21 +51,27 @@ STAGE_EXTRA = """
 
 RESOURCES_EXTRA = """
 产品适配（两步共创）：
-1) 首轮：根据主题、目标、当前阶梯，直接推荐一套均衡资料方案，不要先追问用户要几份。
-   - 「约 5 份高杠杆资料」是综合较均衡的默认（信号够、噪音少）；除非上下文强烈需要，否则首轮以约 5 份为主。
+1) 首轮：根据主题、目标、当前阶梯，直接推荐可执行资料方案，不要先追问用户要几份。
+   - 默认 3 份（信号够、噪音少）；除非用户明确要求更多，否则不要堆到 5+。
+   - 主题类型=general（通识）：默认交付「1 本主书 + 本周阅读脚本（AI 加工稿）」形态；
+     how_to_use 必须含可立即执行的步骤/输出物，禁止只丢三本经典并列书单。
+     优先微信读书可读书籍；type 可用 book / script / ai_pack。
+   - 主题类型=tech（技术）：默认交付「AI 学习包」——概念对照卡、常见错误/病例、最短可运行例子；
+     官方文档/The Book 全本配额 ≤1，且角色只能是「索引」写进 how_to_use，禁止当第一天主读物。
    - assistant_message 用 1–2 句说明为何这样配，并邀请用户提意见。
 2) 其后：用户意见优先。例如「想要更多参考」「精简聚焦」「只要微信读书」「再硬核」——严格按最新意见更新 resources / order / target_count / path_7d；指定 N 份就必须恰好 N 份。
 - order 长度必须与 resources 一致。
 - 若用户限定「微信读书」，优先可读书籍，并加 weread_readable 与可选 book_hint。
+- 不确定是否真实存在的书名，必须在 warning 写「待核验」，禁止装作权威出处。
 - live_doc 结构：
   {
     "constraints": ["..."],
-    "target_count": 5,
+    "target_count": 3,
     "rationale": "一句话：为何这份清单适合当前阶梯与目标",
     "resources": [
       {
         "name": "...",
-        "type": "book|course|video|doc|other",
+        "type": "book|course|video|doc|script|ai_pack|other",
         "why": "...",
         "covers": "...",
         "learner_type": "...",
@@ -76,32 +82,33 @@ RESOURCES_EXTRA = """
         "book_hint": ""
       }
     ],
-    "order": [0, 1, 2, 3, 4],
+    "order": [0, 1, 2],
     "path_7d": "..."
   }
 """
 
 PLAN_EXTRA = """
 产品适配（两步共创）：
-1) 首轮：根据主题、目标、阶梯级别、资料清单推荐计划；节奏锚点如下（除非用户另有要求，否则首轮按此均衡方案）：
-   - 学习期：约 10 节 × 每节 2 小时（承接原 Skill「20 小时 / 二八法则」总量；activities 约 10 条，activity_type=learn）
-   - 练习期：约 4 周，每天约 30 分钟（activities 按周密度排，activity_type=practice）
-   - 应用期：长尾，每天约 30 分钟（骨架即可，activity_type=apply）
+1) 首轮：根据主题、目标、阶梯级别、资料清单推荐计划；节奏锚点如下（除非用户另有要求，否则首轮按此）：
+   - 学习期：约 4–6 条可检查活动（不要默认 10 条）；duration 可用「约 1–2 周」或等价短节奏；activity_type=learn
+   - 练习期：约 4 周骨架，activities 最多 4 条（按周密度，不要堆 8 条细项）；每天约 30 分钟；activity_type=practice
+   - 应用期：长尾骨架，activities 最多 3 条；每天约 30 分钟；activity_type=apply
    - assistant_message 说明推荐理由，并邀请用户提意见。
-2) 其后：用户意见优先（更早练习、缩短学期、每天更少时间等）——同步改 durations、phase_minutes、各 phase.duration 与 activities。
-- 产出三阶段 learning / practice / application；保留约 20% 核心。
+2) 其后：用户意见优先（更早练习、缩短学期、每天更少时间等）——必须同步改 daily_minutes、durations、phase_minutes、各 phase.duration，并按新节奏裁剪/重排 activities（数量也要匹配）。
+- 产出三阶段 learning / practice / application；保留约 20% 核心（core_20 5 条左右即可）。
+- activity title 尽量 ≤20 字，可执行；细节放 description。
 - live_doc 结构：
   {
     "goal": "...",
     "core_20": ["..."],
     "rationale": "一句话：为何这套节奏适合当前上下文",
     "durations": {
-      "learning": "10 节 × 2 小时",
+      "learning": "约 1–2 周",
       "practice": "约 4 周",
       "application": "长尾"
     },
     "phase_minutes": {
-      "learning": 120,
+      "learning": 30,
       "practice": 30,
       "application": 30
     },
@@ -109,9 +116,9 @@ PLAN_EXTRA = """
     "phases": {
       "learning": {
         "title": "学习期",
-        "duration": "10 节 × 2 小时",
+        "duration": "约 1–2 周",
         "summary": "...",
-        "activities": [{"title":"...","description":"...","activity_type":"learn","minutes":120}]
+        "activities": [{"title":"...","description":"...","activity_type":"learn","minutes":30}]
       },
       "practice": {
         "title": "练习期",

@@ -1,0 +1,425 @@
+{
+  "date": "2026-08-11",
+  "mode": "live-llm",
+  "base": "http://127.0.0.1:8000/api",
+  "results": [
+    {
+      "theme": {
+        "id": "f9f3e1f7-4bb4-4738-88e7-2a02543f4050",
+        "title": "主题阅读",
+        "theme_type": "general",
+        "goal": "两周内建立可持续的主题阅读方法：能围绕一个主题选书、做分析阅读并写出结构提纲"
+      },
+      "ok": true,
+      "notes": [
+        {
+          "step": "create_theme",
+          "ok": true,
+          "ms": 48,
+          "detail": "主题阅读"
+        },
+        {
+          "step": "cocreate_stage_start",
+          "ok": true,
+          "ms": 9538,
+          "detail": "levels=5"
+        },
+        {
+          "step": "cocreate_stage_confirm",
+          "ok": true,
+          "ms": 12,
+          "detail": "level=2"
+        },
+        {
+          "step": "cocreate_resources_start",
+          "ok": true,
+          "ms": 11857,
+          "detail": "n=3 names=['《如何阅读一本书》', '两周主题阅读行动脚本', '主题阅读AI学习包']"
+        },
+        {
+          "step": "cocreate_resources_message",
+          "ok": true,
+          "ms": 7851,
+          "detail": "n=3 names=['《如何阅读一本书》', '两周主题阅读行动脚本', '主题阅读AI学习包']"
+        },
+        {
+          "step": "cocreate_resources_confirm",
+          "ok": true,
+          "ms": 10,
+          "detail": ""
+        },
+        {
+          "step": "cocreate_plan_start",
+          "ok": true,
+          "ms": 7250,
+          "detail": "daily=30 learning_acts=5"
+        },
+        {
+          "step": "cocreate_plan_message",
+          "ok": true,
+          "ms": 5084,
+          "detail": "daily=40"
+        },
+        {
+          "step": "cocreate_plan_lock",
+          "ok": true,
+          "ms": 27,
+          "detail": "status=active phase=learning"
+        },
+        {
+          "step": "home_after_lock",
+          "ok": true,
+          "ms": 22,
+          "detail": "today=0 queue=5"
+        },
+        {
+          "step": "commit_from_queue",
+          "ok": true,
+          "ms": 16,
+          "detail": "activity=8eeded8e-319b-4011-8ac2-84f3a17416b2"
+        },
+        {
+          "step": "commitments_suggest",
+          "ok": true,
+          "ms": 14,
+          "detail": ""
+        },
+        {
+          "step": "home_after_suggest",
+          "ok": true,
+          "ms": 20,
+          "detail": "today=2"
+        },
+        {
+          "step": "activity_expand",
+          "ok": true,
+          "ms": 2133,
+          "detail": "steps=3"
+        },
+        {
+          "step": "tick_today_task",
+          "ok": true,
+          "ms": 12,
+          "detail": ""
+        },
+        {
+          "step": "plan_document",
+          "ok": true,
+          "ms": 5,
+          "detail": "locked=True"
+        }
+      ],
+      "frictions": [],
+      "resource_names": [
+        "《如何阅读一本书》",
+        "两周主题阅读行动脚本",
+        "主题阅读AI学习包"
+      ],
+      "plan_daily_minutes": 40
+    },
+    {
+      "theme": {
+        "id": "b80696ee-090d-43ec-9954-9774b41255ba",
+        "title": "AI Agent 入门",
+        "theme_type": "tech",
+        "goal": "一周内能讲清 Agent 核心组件（感知/规划/工具/记忆），并搭一个最小可运行 Agent 示例"
+      },
+      "ok": true,
+      "notes": [
+        {
+          "step": "advance_prev_learning",
+          "ok": true,
+          "ms": 31,
+          "detail": "from=主题阅读"
+        },
+        {
+          "step": "create_theme",
+          "ok": true,
+          "ms": 11,
+          "detail": "AI Agent 入门"
+        },
+        {
+          "step": "cocreate_stage_start",
+          "ok": true,
+          "ms": 8684,
+          "detail": "levels=5"
+        },
+        {
+          "step": "cocreate_stage_confirm",
+          "ok": true,
+          "ms": 10,
+          "detail": "level=2"
+        },
+        {
+          "step": "cocreate_resources_start",
+          "ok": true,
+          "ms": 11234,
+          "detail": "n=3 names=['AI Agent 四大组件概念对照卡', 'Agent 常见错误病例集', 'LangChain 最短可运行 Agent 示例']"
+        },
+        {
+          "step": "cocreate_resources_message",
+          "ok": true,
+          "ms": 7541,
+          "detail": "n=3 names=['AI Agent 四大组件概念对照卡', 'Agent 常见错误病例集（3 个典型失败病例）', 'LangChain 最短可运行 Agent 示例']"
+        },
+        {
+          "step": "cocreate_resources_confirm",
+          "ok": true,
+          "ms": 10,
+          "detail": ""
+        },
+        {
+          "step": "cocreate_plan_start",
+          "ok": true,
+          "ms": 7694,
+          "detail": "daily=30 learning_acts=6"
+        },
+        {
+          "step": "cocreate_plan_message",
+          "ok": true,
+          "ms": 5612,
+          "detail": "daily=45"
+        },
+        {
+          "step": "cocreate_plan_lock",
+          "ok": true,
+          "ms": 24,
+          "detail": "status=active phase=learning"
+        },
+        {
+          "step": "home_after_lock",
+          "ok": true,
+          "ms": 20,
+          "detail": "today=0 queue=10"
+        },
+        {
+          "step": "commit_from_queue",
+          "ok": true,
+          "ms": 10,
+          "detail": "activity=8e602a71-d1ca-49c6-a070-4ce6d571e799"
+        },
+        {
+          "step": "commitments_suggest",
+          "ok": true,
+          "ms": 47,
+          "detail": ""
+        },
+        {
+          "step": "home_after_suggest",
+          "ok": true,
+          "ms": 24,
+          "detail": "today=4"
+        },
+        {
+          "step": "activity_expand",
+          "ok": true,
+          "ms": 2181,
+          "detail": "steps=4"
+        },
+        {
+          "step": "tick_today_task",
+          "ok": true,
+          "ms": 8,
+          "detail": ""
+        },
+        {
+          "step": "plan_document",
+          "ok": true,
+          "ms": 4,
+          "detail": "locked=True"
+        }
+      ],
+      "frictions": [],
+      "resource_names": [
+        "AI Agent 四大组件概念对照卡",
+        "Agent 常见错误病例集（3 个典型失败病例）",
+        "LangChain 最短可运行 Agent 示例"
+      ],
+      "plan_daily_minutes": 45
+    },
+    {
+      "theme": {
+        "id": "2dcbda03-17e2-4640-8434-cb214d004a5e",
+        "title": "第六轮康波周期分析",
+        "theme_type": "general",
+        "goal": "两周内能用康波框架解释当前长波位置，并写出一份可分享的周期分析提纲"
+      },
+      "ok": false,
+      "notes": [
+        {
+          "step": "advance_prev_learning",
+          "ok": true,
+          "ms": 15,
+          "detail": "from=AI Agent 入门"
+        },
+        {
+          "step": "create_theme",
+          "ok": true,
+          "ms": 7,
+          "detail": "第六轮康波周期分析"
+        },
+        {
+          "step": "cocreate_stage_start",
+          "ok": true,
+          "ms": 9941,
+          "detail": "levels=5"
+        },
+        {
+          "step": "cocreate_stage_confirm",
+          "ok": true,
+          "ms": 13,
+          "detail": "level=2"
+        },
+        {
+          "step": "cocreate_resources_start",
+          "ok": true,
+          "ms": 12089,
+          "detail": "n=3 names=['《涛动周期论》', '第六轮康波候选技术阅读脚本', '康波分析提纲生成脚本']"
+        },
+        {
+          "step": "cocreate_resources_message",
+          "ok": true,
+          "ms": 9737,
+          "detail": "n=3 names=['《涛动周期论》', '第六轮康波候选技术阅读脚本', '康波分析提纲生成脚本']"
+        },
+        {
+          "step": "cocreate_resources_confirm",
+          "ok": true,
+          "ms": 8,
+          "detail": ""
+        },
+        {
+          "step": "cocreate_plan_start",
+          "ok": true,
+          "ms": 9615,
+          "detail": "daily=30 learning_acts=5"
+        },
+        {
+          "step": "cocreate_plan_message",
+          "ok": false,
+          "ms": 1670,
+          "detail": "daily=None"
+        },
+        {
+          "step": "cocreate_plan_lock",
+          "ok": true,
+          "ms": 25,
+          "detail": "status=active phase=learning"
+        },
+        {
+          "step": "home_after_lock",
+          "ok": true,
+          "ms": 32,
+          "detail": "today=2 queue=11"
+        },
+        {
+          "step": "commitments_suggest",
+          "ok": true,
+          "ms": 35,
+          "detail": ""
+        },
+        {
+          "step": "home_after_suggest",
+          "ok": true,
+          "ms": 40,
+          "detail": "today=6"
+        },
+        {
+          "step": "activity_expand",
+          "ok": true,
+          "ms": 2118,
+          "detail": "steps=3"
+        },
+        {
+          "step": "tick_today_task",
+          "ok": true,
+          "ms": 7,
+          "detail": ""
+        },
+        {
+          "step": "plan_document",
+          "ok": true,
+          "ms": 5,
+          "detail": "locked=True"
+        }
+      ],
+      "frictions": [
+        "cocreate_plan_message 失败 HTTP 502: daily=None"
+      ],
+      "resource_names": [
+        "《涛动周期论》",
+        "第六轮康波候选技术阅读脚本",
+        "康波分析提纲生成脚本"
+      ],
+      "plan_daily_minutes": null
+    }
+  ],
+  "weekly_review": {
+    "ok": true,
+    "ms": 25,
+    "body": {
+      "id": "b6cd05fc-25de-44b9-9e51-d4975d966354",
+      "week_start": "2026-08-10",
+      "summary": "本周完成率仅16.7%，三个主题均处于练习/学习阶段，仅完成康波周期分析中的阅读任务，主题阅读与AI Agent入门均未启动执行，整体进度滞后。",
+      "wins": [
+        "完成《涛动周期论》第1章阅读并标记四阶段",
+        "三个主题均完成共创锁定与一次今日勾选"
+      ],
+      "issues": [
+        "主题阅读与AI Agent入门主题下所有任务均未完成，执行率低",
+        "整体完成率仅16.7%，远低于预期",
+        "康波周期分析中历史数据制作任务未完成，影响后续分析"
+      ],
+      "adjustments": [
+        "下周优先完成主题阅读的选书与提纲任务，并设定具体完成时间",
+        "将AI Agent入门任务拆分为每日小步骤，确保至少完成一项",
+        "康波周期分析需补做历史数据表格，并明确数据来源与格式"
+      ]
+    }
+  },
+  "final_home": {
+    "themes": [
+      {
+        "id": "2dcbda03-17e2-4640-8434-cb214d004a5e",
+        "title": "第六轮康波周期分析",
+        "theme_type": "general",
+        "phase": "learning",
+        "status": "active",
+        "is_focus": true
+      },
+      {
+        "id": "b80696ee-090d-43ec-9954-9774b41255ba",
+        "title": "AI Agent 入门",
+        "theme_type": "tech",
+        "phase": "practice",
+        "status": "active",
+        "is_focus": true
+      },
+      {
+        "id": "f9f3e1f7-4bb4-4738-88e7-2a02543f4050",
+        "title": "主题阅读",
+        "theme_type": "general",
+        "phase": "practice",
+        "status": "active",
+        "is_focus": true
+      }
+    ],
+    "slots": {
+      "learning": {
+        "used": 1,
+        "max": 1
+      },
+      "practice": {
+        "used": 2,
+        "max": 3
+      },
+      "application": {
+        "used": 0,
+        "max": 5
+      }
+    },
+    "today_tasks": 6,
+    "queue": 7,
+    "focus_count": 3
+  }
+}

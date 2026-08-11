@@ -238,9 +238,66 @@ export function matchThemeResource(
   return loose || null
 }
 
+const NON_BOOK_TYPES = new Set([
+  'ai_pack',
+  'script',
+  'course',
+  'video',
+  'doc',
+  'docs',
+  'tool',
+  'other',
+])
+
+const NON_BOOK_NAME_RE = /学习包|脚本|对照卡|病例|示例|提纲|清单/
+
+export function normalizeBookTitle(text: string): string {
+  return String(text || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[《》「」『』【】[\]()（）\s·・.\-_—:：,，、]/g, '')
+}
+
+export function titlesCompatible(resourceName: string, bookTitle: string): boolean {
+  const a = normalizeBookTitle(resourceName)
+  const b = normalizeBookTitle(bookTitle)
+  if (!a || !b) return false
+  if (a === b) return true
+  if (Math.min(a.length, b.length) >= 4 && (a.includes(b) || b.includes(a))) return true
+  return false
+}
+
+/** Real books only — learning packs / scripts must not open WeRead deep links. */
+export function isBookLikeResource(resource: ThemeResource | null | undefined): boolean {
+  if (!resource?.name) return false
+  const type = String(resource.type || '')
+    .trim()
+    .toLowerCase()
+  const name = resource.name
+  if (NON_BOOK_TYPES.has(type)) return false
+  if (NON_BOOK_NAME_RE.test(name)) return false
+  if (type === 'book' || type === 'article') return true
+  return /《.+》/.test(name)
+}
+
 export function resourceDeepLink(resource: ThemeResource | null | undefined): string | null {
+  if (!isBookLikeResource(resource)) return null
+  const boundTitle = resource?.weread?.title
+  if (boundTitle && !titlesCompatible(resource!.name, boundTitle)) return null
   const link = resource?.weread?.deepLink
   return typeof link === 'string' && link.trim() ? link.trim() : null
+}
+
+export function pickMatchingWereadBook<T extends { title?: string | null; deepLink?: string | null }>(
+  resourceName: string,
+  books: T[],
+): T | null {
+  for (const book of books) {
+    const title = typeof book.title === 'string' ? book.title : ''
+    const link = typeof book.deepLink === 'string' ? book.deepLink : ''
+    if (title && link && titlesCompatible(resourceName, title)) return book
+  }
+  return null
 }
 
 export function resourcesPathHint(theme: Theme | null | undefined): string {

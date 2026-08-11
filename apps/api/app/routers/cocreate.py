@@ -20,7 +20,7 @@ from app.services import domain as domain_svc
 from app.services import cocreate_post as post_svc
 from app.services.llm import chat_json
 from app.services.skills import system_prompt_for
-from app.services.weread import enrich_resources_with_weread
+from app.services.weread import enrich_resources_with_weread, sanitize_weread_bindings
 
 router = APIRouter(prefix="/themes/{theme_id}/cocreate", tags=["cocreate"])
 
@@ -424,12 +424,18 @@ def _apply_plan_prefs(live_doc: dict[str, Any], prefs: PlanPrefs) -> dict[str, A
 
 def _maybe_enrich_weread(settings: Settings, live_doc: dict[str, Any]) -> dict[str, Any]:
     resources = live_doc.get("resources")
-    if not isinstance(resources, list) or not settings.weread_api_key:
-        return live_doc
-    try:
-        enriched = enrich_resources_with_weread(settings, resources)
-    except Exception:
+    if not isinstance(resources, list):
         return live_doc
     out = dict(live_doc)
-    out["resources"] = enriched
+    # Always drop non-book / mismatched bindings, even when WeRead is off.
+    cleaned = sanitize_weread_bindings(resources)
+    if not settings.weread_api_key:
+        out["resources"] = cleaned
+        return out
+    try:
+        enriched = enrich_resources_with_weread(settings, cleaned)
+    except Exception:
+        out["resources"] = cleaned
+        return out
+    out["resources"] = sanitize_weread_bindings(enriched)
     return out

@@ -10,6 +10,8 @@ import {
   getSliceItems,
   matchThemeResource,
   phaseZh,
+  isBookLikeResource,
+  pickMatchingWereadBook,
   resourceDeepLink,
   workNoteKey,
 } from '../lib/themeDoc'
@@ -134,20 +136,25 @@ export function ThemeBoardWorkspace() {
 
   async function openResource(ref?: { index?: number | null; name?: string } | null) {
     const matched = matchThemeResource(theme, ref || null)
+    // 学习包 / 脚本：进资料页看用法，不要去微信读书搜书
+    if (matched && !isBookLikeResource(matched)) {
+      nav(`/themes/${themeId}/document/resources`)
+      return
+    }
     const direct = resourceDeepLink(matched)
     if (direct) {
       window.open(direct, '_blank', 'noopener,noreferrer')
       return
     }
-    const query = (matched?.weread?.title || matched?.name || ref?.name || '').replace(/[《》]/g, '').trim()
-    if (!query) {
+    const query = (matched?.name || ref?.name || '').replace(/[《》]/g, '').trim()
+    if (!query || (matched && !isBookLikeResource(matched))) {
       nav(`/themes/${themeId}/document/resources`)
       return
     }
     setOpeningResource(true)
     try {
       const { books } = await api.searchWeread(query)
-      const hit = books.find((b) => typeof b.deepLink === 'string' && b.deepLink)
+      const hit = pickMatchingWereadBook(matched?.name || ref?.name || query, books)
       if (hit && typeof hit.deepLink === 'string') {
         window.open(hit.deepLink, '_blank', 'noopener,noreferrer')
       } else {

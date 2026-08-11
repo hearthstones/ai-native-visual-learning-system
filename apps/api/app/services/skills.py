@@ -62,6 +62,10 @@ RESOURCES_EXTRA = """
 2) 其后：用户意见优先。例如「想要更多参考」「精简聚焦」「只要微信读书」「再硬核」——严格按最新意见更新 resources / order / target_count / path_7d；指定 N 份就必须恰好 N 份。
 - order 长度必须与 resources 一致。
 - 若用户限定「微信读书」，优先可读书籍，并加 weread_readable 与可选 book_hint。
+- 书名必须用可检索的正式书名（与封面/微信读书标题一致），禁止用口耳相传的俗称占位；
+  找不到同名书时：不要硬挂「看起来相关」的另一本书，warning 写「待核验」，或改推你有把握的正式书名。
+- type=script / ai_pack 是站内加工稿（阅读脚本、对照卡、病例、示例），不是书；
+  禁止给它们填 weread_readable=true，禁止把学习包/脚本伪装成可打开的书籍链接。
 - 不确定是否真实存在的书名，必须在 warning 写「待核验」，禁止装作权威出处。
 - live_doc 结构：
   {

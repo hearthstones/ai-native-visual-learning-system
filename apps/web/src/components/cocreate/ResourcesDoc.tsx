@@ -1,4 +1,9 @@
 import { Icon } from '../Icon'
+import {
+  isBookLikeResource,
+  resourceDeepLink,
+  type ThemeResource,
+} from '../../lib/themeDoc'
 
 /** 过滤共创里误写入的主题元数据约束 */
 function displayConstraints(raw: string[]): string[] {
@@ -15,8 +20,27 @@ function typeZh(type: unknown): string {
     tool: '工具',
     docs: '文档',
     doc: '文档',
+    ai_pack: '学习包',
+    script: '阅读脚本',
   }
   return map[t.toLowerCase()] || t
+}
+
+function asThemeResource(r: Record<string, unknown>): ThemeResource {
+  const weread =
+    r.weread && typeof r.weread === 'object'
+      ? (r.weread as ThemeResource['weread'])
+      : null
+  return {
+    name: String(r.name || ''),
+    type: r.type != null ? String(r.type) : undefined,
+    how_to_use: r.how_to_use != null ? String(r.how_to_use) : undefined,
+    covers: r.covers != null ? String(r.covers) : undefined,
+    why: r.why != null ? String(r.why) : undefined,
+    weread_readable: Boolean(r.weread_readable),
+    book_hint: r.book_hint != null ? String(r.book_hint) : undefined,
+    weread,
+  }
 }
 
 function difficultyZh(value: unknown): string {
@@ -98,7 +122,11 @@ export function ResourcesDoc({
           </div>
         )}
         <div className="resources">
-          {resources.map((r, i) => (
+          {resources.map((r, i) => {
+            const resource = asThemeResource(r)
+            const openHref = resourceDeepLink(resource)
+            const bookLike = isBookLikeResource(resource)
+            return (
             <div key={i} className="resource-card">
               <div className="resource-card__head">
                 <span className="resource-card__icon">
@@ -107,17 +135,19 @@ export function ResourcesDoc({
                 <div>
                   <div className="resource-card__title">{String(r.name || `资源 ${i + 1}`)}</div>
                   <div className="resource-card__author">{typeZh(r.type)}</div>
-                  {typeof (r.weread as { deepLink?: string } | undefined)?.deepLink === 'string' ? (
+                  {openHref ? (
                     <a
                       className="resource-card__open"
-                      href={String((r.weread as { deepLink: string }).deepLink)}
+                      href={openHref}
                       target="_blank"
                       rel="noreferrer"
                     >
                       打开阅读
                     </a>
-                  ) : r.weread_readable ? (
+                  ) : bookLike && r.weread_readable ? (
                     <span className="resource-card__open resource-card__open--muted">微信读书可读</span>
+                  ) : !bookLike ? (
+                    <span className="resource-card__open resource-card__open--muted">站内用法见下方</span>
                   ) : null}
                 </div>
                 <div className="resource-card__tags">
@@ -126,7 +156,7 @@ export function ResourcesDoc({
                   ) : (
                     <span className="ds-tag">补充</span>
                   )}
-                  {r.weread_readable ? <span className="ds-tag">微信读书可读</span> : null}
+                  {openHref ? <span className="ds-tag">微信读书可读</span> : null}
                   {r.difficulty ? <span className="ds-tag">{difficultyZh(r.difficulty)}</span> : null}
                 </div>
               </div>
@@ -169,7 +199,8 @@ export function ResourcesDoc({
                 ) : null}
               </div>
             </div>
-          ))}
+            )
+          })}
           {!resources.length ? <p className="text-tertiary">等待资料推荐…</p> : null}
         </div>
       </section>

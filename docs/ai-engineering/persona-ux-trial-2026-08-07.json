@@ -1,0 +1,449 @@
+{
+  "date": "2026-08-07",
+  "mode": "live-llm",
+  "base": "http://127.0.0.1:8000/api",
+  "results": [
+    {
+      "persona": {
+        "id": "p1-general-reader",
+        "name": "林晓（通识读者）",
+        "archetype": "周末自学、偏好微信读书、讨厌空泛书单",
+        "theme_title": "用分析阅读吃透非虚构",
+        "theme_type": "general"
+      },
+      "theme_id": "25fc3ae9-b693-4c24-bbba-18642214140d",
+      "ok": true,
+      "notes": [
+        {
+          "step": "home_empty",
+          "ok": true,
+          "ms": 28,
+          "detail": "themes=0",
+          "friction": []
+        },
+        {
+          "step": "create_theme",
+          "ok": true,
+          "ms": 14,
+          "detail": "用分析阅读吃透非虚构",
+          "friction": []
+        },
+        {
+          "step": "cocreate_stage_start",
+          "ok": true,
+          "ms": 13981,
+          "detail": "levels=5 msg=好的，我来为你搭建「用分析阅读吃透非虚构」的 5 级学习阶梯。每一级都配好了里程碑、练习和自检题，你可以先看看自己现在站",
+          "friction": []
+        },
+        {
+          "step": "cocreate_stage_confirm",
+          "ok": true,
+          "ms": 8,
+          "detail": "level=2",
+          "friction": []
+        },
+        {
+          "step": "cocreate_resources_start",
+          "ok": true,
+          "ms": 13883,
+          "detail": "n=3 names=['如何阅读一本书', '学会提问：批判性思维指南', '非虚构写作课：如何写出好故事']",
+          "friction": []
+        },
+        {
+          "step": "cocreate_resources_message",
+          "ok": true,
+          "ms": 10073,
+          "detail": "n=3 names=['如何阅读一本书', '学会提问：批判性思维指南', '非虚构写作课：如何写出好故事']",
+          "friction": []
+        },
+        {
+          "step": "cocreate_resources_confirm",
+          "ok": true,
+          "ms": 5,
+          "detail": "",
+          "friction": []
+        },
+        {
+          "step": "cocreate_plan_start",
+          "ok": true,
+          "ms": 9977,
+          "detail": "daily=30 learning_acts=10 goal=两周内能对任意非虚构章节写出结构提纲与三条质疑",
+          "friction": []
+        },
+        {
+          "step": "cocreate_plan_message",
+          "ok": true,
+          "ms": 5996,
+          "detail": "daily=30",
+          "friction": []
+        },
+        {
+          "step": "cocreate_plan_lock",
+          "ok": true,
+          "ms": 23,
+          "detail": "status=active",
+          "friction": []
+        },
+        {
+          "step": "home_after_lock",
+          "ok": true,
+          "ms": 6,
+          "detail": "today=0 queue=5 focus=1",
+          "friction": []
+        },
+        {
+          "step": "commit_from_queue",
+          "ok": true,
+          "ms": 8,
+          "detail": "activity=1f7d75b0-f684-4a36-a96b-2dccf9c23a51",
+          "friction": []
+        },
+        {
+          "step": "commitments_suggest",
+          "ok": true,
+          "ms": 4,
+          "detail": "",
+          "friction": []
+        },
+        {
+          "step": "theme_board",
+          "ok": true,
+          "ms": 1,
+          "detail": "phase=learning",
+          "friction": []
+        },
+        {
+          "step": "activity_expand",
+          "ok": false,
+          "ms": 2,
+          "detail": "steps=0",
+          "friction": [
+            "activity_expand 失败 HTTP 404: steps=0"
+          ]
+        },
+        {
+          "step": "tick_today_task",
+          "ok": true,
+          "ms": 5,
+          "detail": "",
+          "friction": []
+        },
+        {
+          "step": "weekly_review",
+          "ok": true,
+          "ms": 2529,
+          "detail": "summary=本周完成1/2任务，执行率50%。已开始学习分析阅读规则并用书中例子练习，但尚未完成整篇非虚构章节的实战应用。当前处于学习阶段，概念初步接触，尚未内化。",
+          "friction": []
+        },
+        {
+          "step": "plan_document",
+          "ok": true,
+          "ms": 3,
+          "detail": "locked=True",
+          "friction": []
+        }
+      ],
+      "frictions": [],
+      "resource_names": [
+        "如何阅读一本书",
+        "学会提问：批判性思维指南",
+        "非虚构写作课：如何写出好故事"
+      ],
+      "plan_daily_minutes": 30,
+      "notes_annotation": "activity_expand 404 was trial-script wrong path (/themes/{id}/activities/...); product path /themes/activities/{id}/expand works (verified live)."
+    },
+    {
+      "persona": {
+        "id": "p2-tech-rust",
+        "name": "周凯（技术工程师）",
+        "archetype": "有项目压力、讨厌官方文档堆砌、要 AI 加工稿",
+        "theme_title": "Rust 所有权与借用一次讲清",
+        "theme_type": "tech"
+      },
+      "theme_id": "74d977f1-7a4b-4fec-b43c-96412304ed58",
+      "ok": true,
+      "notes": [
+        {
+          "step": "home_empty",
+          "ok": true,
+          "ms": 35,
+          "detail": "themes=0",
+          "friction": []
+        },
+        {
+          "step": "create_theme",
+          "ok": true,
+          "ms": 20,
+          "detail": "Rust 所有权与借用一次讲清",
+          "friction": []
+        },
+        {
+          "step": "cocreate_stage_start",
+          "ok": true,
+          "ms": 11090,
+          "detail": "levels=5 msg=好的，我为你把「Rust 所有权与借用」拆成了 5 级学习阶梯，从零基础到能独立改错。每一级都配了里程碑、练习和自检题，",
+          "friction": []
+        },
+        {
+          "step": "cocreate_stage_confirm",
+          "ok": true,
+          "ms": 6,
+          "detail": "level=2",
+          "friction": []
+        },
+        {
+          "step": "cocreate_resources_start",
+          "ok": true,
+          "ms": 12976,
+          "detail": "n=3 names=['《Rust 程序设计》（第2版）第4章', 'Rust Book 官方教程（第4章）', 'Rustlings 练习（所有权相关）']",
+          "friction": []
+        },
+        {
+          "step": "cocreate_resources_message",
+          "ok": true,
+          "ms": 12271,
+          "detail": "n=3 names=['Rust 所有权与借用概念对照卡（自制/在线）', 'Rust 编译错误病例集（E0382、E0502、E0597）', 'Rust 官方文档（仅作索引）']",
+          "friction": []
+        },
+        {
+          "step": "cocreate_resources_confirm",
+          "ok": true,
+          "ms": 6,
+          "detail": "",
+          "friction": []
+        },
+        {
+          "step": "cocreate_plan_start",
+          "ok": true,
+          "ms": 11411,
+          "detail": "daily=30 learning_acts=10 goal=一周内能独立解释并改对 3 个常见所有权编译错误",
+          "friction": []
+        },
+        {
+          "step": "cocreate_plan_message",
+          "ok": true,
+          "ms": 7684,
+          "detail": "daily=30",
+          "friction": []
+        },
+        {
+          "step": "cocreate_plan_lock",
+          "ok": true,
+          "ms": 23,
+          "detail": "status=active",
+          "friction": []
+        },
+        {
+          "step": "home_after_lock",
+          "ok": true,
+          "ms": 6,
+          "detail": "today=0 queue=10 focus=1",
+          "friction": []
+        },
+        {
+          "step": "commit_from_queue",
+          "ok": true,
+          "ms": 8,
+          "detail": "activity=608a7c24-227b-49cb-88c1-10fe40043e86",
+          "friction": []
+        },
+        {
+          "step": "commitments_suggest",
+          "ok": true,
+          "ms": 6,
+          "detail": "",
+          "friction": []
+        },
+        {
+          "step": "theme_board",
+          "ok": true,
+          "ms": 1,
+          "detail": "phase=learning",
+          "friction": []
+        },
+        {
+          "step": "activity_expand",
+          "ok": true,
+          "ms": 2566,
+          "detail": "steps=4 title=理解所有权规则",
+          "friction": []
+        },
+        {
+          "step": "tick_today_task",
+          "ok": true,
+          "ms": 8,
+          "detail": "",
+          "friction": []
+        },
+        {
+          "step": "weekly_review",
+          "ok": true,
+          "ms": 3077,
+          "detail": "summary=本周完成了1/2任务，执行率50%。已阅读所有权三规则对照卡，并跟做了最小例子，但尚未完成移动语义与Copy trait区别的掌握。概念理解处于初步阶段（自评2",
+          "friction": []
+        },
+        {
+          "step": "plan_document",
+          "ok": true,
+          "ms": 3,
+          "detail": "locked=True",
+          "friction": []
+        }
+      ],
+      "frictions": [],
+      "resource_names": [
+        "《Rust 程序设计》（第2版）第4章",
+        "Rust Book 官方教程（第4章）",
+        "Rustlings 练习（所有权相关）"
+      ],
+      "plan_daily_minutes": 30
+    },
+    {
+      "persona": {
+        "id": "p3-busy-pm",
+        "name": "陈敏（忙碌产品）",
+        "archetype": "碎片时间、想多主题并行、依赖今日看板",
+        "theme_title": "AI 产品评测方法论",
+        "theme_type": "general"
+      },
+      "theme_id": "4e71ff4f-948f-45ef-b716-e77e30b89b41",
+      "ok": true,
+      "notes": [
+        {
+          "step": "home_empty",
+          "ok": true,
+          "ms": 35,
+          "detail": "themes=0",
+          "friction": []
+        },
+        {
+          "step": "create_theme",
+          "ok": true,
+          "ms": 15,
+          "detail": "AI 产品评测方法论",
+          "friction": []
+        },
+        {
+          "step": "cocreate_stage_start",
+          "ok": true,
+          "ms": 9717,
+          "detail": "levels=5 msg=好的，我已经为「AI 产品评测方法论」生成了 5 级学习阶梯初稿。你可以先浏览每一级的内容，然后告诉我你目前大概处于哪一",
+          "friction": []
+        },
+        {
+          "step": "cocreate_stage_confirm",
+          "ok": true,
+          "ms": 7,
+          "detail": "level=3",
+          "friction": []
+        },
+        {
+          "step": "cocreate_resources_start",
+          "ok": true,
+          "ms": 11855,
+          "detail": "n=3 names=['AI产品经理手册', 'AI产品评测实战指南', 'AI产品评测：从入门到精通']",
+          "friction": []
+        },
+        {
+          "step": "cocreate_resources_message",
+          "ok": true,
+          "ms": 9392,
+          "detail": "n=3 names=['AI产品经理手册', 'AI产品评测实战指南', 'AI产品评测：从入门到精通']",
+          "friction": []
+        },
+        {
+          "step": "cocreate_resources_confirm",
+          "ok": true,
+          "ms": 6,
+          "detail": "",
+          "friction": []
+        },
+        {
+          "step": "cocreate_plan_start",
+          "ok": true,
+          "ms": 11516,
+          "detail": "daily=30 learning_acts=10 goal=建立可复用的 AI 功能评测清单，两周内评完一个竞品模块",
+          "friction": []
+        },
+        {
+          "step": "cocreate_plan_message",
+          "ok": true,
+          "ms": 7667,
+          "detail": "daily=20",
+          "friction": []
+        },
+        {
+          "step": "cocreate_plan_lock",
+          "ok": true,
+          "ms": 19,
+          "detail": "status=active",
+          "friction": []
+        },
+        {
+          "step": "home_after_lock",
+          "ok": true,
+          "ms": 6,
+          "detail": "today=0 queue=10 focus=1",
+          "friction": []
+        },
+        {
+          "step": "commit_from_queue",
+          "ok": true,
+          "ms": 7,
+          "detail": "activity=5f747ccc-c52a-489b-969f-d90e6203bd47",
+          "friction": []
+        },
+        {
+          "step": "commitments_suggest",
+          "ok": true,
+          "ms": 6,
+          "detail": "",
+          "friction": []
+        },
+        {
+          "step": "theme_board",
+          "ok": true,
+          "ms": 1,
+          "detail": "phase=learning",
+          "friction": []
+        },
+        {
+          "step": "activity_expand",
+          "ok": true,
+          "ms": 2564,
+          "detail": "steps=3 title=明确评测目标",
+          "friction": []
+        },
+        {
+          "step": "tick_today_task",
+          "ok": true,
+          "ms": 6,
+          "detail": "",
+          "friction": []
+        },
+        {
+          "step": "weekly_review",
+          "ok": true,
+          "ms": 3363,
+          "detail": "summary=本周完成1/2任务，执行率50%。已启动AI产品评测方法论主题，阅读了评测框架章节，但尚未学习功能、性能、体验、价值等维度的具体含义。当前掌握度评分为2（满分5",
+          "friction": []
+        },
+        {
+          "step": "plan_document",
+          "ok": true,
+          "ms": 3,
+          "detail": "locked=True",
+          "friction": []
+        }
+      ],
+      "frictions": [],
+      "resource_names": [
+        "AI产品经理手册",
+        "AI产品评测实战指南",
+        "AI产品评测：从入门到精通"
+      ],
+      "plan_daily_minutes": 20
+    }
+  ],
+  "report": "docs/ai-engineering/2026-08-07-persona-ux-trial.md"
+}

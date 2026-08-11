@@ -210,7 +210,7 @@ export function HomePage() {
           </div>
           <div className="home-empty__subtitle">
             {drafts.length > 0
-              ? '继续共创，或去「我的主题」管理草稿与休眠主题。'
+              ? '可以继续上次共创，也可以新建另一个主题（学习槽满时会先帮你腾位）。'
               : 'AI 教练帮你共创学习阶梯、筛选高杠杆资料、制定学练用三阶段计划。每天约 30 分钟。'}
           </div>
         </div>
@@ -221,7 +221,11 @@ export function HomePage() {
                 <Icon name="arrow-right" size={14} className="icon" />
                 <span>{draftResumeLabel(drafts[0])} · {drafts[0].title}</span>
               </Link>
-              <Link className="ds-btn ds-btn--secondary" to="/themes?tab=draft">
+              <button className="ds-btn ds-btn--secondary ds-btn--lg" type="button" onClick={goCreate}>
+                <Icon name="plus" size={14} className="icon" />
+                <span>新建主题</span>
+              </button>
+              <Link className="ds-btn ds-btn--tertiary" to="/themes?tab=draft">
                 管理全部主题
               </Link>
             </>
@@ -288,7 +292,7 @@ export function HomePage() {
           {data.today_tasks.length === 0 && (
             <div className="home-empty-commit">
               <p className="text-tertiary" style={{ fontSize: 12, margin: 0 }}>
-                今天还没有承诺。从下方队列选几条加入，或一键按建议填入。
+                今天还没有承诺。从下方队列选几条加入，或一键填入推荐的 1–2 条。
               </p>
               {(data.queue?.length ?? 0) > 0 ? (
                 <button
@@ -297,7 +301,7 @@ export function HomePage() {
                   disabled={busyAction}
                   onClick={() => void suggestFill()}
                 >
-                  按建议填入今天
+                  填入推荐的今日项
                 </button>
               ) : null}
             </div>
@@ -377,7 +381,7 @@ export function HomePage() {
               className="home-section__link"
               onClick={() => setQueueExpanded((v) => !v)}
             >
-              {queueExpanded ? '收起' : `展开（${data.queue?.length ?? 0} 条）`}
+              {queueExpanded ? '收起' : `共 ${data.queue?.length ?? 0} 条 · 展开`}
             </button>
           ) : null}
         </div>
@@ -462,7 +466,7 @@ export function HomePage() {
                         disabled={busyAction}
                         onClick={() => void suggestFill(theme.id)}
                       >
-                        建议填入
+                        填入推荐
                       </button>
                     ) : null}
                     <Link className="theme-card__enter" to={`/themes/${theme.id}`}>

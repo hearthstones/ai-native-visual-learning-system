@@ -443,7 +443,12 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                   <Icon name="sparkles" size={16} className="icon" />
                 </div>
                 <div className="msg__body">
-                  <div className="msg__bubble">AI 教练思考中…</div>
+                  <div className="msg__bubble">
+                    AI 教练生成中 · 约 15 秒
+                    <div className="text-tertiary" style={{ fontSize: 12, marginTop: 6 }}>
+                      正在按你的意见更新右侧文档，请稍候…
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : null}
@@ -455,10 +460,17 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                 <div className="msg__body">
                   <div className="msg__bubble">
                     {kind === 'resources'
-                      ? '正在根据主题、目标与阶梯推荐资料…'
+                      ? '正在生成资料方案 · 约 15 秒'
                       : kind === 'plan'
-                        ? '正在根据主题、阶梯与资料推荐学习节奏…'
-                        : 'AI 正在生成初稿…'}
+                        ? '正在生成学练用计划 · 约 15 秒'
+                        : '正在生成学习阶梯 · 约 15 秒'}
+                    <div className="text-tertiary" style={{ fontSize: 12, marginTop: 6 }}>
+                      {kind === 'resources'
+                        ? '按主题类型策展高杠杆资料（技术偏学习包，通识偏阅读脚本）'
+                        : kind === 'plan'
+                          ? '默认每天约 30 分钟，学习期活动会控制在 4–6 条'
+                          : 'AI 教练正在搭建 5 级阶梯初稿，不会卡住'}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -5,7 +5,7 @@ import type { PlanPrefs } from './api'
  * 请与后端 `app/plan_defaults.py` / `schemas.PlanPrefs` 保持一致。
  */
 export const DEFAULT_PLAN_PREFS: PlanPrefs = {
-  learning_duration: '10 节 × 2 小时',
+  learning_duration: '约 1–2 周',
   practice_duration: '约 4 周',
   application_duration: '长尾',
   daily_minutes: 30,

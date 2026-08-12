@@ -191,6 +191,119 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>
 }
 
+export type CocreateStreamHandlers = {
+  onStatus?: (data: { phase?: string; kind?: string }) => void
+  onDelta?: (text: string) => void
+  onLiveDoc?: (doc: Record<string, unknown>) => void
+  onSession?: (session: CocreateSession) => void
+}
+
+function parseSseBlock(block: string): { event: string; data: string } | null {
+  const lines = block.split(/\r?\n/)
+  let event = 'message'
+  const dataLines: string[] = []
+  for (const line of lines) {
+    if (!line || line.startsWith(':')) continue
+    if (line.startsWith('event:')) {
+      event = line.slice(6).trim()
+      continue
+    }
+    if (line.startsWith('data:')) {
+      dataLines.push(line.slice(5).trimStart())
+    }
+  }
+  if (!dataLines.length) return null
+  return { event, data: dataLines.join('\n') }
+}
+
+async function streamCocreateRequest(
+  path: string,
+  body: unknown,
+  handlers: CocreateStreamHandlers = {},
+): Promise<CocreateSession> {
+  const res = await fetch(path, {
+    method: 'POST',
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'text/event-stream',
+    },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) {
+    let detail = res.statusText
+    try {
+      const errBody = await res.json()
+      detail = errBody.detail || JSON.stringify(errBody)
+    } catch {
+      /* ignore */
+    }
+    throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
+  }
+  if (!res.body) throw new Error('浏览器不支持流式响应')
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  let session: CocreateSession | null = null
+  let streamError: string | null = null
+
+  const handleBlock = (raw: string) => {
+    const parsed = parseSseBlock(raw)
+    if (!parsed) return
+    let payload: unknown = parsed.data
+    try {
+      payload = JSON.parse(parsed.data)
+    } catch {
+      /* keep raw string */
+    }
+    if (parsed.event === 'status' && payload && typeof payload === 'object') {
+      handlers.onStatus?.(payload as { phase?: string; kind?: string })
+      return
+    }
+    if (parsed.event === 'delta' && payload && typeof payload === 'object') {
+      const text = String((payload as { text?: string }).text || '')
+      if (text) handlers.onDelta?.(text)
+      return
+    }
+    if (parsed.event === 'live_doc' && payload && typeof payload === 'object') {
+      handlers.onLiveDoc?.(payload as Record<string, unknown>)
+      return
+    }
+    if (parsed.event === 'session' && payload && typeof payload === 'object') {
+      session = payload as CocreateSession
+      handlers.onSession?.(session)
+      return
+    }
+    if (parsed.event === 'error') {
+      const detail =
+        payload && typeof payload === 'object'
+          ? String((payload as { detail?: string }).detail || JSON.stringify(payload))
+          : String(payload)
+      streamError = detail
+    }
+  }
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    buffer = buffer.replace(/\r\n/g, '\n')
+    let sep = buffer.indexOf('\n\n')
+    while (sep >= 0) {
+      const block = buffer.slice(0, sep)
+      buffer = buffer.slice(sep + 2)
+      if (block.trim()) handleBlock(block)
+      sep = buffer.indexOf('\n\n')
+    }
+  }
+  if (buffer.trim()) handleBlock(buffer)
+
+  if (streamError) throw new Error(streamError)
+  if (!session) throw new Error('流式共创未返回会话')
+  return session
+}
+
 export const api = {
   health: () =>
     request<{ ok: boolean; deepseek_configured: boolean; weread_configured: boolean; model?: string }>(
@@ -245,6 +358,17 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ kind, ...options }),
     }),
+  startCocreateStream: (
+    themeId: string,
+    kind: CocreateKind,
+    options: StartCocreateOptions = {},
+    handlers: CocreateStreamHandlers = {},
+  ) =>
+    streamCocreateRequest(
+      `/api/themes/${themeId}/cocreate/start/stream`,
+      { kind, ...options },
+      handlers,
+    ),
   getCocreate: (themeId: string, kind: CocreateKind) =>
     request<CocreateSession>(`/api/themes/${themeId}/cocreate/${kind}`),
   messageCocreate: (themeId: string, kind: CocreateKind, content: string) =>
@@ -252,6 +376,17 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ content }),
     }),
+  messageCocreateStream: (
+    themeId: string,
+    kind: CocreateKind,
+    content: string,
+    handlers: CocreateStreamHandlers = {},
+  ) =>
+    streamCocreateRequest(
+      `/api/themes/${themeId}/cocreate/${kind}/message/stream`,
+      { content },
+      handlers,
+    ),
   confirmCocreate: (
     themeId: string,
     kind: CocreateKind,

@@ -1,11 +1,15 @@
 from datetime import datetime
 from typing import Any
+from collections.abc import Iterator
+import json
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
 from sqlmodel import Session, select
+from sse_starlette.sse import EventSourceResponse
 
 from app.config import Settings, get_settings
-from app.db import get_session
+from app.db import engine, get_session
 from app import plan_defaults
 from app.models import CocreateKind, CocreateSession, Theme, ThemePhase, ThemeStatus
 from app.schemas import (
@@ -18,11 +22,22 @@ from app.schemas import (
 )
 from app.services import domain as domain_svc
 from app.services import cocreate_post as post_svc
-from app.services.llm import chat_json
+from app.services.llm import chat_json, chat_json_stream
 from app.services.skills import system_prompt_for
 from app.services.weread import enrich_resources_with_weread, sanitize_weread_bindings
 
 router = APIRouter(prefix="/themes/{theme_id}/cocreate", tags=["cocreate"])
+
+
+def _sse(event: str, data: Any) -> dict[str, str]:
+    return {
+        "event": event,
+        "data": json.dumps(jsonable_encoder(data), ensure_ascii=False),
+    }
+
+
+def _session_payload(row: CocreateSession) -> dict[str, Any]:
+    return CocreateSessionOut.model_validate(row).model_dump()
 
 
 def _get_theme(session: Session, theme_id: str) -> Theme:
@@ -179,6 +194,114 @@ def start_cocreate(
     return row
 
 
+@router.post("/start/stream")
+def start_cocreate_stream(
+    theme_id: str,
+    body: CocreateStart,
+    session: Session = Depends(get_session),
+    settings: Settings = Depends(get_settings),
+) -> EventSourceResponse:
+    theme = _get_theme(session, theme_id)
+    if body.kind == CocreateKind.plan and theme.status != ThemeStatus.active:
+        _assert_plan_slot_or_409(session, theme)
+
+    existing = session.exec(
+        select(CocreateSession).where(
+            CocreateSession.theme_id == theme_id,
+            CocreateSession.kind == body.kind,
+            CocreateSession.confirmed == False,  # noqa: E712
+        )
+    ).first()
+    if existing and not body.force:
+        payload = _session_payload(existing)
+
+        def existing_gen() -> Iterator[dict[str, str]]:
+            yield _sse("session", payload)
+            yield _sse("done", {"ok": True, "reused": True})
+
+        return EventSourceResponse(existing_gen())
+    if existing and body.force:
+        session.delete(existing)
+        session.commit()
+
+    seed = _seed_user_message(
+        theme,
+        body.kind,
+        resource_count=body.resource_count,
+        plan_prefs=body.plan_prefs,
+    )
+    system = system_prompt_for(body.kind.value)
+    context_msgs = [{"role": "user", "content": seed}]
+    kind = body.kind
+    resource_count = body.resource_count
+    plan_prefs = body.plan_prefs
+    theme_snapshot = {
+        "id": theme.id,
+        "title": theme.title,
+        "theme_type": theme.theme_type.value,
+        "goal": theme.goal,
+    }
+
+    def event_gen() -> Iterator[dict[str, str]]:
+        yield _sse("status", {"phase": "generating", "kind": kind.value})
+        try:
+            result: dict[str, Any] | None = None
+            for ev in chat_json_stream(
+                settings,
+                system=system,
+                messages=context_msgs,
+                kind=kind.value,
+            ):
+                if ev.get("type") == "delta":
+                    yield _sse("delta", {"text": str(ev.get("text") or "")})
+                elif ev.get("type") == "result":
+                    result = ev.get("result") if isinstance(ev.get("result"), dict) else None
+            if not result:
+                raise RuntimeError("LLM 流式结果为空")
+
+            assistant_message = str(result.get("assistant_message") or "已生成初稿，请看右侧文档。")
+            live_doc = result.get("live_doc") or {}
+            if not isinstance(live_doc, dict):
+                live_doc = {}
+            if not live_doc:
+                raise RuntimeError(
+                    f"LLM 未返回活文档（kind={kind.value}）。"
+                    f"原始键：{list((result.get('_raw') or result).keys())}"
+                )
+
+            if kind == CocreateKind.resources:
+                live_doc = _finalize_resources_doc(
+                    settings,
+                    live_doc,
+                    requested_count=resource_count,
+                )
+            elif kind == CocreateKind.plan:
+                live_doc = _finalize_plan_doc(live_doc, prefs=plan_prefs)
+
+            messages = [
+                {"role": "user", "content": seed},
+                {"role": "assistant", "content": assistant_message},
+            ]
+            with Session(engine) as db:
+                row = CocreateSession(
+                    theme_id=theme_snapshot["id"],
+                    kind=kind,
+                    messages=messages,
+                    live_doc=live_doc,
+                )
+                db.add(row)
+                db.commit()
+                db.refresh(row)
+                payload = _session_payload(row)
+            yield _sse("live_doc", live_doc)
+            yield _sse("session", payload)
+            yield _sse("done", {"ok": True})
+        except Exception as e:
+            yield _sse("error", {"detail": f"LLM 调用失败: {e}"})
+
+    return EventSourceResponse(event_gen())
+
+
 @router.get("/{kind}", response_model=CocreateSessionOut)
 def get_cocreate(
     theme_id: str,
@@ -278,6 +401,112 @@ def post_message(
     session.commit()
     session.refresh(row)
     return row
+
+
+@router.post("/{kind}/message/stream")
+def post_message_stream(
+    theme_id: str,
+    kind: CocreateKind,
+    body: CocreateMessageIn,
+    session: Session = Depends(get_session),
+    settings: Settings = Depends(get_settings),
+) -> EventSourceResponse:
+    theme = _get_theme(session, theme_id)
+    row = session.exec(
+        select(CocreateSession)
+        .where(
+            CocreateSession.theme_id == theme_id,
+            CocreateSession.kind == kind,
+            CocreateSession.confirmed == False,  # noqa: E712
+        )
+        .order_by(CocreateSession.updated_at.desc())
+    ).first()
+    if not row:
+        raise HTTPException(404, "尚无进行中的共创会话")
+
+    session_id = row.id
+    prior_live_doc = dict(row.live_doc or {}) if isinstance(row.live_doc, dict) else {}
+    messages = list(row.messages or [])
+    messages.append({"role": "user", "content": body.content})
+
+    system = system_prompt_for(kind.value)
+    llm_messages = [{"role": m["role"], "content": m["content"]} for m in messages]
+    extra = (
+        "额外上下文：主题="
+        f"{theme.title}；类型={theme.theme_type.value}；目标={theme.goal}。"
+        f"当前 live_doc={prior_live_doc}。"
+        '请返回 JSON：{"assistant_message":"...","live_doc":{...}}'
+    )
+    if kind == CocreateKind.resources:
+        extra += (
+            " 若用户本轮要求调整资料数量，必须把 live_doc.resources 与 order "
+            "严格改成该数量，并更新 target_count；禁止继续输出固定 5 条。"
+        )
+    if kind == CocreateKind.plan:
+        extra += (
+            " 若用户本轮调整了学/练/用时长或每天分钟数，同步更新 durations、"
+            "各 phase.duration、daily_minutes，并按新节奏重排 activities。"
+            " 学习期活动不超过 6 条，练习期不超过 4 条。"
+        )
+    llm_messages.append({"role": "user", "content": extra})
+    user_content = body.content
+
+    def event_gen() -> Iterator[dict[str, str]]:
+        yield _sse("status", {"phase": "generating", "kind": kind.value})
+        try:
+            result: dict[str, Any] | None = None
+            for ev in chat_json_stream(
+                settings,
+                system=system,
+                messages=llm_messages,
+                kind=kind.value,
+            ):
+                if ev.get("type") == "delta":
+                    yield _sse("delta", {"text": str(ev.get("text") or "")})
+                elif ev.get("type") == "result":
+                    result = ev.get("result") if isinstance(ev.get("result"), dict) else None
+            if not result:
+                raise RuntimeError("LLM 流式结果为空")
+
+            assistant_message = str(result.get("assistant_message") or "已更新。")
+            live_doc = result.get("live_doc") or prior_live_doc
+            if not isinstance(live_doc, dict) or not live_doc:
+                live_doc = prior_live_doc
+
+            if kind == CocreateKind.resources:
+                requested = post_svc.parse_resource_count_request(user_content)
+                live_doc = _finalize_resources_doc(
+                    settings,
+                    live_doc if isinstance(live_doc, dict) else {},
+                    requested_count=requested,
+                )
+            elif kind == CocreateKind.plan:
+                minutes = post_svc.parse_daily_minutes_request(user_content)
+                live_doc = _finalize_plan_doc(
+                    live_doc if isinstance(live_doc, dict) else {},
+                    daily_minutes=minutes,
+                )
+
+            out_messages = list(messages)
+            out_messages.append({"role": "assistant", "content": assistant_message})
+            with Session(engine) as db:
+                db_row = db.get(CocreateSession, session_id)
+                if not db_row or db_row.confirmed:
+                    raise RuntimeError("共创会话已不存在或已确认")
+                db_row.messages = out_messages
+                db_row.live_doc = live_doc
+                db_row.updated_at = datetime.utcnow()
+                db.add(db_row)
+                db.commit()
+                db.refresh(db_row)
+                payload = _session_payload(db_row)
+            yield _sse("live_doc", live_doc)
+            yield _sse("session", payload)
+            yield _sse("done", {"ok": True})
+        except Exception as e:
+            yield _sse("error", {"detail": f"LLM 调用失败: {e}"})
+
+    return EventSourceResponse(event_gen())
 
 
 @router.post("/{kind}/confirm", response_model=ThemeOut)

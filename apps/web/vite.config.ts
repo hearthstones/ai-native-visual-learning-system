@@ -9,6 +9,9 @@ export default defineConfig({
       '/api': {
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
+        // Keep SSE chunks flushing through the Vite proxy.
+        timeout: 0,
+        proxyTimeout: 0,
       },
     },
   },

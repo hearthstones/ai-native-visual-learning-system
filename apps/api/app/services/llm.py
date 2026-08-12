@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import re
+import time
+from collections.abc import Iterator
 from typing import Any
 
 from openai import OpenAI
@@ -121,6 +123,134 @@ def normalize_cocreate_result(kind: str, result: dict[str, Any]) -> dict[str, An
     }
 
 
+def _system_full(system: str, kind: str | None) -> str:
+    # weekly_review / activity_expand 有独立 JSON 契约，不要叠共创的 assistant_message/live_doc 约束
+    if kind in (None, "weekly_review", "activity_expand"):
+        return system
+    return f"{system}\n\n{OUTPUT_CONTRACT}"
+
+
+def extract_assistant_message_partial(buf: str) -> str | None:
+    """Best-effort pull of assistant_message string while JSON is still streaming."""
+    key = '"assistant_message"'
+    i = buf.find(key)
+    if i < 0:
+        return None
+    j = buf.find(":", i + len(key))
+    if j < 0:
+        return None
+    j += 1
+    while j < len(buf) and buf[j] in " \t\n\r":
+        j += 1
+    if j >= len(buf) or buf[j] != '"':
+        return None
+    j += 1
+    out: list[str] = []
+    escapes = {"n": "\n", "t": "\t", "r": "\r", '"': '"', "\\": "\\", "/": "/"}
+    while j < len(buf):
+        c = buf[j]
+        if c == "\\":
+            if j + 1 >= len(buf):
+                break
+            nxt = buf[j + 1]
+            if nxt == "u" and j + 5 < len(buf):
+                hex_part = buf[j + 2 : j + 6]
+                if re.fullmatch(r"[0-9a-fA-F]{4}", hex_part):
+                    out.append(chr(int(hex_part, 16)))
+                    j += 6
+                    continue
+            out.append(escapes.get(nxt, nxt))
+            j += 2
+            continue
+        if c == '"':
+            return "".join(out)
+        out.append(c)
+        j += 1
+    return "".join(out)
+
+
+def _mock_stream_events(kind: str | None, messages: list[dict[str, str]]) -> Iterator[dict[str, Any]]:
+    result = mock_chat_json(kind=kind, messages=messages)
+    if kind and kind not in ("weekly_review", "activity_expand"):
+        result = normalize_cocreate_result(kind, result)
+    text = str(result.get("assistant_message") or "")
+    # Simulate typing so the UI path is exercised in mock mode.
+    step = max(1, min(4, len(text) // 12 or 1))
+    for i in range(0, len(text), step):
+        yield {"type": "delta", "text": text[i : i + step]}
+        time.sleep(0.01)
+    yield {"type": "result", "result": result}
+
+
+def chat_json_stream(
+    settings: Settings,
+    *,
+    system: str,
+    messages: list[dict[str, str]],
+    temperature: float = 0.4,
+    kind: str | None = None,
+) -> Iterator[dict[str, Any]]:
+    """Yield {type:delta,text} while streaming, then {type:result,result}."""
+    if is_mock_mode(settings.deepseek_api_key):
+        yield from _mock_stream_events(kind, messages)
+        return
+
+    client = get_llm_client(settings)
+    payload = [{"role": "system", "content": _system_full(system, kind)}, *messages]
+    kwargs: dict[str, Any] = {
+        "model": settings.deepseek_model,
+        "messages": payload,
+        "temperature": temperature,
+        "stream": True,
+        "extra_body": {"thinking": {"type": "disabled"}},
+    }
+    try:
+        stream = client.chat.completions.create(
+            **kwargs,
+            response_format={"type": "json_object"},
+        )
+    except Exception as first_err:
+        err_text = str(first_err)
+        if "Connection" in err_text or "connect" in err_text.lower():
+            raise
+        stream = client.chat.completions.create(**kwargs)
+
+    buf = ""
+    emitted = ""
+    for chunk in stream:
+        try:
+            delta = chunk.choices[0].delta.content or ""
+        except Exception:
+            delta = ""
+        if not delta:
+            continue
+        buf += delta
+        partial = extract_assistant_message_partial(buf)
+        if partial is None:
+            continue
+        if partial.startswith(emitted):
+            neu = partial[len(emitted) :]
+            if neu:
+                emitted = partial
+                yield {"type": "delta", "text": neu}
+        else:
+            # Rare reshape of the string; resync by sending remaining suffix if possible.
+            emitted = partial
+            yield {"type": "delta", "text": partial}
+
+    parsed = extract_json(buf)
+    if kind and kind not in ("weekly_review", "activity_expand"):
+        result = normalize_cocreate_result(kind, parsed)
+    else:
+        result = parsed
+    final_msg = str(result.get("assistant_message") or "")
+    if final_msg and not emitted:
+        yield {"type": "delta", "text": final_msg}
+    elif final_msg.startswith(emitted) and final_msg != emitted:
+        yield {"type": "delta", "text": final_msg[len(emitted) :]}
+    yield {"type": "result", "result": result}
+
+
 def chat_json(
     settings: Settings,
     *,
@@ -136,12 +266,7 @@ def chat_json(
         return result
 
     client = get_llm_client(settings)
-    # weekly_review / activity_expand 有独立 JSON 契约，不要叠共创的 assistant_message/live_doc 约束
-    if kind in (None, "weekly_review", "activity_expand"):
-        system_full = system
-    else:
-        system_full = f"{system}\n\n{OUTPUT_CONTRACT}"
-    payload = [{"role": "system", "content": system_full}, *messages]
+    payload = [{"role": "system", "content": _system_full(system, kind)}, *messages]
     kwargs: dict[str, Any] = {
         "model": settings.deepseek_model,
         "messages": payload,

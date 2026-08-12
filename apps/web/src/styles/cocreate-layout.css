@@ -186,6 +186,22 @@ img { display: block; }
   border-top-right-radius: var(--radius-4);
   border-bottom-right-radius: var(--radius-4);
 }
+.msg__bubble--streaming {
+  min-height: 1.55em;
+}
+.msg__caret {
+  display: inline-block;
+  width: 0.55ch;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--bg-brand);
+  animation: msg-caret-blink 1s steps(1) infinite;
+}
+@keyframes msg-caret-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
 .msg__meta {
   font-size: var(--body-xs-font-size);
   color: var(--text-tertiary);

@@ -92,6 +92,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [streamingText, setStreamingText] = useState('')
   const [revisionMode, setRevisionMode] = useState(false)
   const [openedAt, setOpenedAt] = useState<Date | null>(null)
   const [planPrefs, setPlanPrefs] = useState<PlanPrefs>(DEFAULT_PLAN_PREFS)
@@ -134,23 +135,40 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
       setBusy(true)
       setError('')
       setSession(null)
+      setStreamingText('')
       setRevisionMode(false)
       setOpenedAt(null)
       try {
         let s: CocreateSession
         try {
           const existing = await api.getCocreate(themeId, kind)
-          if (existing.confirmed) {
-            s = existing
-            if (!cancelled) setRevisionMode(true)
-          } else {
-            s = existing
-          }
+          s = existing
+          if (existing.confirmed && !cancelled) setRevisionMode(true)
         } catch {
-          s = await api.startCocreate(themeId, kind)
+          s = await api.startCocreateStream(themeId, kind, {}, {
+            onDelta: (text) => {
+              if (!cancelled) setStreamingText((prev) => prev + text)
+            },
+            onLiveDoc: (doc) => {
+              if (cancelled) return
+              setSession((prev) =>
+                prev
+                  ? { ...prev, live_doc: doc }
+                  : {
+                      id: 'streaming',
+                      theme_id: themeId,
+                      kind,
+                      messages: [],
+                      live_doc: doc,
+                      confirmed: false,
+                    },
+              )
+            },
+          })
         }
         if (!cancelled) {
           setSession(s)
+          setStreamingText('')
           setOpenedAt(new Date())
           const level = (s.live_doc as { selected_level?: number }).selected_level
           if (typeof level === 'number') setSelectedLevel(level)
@@ -161,7 +179,10 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e))
       } finally {
-        if (!cancelled) setBusy(false)
+        if (!cancelled) {
+          setBusy(false)
+          setStreamingText('')
+        }
       }
     }
     void boot()
@@ -187,19 +208,51 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
 
   async function sendMessage(content: string) {
     if (!content.trim() || !session || busy || session.confirmed) return
+    const text = content.trim()
     setBusy(true)
     setError('')
+    setStreamingText('')
+    setInput('')
+    setSession((prev) =>
+      prev
+        ? {
+            ...prev,
+            messages: [...(prev.messages || []), { role: 'user', content: text }],
+          }
+        : prev,
+    )
     try {
-      const s = await api.messageCocreate(themeId, kind, content.trim())
+      const s = await api.messageCocreateStream(themeId, kind, text, {
+        onDelta: (chunk) => setStreamingText((prev) => prev + chunk),
+        onLiveDoc: (doc) => {
+          setSession((prev) => (prev ? { ...prev, live_doc: doc } : prev))
+          if (kind === 'plan') {
+            setPlanPrefs((prev) => applyDurationsToPrefs(doc, prev))
+          }
+        },
+      })
       setSession(s)
-      setInput('')
+      setStreamingText('')
       if (kind === 'plan') {
         setPlanPrefs((prev) => applyDurationsToPrefs(s.live_doc, prev))
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
+      // roll back optimistic user bubble on failure
+      setSession((prev) =>
+        prev
+          ? {
+              ...prev,
+              messages: (prev.messages || []).filter(
+                (m, i, arr) => !(i === arr.length - 1 && m.role === 'user' && m.content === text),
+              ),
+            }
+          : prev,
+      )
+      setInput(text)
     } finally {
       setBusy(false)
+      setStreamingText('')
     }
   }
 
@@ -218,9 +271,19 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
   async function restartCocreate() {
     setBusy(true)
     setError('')
+    setStreamingText('')
     try {
-      const s = await api.startCocreate(themeId, kind, { force: true })
+      const s = await api.startCocreateStream(themeId, kind, { force: true }, {
+        onDelta: (chunk) => setStreamingText((prev) => prev + chunk),
+        onLiveDoc: (doc) => {
+          setSession((prev) => (prev ? { ...prev, live_doc: doc } : prev))
+          if (kind === 'plan') {
+            setPlanPrefs((prev) => applyDurationsToPrefs(doc, prev))
+          }
+        },
+      })
       setSession(s)
+      setStreamingText('')
       setRevisionMode(false)
       setOpenedAt(new Date())
       if (kind === 'plan') {
@@ -230,6 +293,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
       setError(err instanceof Error ? err.message : String(err))
     } finally {
       setBusy(false)
+      setStreamingText('')
     }
   }
 
@@ -437,22 +501,36 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                 </div>
               </div>
             ))}
-            {busy && session ? (
+            {busy && streamingText ? (
+              <div className="msg msg--ai">
+                <div className="msg__avatar">
+                  <Icon name="sparkles" size={16} className="icon" />
+                </div>
+                <div className="msg__body">
+                  <div className="msg__bubble msg__bubble--streaming" style={{ whiteSpace: 'pre-wrap' }}>
+                    {streamingText}
+                    <span className="msg__caret" aria-hidden />
+                  </div>
+                  <div className="msg__meta">AI 教练 · 生成中</div>
+                </div>
+              </div>
+            ) : null}
+            {busy && !streamingText && session ? (
               <div className="msg msg--ai">
                 <div className="msg__avatar">
                   <Icon name="sparkles" size={16} className="icon" />
                 </div>
                 <div className="msg__body">
                   <div className="msg__bubble">
-                    AI 教练生成中 · 约 15 秒
+                    AI 教练生成中
                     <div className="text-tertiary" style={{ fontSize: 12, marginTop: 6 }}>
-                      正在按你的意见更新右侧文档，请稍候…
+                      正在组织回复与右侧文档，开始输出后会逐字显示…
                     </div>
                   </div>
                 </div>
               </div>
             ) : null}
-            {busy && !session ? (
+            {busy && !streamingText && !session ? (
               <div className="msg msg--ai">
                 <div className="msg__avatar">
                   <Icon name="sparkles" size={16} className="icon" />
@@ -460,16 +538,16 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                 <div className="msg__body">
                   <div className="msg__bubble">
                     {kind === 'resources'
-                      ? '正在生成资料方案 · 约 15 秒'
+                      ? '正在生成资料方案'
                       : kind === 'plan'
-                        ? '正在生成学练用计划 · 约 15 秒'
-                        : '正在生成学习阶梯 · 约 15 秒'}
+                        ? '正在生成学练用计划'
+                        : '正在生成学习阶梯'}
                     <div className="text-tertiary" style={{ fontSize: 12, marginTop: 6 }}>
                       {kind === 'resources'
                         ? '按主题类型策展高杠杆资料（技术偏学习包，通识偏阅读脚本）'
                         : kind === 'plan'
                           ? '默认每天约 30 分钟，学习期活动会控制在 4–6 条'
-                          : 'AI 教练正在搭建 5 级阶梯初稿，不会卡住'}
+                          : 'AI 教练正在搭建 5 级阶梯初稿，开始输出后会逐字显示'}
                     </div>
                   </div>
                 </div>

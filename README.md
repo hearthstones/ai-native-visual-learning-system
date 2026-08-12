@@ -1,5 +1,9 @@
 # AI Native Visual Learning System
 
+> **状态：系统暂停（2026-08-12）**  
+> 诚实记账与重启门槛见 [`docs/requirements/2026-08-12-能力边界与产品身份-诚实记账与暂停.md`](./docs/requirements/2026-08-12-能力边界与产品身份-诚实记账与暂停.md)。  
+> 暂停期间不排新功能；本地仍可按下方步骤自用。
+
 可视化刻意练习系统。原型见 `prototype/`，正式应用在 `apps/`。
 
 ## 技术栈

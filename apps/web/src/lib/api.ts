@@ -364,10 +364,6 @@ export const api = {
       body: JSON.stringify({ username, password }),
     }),
   logout: () => request<AuthMe>('/api/auth/logout', { method: 'POST', body: '{}' }),
-  health: () =>
-    request<{ ok: boolean; deepseek_configured: boolean; weread_configured: boolean; model?: string }>(
-      '/api/health',
-    ),
   getSettings: () => request<LlmSettings>('/api/settings'),
   updateSettings: (body: LlmSettingsUpdate) =>
     request<LlmSettings>('/api/settings', { method: 'PATCH', body: JSON.stringify(body) }),
@@ -412,11 +408,6 @@ export const api = {
     request<void>(`/api/themes/${id}`, { method: 'DELETE' }),
   advancePhase: (id: string) =>
     request<Theme>(`/api/themes/${id}/advance-phase`, { method: 'POST' }),
-  startCocreate: (themeId: string, kind: CocreateKind, options: StartCocreateOptions = {}) =>
-    request<CocreateSession>(`/api/themes/${themeId}/cocreate/start`, {
-      method: 'POST',
-      body: JSON.stringify({ kind, ...options }),
-    }),
   startCocreateStream: (
     themeId: string,
     kind: CocreateKind,
@@ -430,11 +421,6 @@ export const api = {
     ),
   getCocreate: (themeId: string, kind: CocreateKind) =>
     request<CocreateSession>(`/api/themes/${themeId}/cocreate/${kind}`),
-  messageCocreate: (themeId: string, kind: CocreateKind, content: string) =>
-    request<CocreateSession>(`/api/themes/${themeId}/cocreate/${kind}/message`, {
-      method: 'POST',
-      body: JSON.stringify({ content }),
-    }),
   messageCocreateStream: (
     themeId: string,
     kind: CocreateKind,

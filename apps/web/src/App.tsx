@@ -17,7 +17,6 @@ import { ThemePlanPage } from './pages/ThemePlanPage'
 import { ThemePracticePage } from './pages/ThemePracticePage'
 import { ThemesPage } from './pages/ThemesPage'
 import { ThemeWorkPage } from './pages/ThemeWorkPage'
-import './styles/pages/login.css'
 
 function ShellLayout() {
   const [slots, setSlots] = useState<SlotMap>()

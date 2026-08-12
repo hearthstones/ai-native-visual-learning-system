@@ -299,10 +299,3 @@ export function pickMatchingWereadBook<T extends { title?: string | null; deepLi
   }
   return null
 }
-
-export function resourcesPathHint(theme: Theme | null | undefined): string {
-  const path7d = String(theme?.resources_doc?.path_7d || '').trim()
-  if (!path7d) return ''
-  const first = path7d.split(/[。；;\n]/)[0]?.trim()
-  return first || path7d.slice(0, 80)
-}

@@ -35,7 +35,7 @@ export function CreateSummaryPage() {
           const home = await api.home()
           if (cancelled) return
           setTasks(home.today_tasks.filter((task) => task.theme_id === themeId))
-          setQueueCount(home.queue.filter((item) => item.theme_id === themeId).length)
+          setQueueCount((home.queue ?? []).filter((item) => item.theme_id === themeId).length)
         } catch {
           if (!cancelled) {
             setHomeUnavailable(true)

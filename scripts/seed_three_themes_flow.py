@@ -8,12 +8,30 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from http.cookiejar import CookieJar
 from pathlib import Path
 from typing import Any
 
+ROOT = Path(__file__).resolve().parents[1]
 BASE = "http://127.0.0.1:8000/api"
-OUT = Path(__file__).resolve().parents[1] / "docs" / "ai-engineering" / "seed-three-themes-flow.json"
+OUT = ROOT / "docs" / "ai-engineering" / "seed-three-themes-flow.json"
+
+_COOKIE_JAR = CookieJar()
+_OPENER = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(_COOKIE_JAR))
+
+
+def _load_dotenv(path: Path) -> dict[str, str]:
+    out: dict[str, str] = {}
+    if not path.is_file():
+        return out
+    for line in path.read_text(encoding="utf-8").splitlines():
+        s = line.strip()
+        if not s or s.startswith("#") or "=" not in s:
+            continue
+        k, v = s.split("=", 1)
+        out[k.strip()] = v.strip().strip('"').strip("'")
+    return out
 
 
 def req(method: str, path: str, body: dict | None = None) -> tuple[int, Any, float]:
@@ -22,7 +40,7 @@ def req(method: str, path: str, body: dict | None = None) -> tuple[int, Any, flo
     r = urllib.request.Request(f"{BASE}{path}", data=data, headers=headers, method=method)
     t0 = time.time()
     try:
-        with urllib.request.urlopen(r, timeout=240) as resp:
+        with _OPENER.open(r, timeout=240) as resp:
             raw = resp.read().decode()
             elapsed = time.time() - t0
             return resp.status, (json.loads(raw) if raw else None), elapsed
@@ -37,6 +55,30 @@ def req(method: str, path: str, body: dict | None = None) -> tuple[int, Any, flo
     except Exception as e:
         elapsed = time.time() - t0
         return 0, {"detail": str(e)}, elapsed
+
+
+def ensure_auth() -> None:
+    """若启用了 AUTH_PASSWORD，用 .env 凭证登录并保留 cookie。"""
+    code, me, _ = req("GET", "/auth/me")
+    if code == 200 and isinstance(me, dict) and me.get("authenticated"):
+        print(f"auth: already ok (required={me.get('auth_required')})")
+        return
+    if code == 200 and isinstance(me, dict) and not me.get("auth_required"):
+        print("auth: gate disabled")
+        return
+
+    env = _load_dotenv(ROOT / ".env")
+    user = env.get("AUTH_USERNAME") or "admin"
+    password = env.get("AUTH_PASSWORD") or ""
+    if not password.strip():
+        print("auth: required but AUTH_PASSWORD empty in .env", file=sys.stderr)
+        sys.exit(2)
+
+    code, body, _ = req("POST", "/auth/login", {"username": user, "password": password})
+    if code != 200 or not (isinstance(body, dict) and body.get("authenticated")):
+        print(f"auth: login failed HTTP {code} {body}", file=sys.stderr)
+        sys.exit(2)
+    print(f"auth: logged in as {body.get('username') or user}")
 
 
 @dataclass
@@ -259,6 +301,8 @@ def main() -> int:
     if code != 200:
         # some apps expose /api/health
         print(f"health check: {code} {health}")
+        sys.exit(2)
+    ensure_auth()
     code, home, t = req("GET", "/home")
     themes0 = (home or {}).get("themes") or []
     print(f"home before: themes={len(themes0)} slots={(home or {}).get('slots')}")

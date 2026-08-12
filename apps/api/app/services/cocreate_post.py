@@ -135,9 +135,6 @@ def force_daily_minutes(live_doc: dict[str, Any], minutes: int) -> dict[str, Any
     return out
 
 
-_OFFICIALISH = ("官方", "the book", "rust book", "文档", "wikipedia", "百科", "rfc")
-
-
 def annotate_unverified_resources(live_doc: dict[str, Any]) -> dict[str, Any]:
     """Soft-mark generic/likely-hallucinated titles; does not drop items."""
     out = dict(live_doc)
@@ -168,17 +165,3 @@ def annotate_unverified_resources(live_doc: dict[str, Any]) -> dict[str, Any]:
         new_list.append(item)
     out["resources"] = new_list
     return out
-
-
-def tech_official_quota_ok(live_doc: dict[str, Any], *, max_official: int = 1) -> bool:
-    resources = live_doc.get("resources") or []
-    if not isinstance(resources, list):
-        return True
-    official = 0
-    for r in resources:
-        if not isinstance(r, dict):
-            continue
-        blob = f"{r.get('name','')} {r.get('type','')} {r.get('why','')}".lower()
-        if any(k in blob for k in _OFFICIALISH):
-            official += 1
-    return official <= max_official

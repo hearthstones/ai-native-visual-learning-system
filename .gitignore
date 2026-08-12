@@ -15,6 +15,7 @@ __pycache__/
 
 # Data
 data/*.db
+data/*.db.*
 data/*.db-journal
 *.sqlite3
 

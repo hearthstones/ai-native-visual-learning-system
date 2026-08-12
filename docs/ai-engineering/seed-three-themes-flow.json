@@ -1,11 +1,11 @@
 {
-  "date": "2026-08-11",
-  "mode": "live-llm",
+  "date": "2026-08-12",
+  "mode": "mock-llm",
   "base": "http://127.0.0.1:8000/api",
   "results": [
     {
       "theme": {
-        "id": "f9f3e1f7-4bb4-4738-88e7-2a02543f4050",
+        "id": "b350c14a-76ef-4a49-afc0-3201c7950785",
         "title": "主题阅读",
         "theme_type": "general",
         "goal": "两周内建立可持续的主题阅读方法：能围绕一个主题选书、做分析阅读并写出结构提纲"
@@ -15,73 +15,73 @@
         {
           "step": "create_theme",
           "ok": true,
-          "ms": 48,
+          "ms": 32,
           "detail": "主题阅读"
         },
         {
           "step": "cocreate_stage_start",
           "ok": true,
-          "ms": 9538,
+          "ms": 28,
           "detail": "levels=5"
         },
         {
           "step": "cocreate_stage_confirm",
           "ok": true,
-          "ms": 12,
+          "ms": 10,
           "detail": "level=2"
         },
         {
           "step": "cocreate_resources_start",
           "ok": true,
-          "ms": 11857,
-          "detail": "n=3 names=['《如何阅读一本书》', '两周主题阅读行动脚本', '主题阅读AI学习包']"
+          "ms": 1209,
+          "detail": "n=3 names=['如何阅读一本书', '刻意练习', 'AI 学习包：本周阅读脚本']"
         },
         {
           "step": "cocreate_resources_message",
           "ok": true,
-          "ms": 7851,
-          "detail": "n=3 names=['《如何阅读一本书》', '两周主题阅读行动脚本', '主题阅读AI学习包']"
+          "ms": 912,
+          "detail": "n=5 names=['如何阅读一本书', '刻意练习', 'AI 学习包：本周阅读脚本', '主题相关综述或入门讲义', '对标实践案例（短文/讲座）']"
         },
         {
           "step": "cocreate_resources_confirm",
           "ok": true,
-          "ms": 10,
+          "ms": 8,
           "detail": ""
         },
         {
           "step": "cocreate_plan_start",
           "ok": true,
-          "ms": 7250,
-          "detail": "daily=30 learning_acts=5"
+          "ms": 10,
+          "detail": "daily=30 learning_acts=10"
         },
         {
           "step": "cocreate_plan_message",
           "ok": true,
-          "ms": 5084,
+          "ms": 16,
           "detail": "daily=40"
         },
         {
           "step": "cocreate_plan_lock",
           "ok": true,
-          "ms": 27,
+          "ms": 29,
           "detail": "status=active phase=learning"
         },
         {
           "step": "home_after_lock",
           "ok": true,
-          "ms": 22,
-          "detail": "today=0 queue=5"
+          "ms": 61,
+          "detail": "today=0 queue=10"
         },
         {
           "step": "commit_from_queue",
           "ok": true,
-          "ms": 16,
-          "detail": "activity=8eeded8e-319b-4011-8ac2-84f3a17416b2"
+          "ms": 15,
+          "detail": "activity=597640d7-fcea-4d64-aa3e-2fddcf821730"
         },
         {
           "step": "commitments_suggest",
           "ok": true,
-          "ms": 14,
+          "ms": 17,
           "detail": ""
         },
         {
@@ -93,33 +93,35 @@
         {
           "step": "activity_expand",
           "ok": true,
-          "ms": 2133,
+          "ms": 19,
           "detail": "steps=3"
         },
         {
           "step": "tick_today_task",
           "ok": true,
-          "ms": 12,
+          "ms": 18,
           "detail": ""
         },
         {
           "step": "plan_document",
           "ok": true,
-          "ms": 5,
+          "ms": 7,
           "detail": "locked=True"
         }
       ],
       "frictions": [],
       "resource_names": [
-        "《如何阅读一本书》",
-        "两周主题阅读行动脚本",
-        "主题阅读AI学习包"
+        "如何阅读一本书",
+        "刻意练习",
+        "AI 学习包：本周阅读脚本",
+        "主题相关综述或入门讲义",
+        "对标实践案例（短文/讲座）"
       ],
       "plan_daily_minutes": 40
     },
     {
       "theme": {
-        "id": "b80696ee-090d-43ec-9954-9774b41255ba",
+        "id": "ef6eac02-b90e-4a58-a1ab-e0bd65a56de9",
         "title": "AI Agent 入门",
         "theme_type": "tech",
         "goal": "一周内能讲清 Agent 核心组件（感知/规划/工具/记忆），并搭一个最小可运行 Agent 示例"
@@ -129,7 +131,7 @@
         {
           "step": "advance_prev_learning",
           "ok": true,
-          "ms": 31,
+          "ms": 20,
           "detail": "from=主题阅读"
         },
         {
@@ -141,246 +143,245 @@
         {
           "step": "cocreate_stage_start",
           "ok": true,
-          "ms": 8684,
+          "ms": 8,
           "detail": "levels=5"
         },
         {
           "step": "cocreate_stage_confirm",
           "ok": true,
-          "ms": 10,
+          "ms": 8,
           "detail": "level=2"
         },
         {
           "step": "cocreate_resources_start",
           "ok": true,
-          "ms": 11234,
-          "detail": "n=3 names=['AI Agent 四大组件概念对照卡', 'Agent 常见错误病例集', 'LangChain 最短可运行 Agent 示例']"
+          "ms": 1055,
+          "detail": "n=3 names=['如何阅读一本书', '刻意练习', 'AI 学习包：本周阅读脚本']"
         },
         {
           "step": "cocreate_resources_message",
           "ok": true,
-          "ms": 7541,
-          "detail": "n=3 names=['AI Agent 四大组件概念对照卡', 'Agent 常见错误病例集（3 个典型失败病例）', 'LangChain 最短可运行 Agent 示例']"
+          "ms": 970,
+          "detail": "n=5 names=['如何阅读一本书', '刻意练习', 'AI 学习包：本周阅读脚本', '主题相关综述或入门讲义', '对标实践案例（短文/讲座）']"
         },
         {
           "step": "cocreate_resources_confirm",
           "ok": true,
-          "ms": 10,
+          "ms": 7,
           "detail": ""
         },
         {
           "step": "cocreate_plan_start",
           "ok": true,
-          "ms": 7694,
-          "detail": "daily=30 learning_acts=6"
+          "ms": 15,
+          "detail": "daily=30 learning_acts=10"
         },
         {
           "step": "cocreate_plan_message",
           "ok": true,
-          "ms": 5612,
+          "ms": 7,
           "detail": "daily=45"
         },
         {
           "step": "cocreate_plan_lock",
           "ok": true,
-          "ms": 24,
+          "ms": 18,
           "detail": "status=active phase=learning"
         },
         {
           "step": "home_after_lock",
           "ok": true,
-          "ms": 20,
-          "detail": "today=0 queue=10"
+          "ms": 12,
+          "detail": "today=0 queue=12"
         },
         {
           "step": "commit_from_queue",
           "ok": true,
-          "ms": 10,
-          "detail": "activity=8e602a71-d1ca-49c6-a070-4ce6d571e799"
+          "ms": 8,
+          "detail": "activity=412cc1e6-bb46-46b1-a70b-0da954b47607"
         },
         {
           "step": "commitments_suggest",
           "ok": true,
-          "ms": 47,
+          "ms": 17,
           "detail": ""
         },
         {
           "step": "home_after_suggest",
           "ok": true,
-          "ms": 24,
+          "ms": 18,
           "detail": "today=4"
         },
         {
           "step": "activity_expand",
           "ok": true,
-          "ms": 2181,
-          "detail": "steps=4"
-        },
-        {
-          "step": "tick_today_task",
-          "ok": true,
-          "ms": 8,
-          "detail": ""
-        },
-        {
-          "step": "plan_document",
-          "ok": true,
-          "ms": 4,
-          "detail": "locked=True"
-        }
-      ],
-      "frictions": [],
-      "resource_names": [
-        "AI Agent 四大组件概念对照卡",
-        "Agent 常见错误病例集（3 个典型失败病例）",
-        "LangChain 最短可运行 Agent 示例"
-      ],
-      "plan_daily_minutes": 45
-    },
-    {
-      "theme": {
-        "id": "2dcbda03-17e2-4640-8434-cb214d004a5e",
-        "title": "第六轮康波周期分析",
-        "theme_type": "general",
-        "goal": "两周内能用康波框架解释当前长波位置，并写出一份可分享的周期分析提纲"
-      },
-      "ok": false,
-      "notes": [
-        {
-          "step": "advance_prev_learning",
-          "ok": true,
-          "ms": 15,
-          "detail": "from=AI Agent 入门"
-        },
-        {
-          "step": "create_theme",
-          "ok": true,
           "ms": 7,
-          "detail": "第六轮康波周期分析"
-        },
-        {
-          "step": "cocreate_stage_start",
-          "ok": true,
-          "ms": 9941,
-          "detail": "levels=5"
-        },
-        {
-          "step": "cocreate_stage_confirm",
-          "ok": true,
-          "ms": 13,
-          "detail": "level=2"
-        },
-        {
-          "step": "cocreate_resources_start",
-          "ok": true,
-          "ms": 12089,
-          "detail": "n=3 names=['《涛动周期论》', '第六轮康波候选技术阅读脚本', '康波分析提纲生成脚本']"
-        },
-        {
-          "step": "cocreate_resources_message",
-          "ok": true,
-          "ms": 9737,
-          "detail": "n=3 names=['《涛动周期论》', '第六轮康波候选技术阅读脚本', '康波分析提纲生成脚本']"
-        },
-        {
-          "step": "cocreate_resources_confirm",
-          "ok": true,
-          "ms": 8,
-          "detail": ""
-        },
-        {
-          "step": "cocreate_plan_start",
-          "ok": true,
-          "ms": 9615,
-          "detail": "daily=30 learning_acts=5"
-        },
-        {
-          "step": "cocreate_plan_message",
-          "ok": false,
-          "ms": 1670,
-          "detail": "daily=None"
-        },
-        {
-          "step": "cocreate_plan_lock",
-          "ok": true,
-          "ms": 25,
-          "detail": "status=active phase=learning"
-        },
-        {
-          "step": "home_after_lock",
-          "ok": true,
-          "ms": 32,
-          "detail": "today=2 queue=11"
-        },
-        {
-          "step": "commitments_suggest",
-          "ok": true,
-          "ms": 35,
-          "detail": ""
-        },
-        {
-          "step": "home_after_suggest",
-          "ok": true,
-          "ms": 40,
-          "detail": "today=6"
-        },
-        {
-          "step": "activity_expand",
-          "ok": true,
-          "ms": 2118,
           "detail": "steps=3"
         },
         {
           "step": "tick_today_task",
           "ok": true,
-          "ms": 7,
+          "ms": 6,
           "detail": ""
         },
         {
           "step": "plan_document",
           "ok": true,
-          "ms": 5,
+          "ms": 3,
           "detail": "locked=True"
         }
       ],
-      "frictions": [
-        "cocreate_plan_message 失败 HTTP 502: daily=None"
-      ],
+      "frictions": [],
       "resource_names": [
-        "《涛动周期论》",
-        "第六轮康波候选技术阅读脚本",
-        "康波分析提纲生成脚本"
+        "如何阅读一本书",
+        "刻意练习",
+        "AI 学习包：本周阅读脚本",
+        "主题相关综述或入门讲义",
+        "对标实践案例（短文/讲座）"
       ],
-      "plan_daily_minutes": null
+      "plan_daily_minutes": 45
+    },
+    {
+      "theme": {
+        "id": "1ccafdc1-766d-4d85-916e-400136b0d709",
+        "title": "第六轮康波周期分析",
+        "theme_type": "general",
+        "goal": "两周内能用康波框架解释当前长波位置，并写出一份可分享的周期分析提纲"
+      },
+      "ok": true,
+      "notes": [
+        {
+          "step": "advance_prev_learning",
+          "ok": true,
+          "ms": 10,
+          "detail": "from=AI Agent 入门"
+        },
+        {
+          "step": "create_theme",
+          "ok": true,
+          "ms": 5,
+          "detail": "第六轮康波周期分析"
+        },
+        {
+          "step": "cocreate_stage_start",
+          "ok": true,
+          "ms": 7,
+          "detail": "levels=5"
+        },
+        {
+          "step": "cocreate_stage_confirm",
+          "ok": true,
+          "ms": 6,
+          "detail": "level=2"
+        },
+        {
+          "step": "cocreate_resources_start",
+          "ok": true,
+          "ms": 831,
+          "detail": "n=3 names=['如何阅读一本书', '刻意练习', 'AI 学习包：本周阅读脚本']"
+        },
+        {
+          "step": "cocreate_resources_message",
+          "ok": true,
+          "ms": 1373,
+          "detail": "n=3 names=['如何阅读一本书', '刻意练习', 'AI 学习包：本周阅读脚本']"
+        },
+        {
+          "step": "cocreate_resources_confirm",
+          "ok": true,
+          "ms": 12,
+          "detail": ""
+        },
+        {
+          "step": "cocreate_plan_start",
+          "ok": true,
+          "ms": 15,
+          "detail": "daily=30 learning_acts=10"
+        },
+        {
+          "step": "cocreate_plan_message",
+          "ok": true,
+          "ms": 9,
+          "detail": "daily=30"
+        },
+        {
+          "step": "cocreate_plan_lock",
+          "ok": true,
+          "ms": 35,
+          "detail": "status=active phase=learning"
+        },
+        {
+          "step": "home_after_lock",
+          "ok": true,
+          "ms": 23,
+          "detail": "today=2 queue=12"
+        },
+        {
+          "step": "commitments_suggest",
+          "ok": true,
+          "ms": 29,
+          "detail": ""
+        },
+        {
+          "step": "home_after_suggest",
+          "ok": true,
+          "ms": 29,
+          "detail": "today=6"
+        },
+        {
+          "step": "activity_expand",
+          "ok": true,
+          "ms": 9,
+          "detail": "steps=3"
+        },
+        {
+          "step": "tick_today_task",
+          "ok": true,
+          "ms": 9,
+          "detail": ""
+        },
+        {
+          "step": "plan_document",
+          "ok": true,
+          "ms": 3,
+          "detail": "locked=True"
+        }
+      ],
+      "frictions": [],
+      "resource_names": [
+        "如何阅读一本书",
+        "刻意练习",
+        "AI 学习包：本周阅读脚本"
+      ],
+      "plan_daily_minutes": 30
     }
   ],
   "weekly_review": {
     "ok": true,
-    "ms": 25,
+    "ms": 35,
     "body": {
-      "id": "b6cd05fc-25de-44b9-9e51-d4975d966354",
+      "id": "95c4f3c9-408e-4ca6-98ec-16b2489fdc14",
       "week_start": "2026-08-10",
-      "summary": "本周完成率仅16.7%，三个主题均处于练习/学习阶段，仅完成康波周期分析中的阅读任务，主题阅读与AI Agent入门均未启动执行，整体进度滞后。",
+      "summary": "本周有主题在推进，但执行密度仍偏薄；建议把「下一步」压成今日可勾选项，并控制同时焦点。",
       "wins": [
-        "完成《涛动周期论》第1章阅读并标记四阶段",
-        "三个主题均完成共创锁定与一次今日勾选"
+        "至少完成了冷启动锁定，主路径已建立",
+        "资料与计划有了可对照的活文档"
       ],
       "issues": [
-        "主题阅读与AI Agent入门主题下所有任务均未完成，执行率低",
-        "整体完成率仅16.7%，远低于预期",
-        "康波周期分析中历史数据制作任务未完成，影响后续分析"
+        "今日承诺完成率偏低或尚未形成节奏",
+        "若同时开多个学习主题，槽位与心智会打架"
       ],
       "adjustments": [
-        "下周优先完成主题阅读的选书与提纲任务，并设定具体完成时间",
-        "将AI Agent入门任务拆分为每日小步骤，确保至少完成一项",
-        "康波周期分析需补做历史数据表格，并明确数据来源与格式"
+        "明天只承诺 1 条可在 30 分钟内完成的任务",
+        "主题看板里用展开步骤代替「再看一遍计划」",
+        "周复盘只改一条节奏参数，避免重写整份计划"
       ]
     }
   },
   "final_home": {
     "themes": [
       {
-        "id": "2dcbda03-17e2-4640-8434-cb214d004a5e",
+        "id": "1ccafdc1-766d-4d85-916e-400136b0d709",
         "title": "第六轮康波周期分析",
         "theme_type": "general",
         "phase": "learning",
@@ -388,7 +389,7 @@
         "is_focus": true
       },
       {
-        "id": "b80696ee-090d-43ec-9954-9774b41255ba",
+        "id": "ef6eac02-b90e-4a58-a1ab-e0bd65a56de9",
         "title": "AI Agent 入门",
         "theme_type": "tech",
         "phase": "practice",
@@ -396,7 +397,7 @@
         "is_focus": true
       },
       {
-        "id": "f9f3e1f7-4bb4-4738-88e7-2a02543f4050",
+        "id": "b350c14a-76ef-4a49-afc0-3201c7950785",
         "title": "主题阅读",
         "theme_type": "general",
         "phase": "practice",
@@ -419,7 +420,9 @@
       }
     },
     "today_tasks": 6,
-    "queue": 7,
+    "queue": 8,
     "focus_count": 3
-  }
+  },
+  "note": "Cursor agent 沙箱无法解析/访问 api.deepseek.com；本轮 API 进程级 DEEPSEEK_API_KEY=mock（未改 .env）。产品主路径已完整跑通。",
+  "sealed_db": "data/learning.db.sealed-20260812-145023"
 }

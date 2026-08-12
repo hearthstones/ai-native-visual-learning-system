@@ -226,7 +226,3 @@ class ActivityExecutionPatch(BaseModel):
 
 class ActivityStepToggle(BaseModel):
     done: bool
-
-
-class WereadSearchOut(BaseModel):
-    books: list[Any]

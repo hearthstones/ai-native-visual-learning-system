@@ -78,5 +78,8 @@ apps/api          FastAPI
 skills/           十倍速 Skill1–3 + weread-skills（入库副本）
 prototype/        高保真原型（验收参照）
 docs/             需求与规格
+docs/ai-engineering/  AI 工程化方法索引（评测 / 档位 / 流水线等）
 data/             SQLite 数据目录
 ```
+
+AI 工程化笔记入口：[`docs/ai-engineering/README.md`](./docs/ai-engineering/README.md)。

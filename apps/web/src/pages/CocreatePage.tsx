@@ -544,9 +544,9 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
                         : '正在生成学习阶梯'}
                     <div className="text-tertiary" style={{ fontSize: 12, marginTop: 6 }}>
                       {kind === 'resources'
-                        ? '按主题类型策展高杠杆资料（技术偏学习包，通识偏阅读脚本）'
+                        ? '默认约 5 份高杠杆资料（技术偏学习包，通识偏阅读脚本）'
                         : kind === 'plan'
-                          ? '默认每天约 30 分钟，学习期活动会控制在 4–6 条'
+                          ? '默认学习期 10 节 × 2 小时；练/用每天约 30 分钟'
                           : 'AI 教练正在搭建 5 级阶梯初稿，开始输出后会逐字显示'}
                     </div>
                   </div>

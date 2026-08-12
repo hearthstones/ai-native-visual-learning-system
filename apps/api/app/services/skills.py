@@ -52,7 +52,7 @@ STAGE_EXTRA = """
 RESOURCES_EXTRA = """
 产品适配（两步共创）：
 1) 首轮：根据主题、目标、当前阶梯，直接推荐可执行资料方案，不要先追问用户要几份。
-   - 默认 3 份（信号够、噪音少）；除非用户明确要求更多，否则不要堆到 5+。
+   - 「约 5 份高杠杆资料」是综合较均衡的默认（信号够、噪音少）；除非上下文强烈需要，否则首轮以约 5 份为主。
    - 主题类型=general（通识）：默认交付「1 本主书 + 本周阅读脚本（AI 加工稿）」形态；
      how_to_use 必须含可立即执行的步骤/输出物，禁止只丢三本经典并列书单。
      优先微信读书可读书籍；type 可用 book / script / ai_pack。
@@ -70,7 +70,7 @@ RESOURCES_EXTRA = """
 - live_doc 结构：
   {
     "constraints": ["..."],
-    "target_count": 3,
+    "target_count": 5,
     "rationale": "一句话：为何这份清单适合当前阶梯与目标",
     "resources": [
       {
@@ -86,17 +86,17 @@ RESOURCES_EXTRA = """
         "book_hint": ""
       }
     ],
-    "order": [0, 1, 2],
+    "order": [0, 1, 2, 3, 4],
     "path_7d": "..."
   }
 """
 
 PLAN_EXTRA = """
 产品适配（两步共创）：
-1) 首轮：根据主题、目标、阶梯级别、资料清单推荐计划；节奏锚点如下（除非用户另有要求，否则首轮按此）：
-   - 学习期：约 4–6 条可检查活动（不要默认 10 条）；duration 可用「约 1–2 周」或等价短节奏；activity_type=learn
-   - 练习期：约 4 周骨架，activities 最多 4 条（按周密度，不要堆 8 条细项）；每天约 30 分钟；activity_type=practice
-   - 应用期：长尾骨架，activities 最多 3 条；每天约 30 分钟；activity_type=apply
+1) 首轮：根据主题、目标、阶梯级别、资料清单推荐计划；节奏锚点如下（除非用户另有要求，否则首轮按此均衡方案）：
+   - 学习期：约 10 节 × 每节 2 小时（承接原 Skill「20 小时 / 二八法则」总量；activities 约 10 条，activity_type=learn，minutes=120）
+   - 练习期：约 4 周，每天约 30 分钟（activities 按周密度排，最多约 4 条，activity_type=practice）
+   - 应用期：长尾，每天约 30 分钟（骨架即可，最多约 3 条，activity_type=apply）
    - assistant_message 说明推荐理由，并邀请用户提意见。
 2) 其后：用户意见优先（更早练习、缩短学期、每天更少时间等）——必须同步改 daily_minutes、durations、phase_minutes、各 phase.duration，并按新节奏裁剪/重排 activities（数量也要匹配）。
 - 产出三阶段 learning / practice / application；保留约 20% 核心（core_20 5 条左右即可）。
@@ -107,12 +107,12 @@ PLAN_EXTRA = """
     "core_20": ["..."],
     "rationale": "一句话：为何这套节奏适合当前上下文",
     "durations": {
-      "learning": "约 1–2 周",
+      "learning": "10 节 × 2 小时",
       "practice": "约 4 周",
       "application": "长尾"
     },
     "phase_minutes": {
-      "learning": 30,
+      "learning": 120,
       "practice": 30,
       "application": 30
     },
@@ -120,9 +120,9 @@ PLAN_EXTRA = """
     "phases": {
       "learning": {
         "title": "学习期",
-        "duration": "约 1–2 周",
+        "duration": "10 节 × 2 小时",
         "summary": "...",
-        "activities": [{"title":"...","description":"...","activity_type":"learn","minutes":30}]
+        "activities": [{"title":"...","description":"...","activity_type":"learn","minutes":120}]
       },
       "practice": {
         "title": "练习期",

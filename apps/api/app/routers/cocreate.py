@@ -67,15 +67,16 @@ def _finalize_resources_doc(
     requested_count: int | None = None,
 ) -> dict[str, Any]:
     doc = dict(live_doc)
+    default_count = plan_defaults.DEFAULT_RESOURCE_COUNT
     if requested_count:
         doc = post_svc.enforce_resource_count(doc, requested_count)
     elif not doc.get("target_count"):
         resources = doc.get("resources") if isinstance(doc.get("resources"), list) else []
-        # Default product target is 3; trim oversized first drafts.
-        if len(resources) > 3:
-            doc = post_svc.enforce_resource_count(doc, 3)
+        # Default product target is 5; trim oversized first drafts.
+        if len(resources) > default_count:
+            doc = post_svc.enforce_resource_count(doc, default_count)
         else:
-            doc["target_count"] = len(resources) or 3
+            doc["target_count"] = len(resources) or default_count
             doc["order"] = list(range(len(resources)))
     doc = post_svc.annotate_unverified_resources(doc)
     doc = _maybe_enrich_weread(settings, doc)
@@ -595,17 +596,22 @@ def _seed_user_message(
             f"{base}\n当前阶梯级别：{level}\n阶梯摘要：{ladder}\n"
             f"{curate}\n"
             "请根据主题、目标与当前阶梯，推荐一套可执行资料初稿。"
-            "默认约 3 份；在 assistant_message 里简要说明推荐理由，并邀请我提意见。"
+            f"默认约 {plan_defaults.DEFAULT_RESOURCE_COUNT} 份；在 assistant_message 里简要说明推荐理由，并邀请我提意见。"
         )
     if plan_prefs is not None:
+        learning_is_2h = (
+            "2 小时" in plan_prefs.learning_duration
+            or "2小时" in plan_prefs.learning_duration
+        )
+        learning_acts = "约 10 条" if learning_is_2h else "4–6 条"
         return (
             f"{base}\n当前阶梯级别：{theme.current_ladder_level}\n"
             f"资料清单：{theme.resources_doc}\n"
             "请按以下用户指定节奏生成学/练/用三阶段计划：\n"
-            f"- 学习期：{plan_prefs.learning_duration}（activities 4–6 条）\n"
-            f"- 练习期：{plan_prefs.practice_duration}（activities ≤4 条）\n"
-            f"- 应用期：{plan_prefs.application_duration}（activities ≤3 条）\n"
-            f"- 每天约 {plan_prefs.daily_minutes} 分钟\n"
+            f"- 学习期：{plan_prefs.learning_duration}（activities {learning_acts}）\n"
+            f"- 练习期：{plan_prefs.practice_duration}（activities ≤{plan_defaults.DEFAULT_PRACTICE_ACTIVITY_MAX} 条）\n"
+            f"- 应用期：{plan_prefs.application_duration}（activities ≤{plan_defaults.DEFAULT_APPLICATION_ACTIVITY_MAX} 条）\n"
+            f"- 每天约 {plan_prefs.daily_minutes} 分钟（练习/应用期；若学习期为 2 小时课表则学节用 120 分钟）\n"
             "activities 数量与摘要必须匹配上述时长；标题尽量短。"
         )
     return (
@@ -613,9 +619,9 @@ def _seed_user_message(
         f"资料清单：{theme.resources_doc}\n"
         "请根据主题、目标、阶梯与资料，推荐学/练/用三阶段计划初稿。\n"
         "首轮节奏锚点（除非上下文强烈需要微调，否则按此）：\n"
-        f"- 学习期：{plan_defaults.DEFAULT_LEARNING_DURATION}，activities 4–6 条\n"
-        f"- 练习期：{plan_defaults.DEFAULT_PRACTICE_DURATION}，每天约 {plan_defaults.DEFAULT_DAILY_MINUTES} 分钟，activities ≤4\n"
-        f"- 应用期：{plan_defaults.DEFAULT_APPLICATION_DURATION}，每天约 {plan_defaults.DEFAULT_DAILY_MINUTES} 分钟，activities ≤3\n"
+        f"- 学习期：{plan_defaults.DEFAULT_LEARNING_DURATION}，activities 约 {plan_defaults.DEFAULT_LEARNING_ACTIVITY_MAX} 条，每节约 120 分钟\n"
+        f"- 练习期：{plan_defaults.DEFAULT_PRACTICE_DURATION}，每天约 {plan_defaults.DEFAULT_DAILY_MINUTES} 分钟，activities ≤{plan_defaults.DEFAULT_PRACTICE_ACTIVITY_MAX}\n"
+        f"- 应用期：{plan_defaults.DEFAULT_APPLICATION_DURATION}，每天约 {plan_defaults.DEFAULT_DAILY_MINUTES} 分钟，activities ≤{plan_defaults.DEFAULT_APPLICATION_ACTIVITY_MAX}\n"
         "在 assistant_message 里说明推荐理由，并邀请我提意见。"
     )
 

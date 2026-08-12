@@ -100,6 +100,18 @@ def mock_chat_json(
                     "how_to_use": "每天默写 5 组对照，错的留到练习期",
                     "type": "ai_pack",
                 },
+                {
+                    "name": "AI 学习包：典型失败病例",
+                    "why": "提前见过坑，练习期少绕弯",
+                    "how_to_use": "对照病例自检，写出自己会踩的 3 个坑",
+                    "type": "ai_pack",
+                },
+                {
+                    "name": "最短可运行例子仓库",
+                    "why": "把概念落到能跑的代码上",
+                    "how_to_use": "克隆后改一处参数并跑通，截图留证",
+                    "type": "other",
+                },
             ]
         else:
             resources = [
@@ -123,12 +135,25 @@ def mock_chat_json(
                     "how_to_use": "按脚本执行 30 分钟，结束写三句收获",
                     "type": "ai_pack",
                 },
+                {
+                    "name": "主题相关综述或入门讲义",
+                    "why": "快速建立地图，避免只啃一本偏科",
+                    "how_to_use": "只读目录与结论节，画出自己的概念图",
+                    "type": "doc",
+                },
+                {
+                    "name": "对标实践案例（短文/讲座）",
+                    "why": "看到别人怎么用，方便迁移",
+                    "how_to_use": "摘 3 条可照做的动作，下周练一条",
+                    "type": "other",
+                },
             ]
         return {
             "assistant_message": f"已为「{title}」筛出 {len(resources)} 份高杠杆资料。可继续加约束（如只要微信读书 / 只要动手向）。",
             "live_doc": {
-                "constraints": ["每天 ≤30 分钟", "优先可执行而非百科"],
+                "constraints": ["优先可执行而非百科", "默认约 5 份"],
                 "target_count": len(resources),
+                "rationale": "约 5 份：信号够、噪音可控，且保留主书/脚本与动手向搭配。",
                 "resources": resources,
                 "order": list(range(len(resources))),
                 "path_7d": "D1 建检查清单 → D2–4 短练习 → D5 对照复盘 → D6–7 迁移一小步",
@@ -136,8 +161,20 @@ def mock_chat_json(
         }
 
     if kind == "plan":
+        learn_acts = [
+            {"title": "写清目标与边界", "description": "用可验证句子写下学完能演示什么", "activity_type": "learn", "minutes": 120},
+            {"title": "核心术语对照卡", "description": "整理 8～12 个必须能默写的词", "activity_type": "learn", "minutes": 120},
+            {"title": "精读主资料一章", "description": "带着问题精读并标记疑点", "activity_type": "learn", "minutes": 120},
+            {"title": "跟做最小例子", "description": "跑通并截图/笔记证明", "activity_type": "learn", "minutes": 120},
+            {"title": "对照自检三问", "description": "用阶梯自检题过一遍卡点", "activity_type": "learn", "minutes": 120},
+            {"title": "错例复盘", "description": "收集 3 个典型失败并写避坑条", "activity_type": "learn", "minutes": 120},
+            {"title": "小范围迁移练习", "description": "把例子改到贴近你的场景", "activity_type": "learn", "minutes": 120},
+            {"title": "产出一页摘要", "description": "用自己的话写出可教别人的一页", "activity_type": "learn", "minutes": 120},
+            {"title": "模拟讲解", "description": "对着录音讲 10 分钟并回听修表述", "activity_type": "learn", "minutes": 120},
+            {"title": "学习期验收", "description": "对照目标做一次可演示验收", "activity_type": "learn", "minutes": 120},
+        ]
         return {
-            "assistant_message": f"已生成「{title}」学/练/用三阶段计划初稿。可改每天分钟数或某阶段时长后再锁定。",
+            "assistant_message": f"已生成「{title}」学/练/用三阶段计划初稿（学习期按 10 节 × 2 小时）。可改每天分钟数或某阶段时长后再锁定。",
             "live_doc": {
                 "goal": f"在可检查的节奏下推进「{title}」，先能演示再谈精通",
                 "core_20": [
@@ -150,29 +187,9 @@ def mock_chat_json(
                 "phases": {
                     "learning": {
                         "title": "学习期",
-                        "duration": "约 1–2 周",
-                        "activities": [
-                            {
-                                "title": "写清目标与边界",
-                                "description": "用可验证句子写下学完能演示什么",
-                                "activity_type": "learn",
-                            },
-                            {
-                                "title": "核心术语对照卡",
-                                "description": "整理 8～12 个必须能默写的词",
-                                "activity_type": "learn",
-                            },
-                            {
-                                "title": "跟做最小例子",
-                                "description": "跑通并截图/笔记证明",
-                                "activity_type": "learn",
-                            },
-                            {
-                                "title": "自检三问",
-                                "description": "用阶梯自检题过一遍卡点",
-                                "activity_type": "learn",
-                            },
-                        ],
+                        "duration": "10 节 × 2 小时",
+                        "summary": "二八法则聚焦核心 20%，按 10 节课推进",
+                        "activities": learn_acts,
                     },
                     "practice": {
                         "title": "练习期",
@@ -182,11 +199,13 @@ def mock_chat_json(
                                 "title": "每日短循环",
                                 "description": "30 分钟：做→对照→改一处",
                                 "activity_type": "practice",
+                                "minutes": 30,
                             },
                             {
                                 "title": "错题本",
                                 "description": "记录反复出错的 3 类问题",
                                 "activity_type": "practice",
+                                "minutes": 30,
                             },
                         ],
                     },
@@ -198,17 +217,18 @@ def mock_chat_json(
                                 "title": "真实小项目",
                                 "description": "选一个贴近工作/生活的任务落地",
                                 "activity_type": "apply",
+                                "minutes": 30,
                             }
                         ],
                     },
                 },
                 "durations": {
-                    "learning": "约 1–2 周",
+                    "learning": "10 节 × 2 小时",
                     "practice": "约 4 周",
                     "application": "长尾",
                 },
-                "phase_minutes": {"learning": 30, "practice": 30, "application": 30},
-                "rationale": "先把目标做成可检查产出，再进入短反馈循环，最后才迁移到真实场景。",
+                "phase_minutes": {"learning": 120, "practice": 30, "application": 30},
+                "rationale": "学习期用 20 小时课表吃透核心，练习/应用保持每天约 30 分钟的可执行节奏。",
                 "daily_minutes": 30,
             },
         }

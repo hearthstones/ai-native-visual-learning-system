@@ -1,4 +1,5 @@
 from functools import lru_cache
+import hashlib
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -26,9 +27,26 @@ class Settings(BaseSettings):
     database_url: str = f"sqlite:///{DATA_DIR / 'learning.db'}"
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
 
+    # 单人门禁：在 .env 设置 AUTH_PASSWORD 后启用（用户名默认 admin）
+    auth_username: str = "admin"
+    auth_password: str = ""
+    auth_secret: str = ""
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+
+    @property
+    def auth_enabled(self) -> bool:
+        return bool(self.auth_password.strip())
+
+    @property
+    def session_secret(self) -> str:
+        if self.auth_secret.strip():
+            return self.auth_secret.strip()
+        # 未单独配置时，由账号口令派生，改密后旧 cookie 自动失效
+        raw = f"{self.auth_username}:{self.auth_password}"
+        return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
 @lru_cache

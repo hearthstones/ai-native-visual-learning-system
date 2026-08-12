@@ -82,6 +82,12 @@
   gap: var(--spacer-8);
 }
 
+.settings-session {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-neutral-l1);
+}
+
 .ok-banner {
   padding: 10px 14px;
   border-radius: var(--radius-6);

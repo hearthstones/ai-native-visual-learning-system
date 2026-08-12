@@ -22,11 +22,15 @@
 
 ### 1. 配置密钥
 
-在仓库根目录创建 `.env`：
+在仓库根目录创建 `.env`（可参考 `.env.example`）：
 
 ```bash
 DEEPSEEK_API_KEY=sk-...
 WEREAD_API_KEY=wrk-...
+
+# 系统门禁（设置密码后，打开网页需先登录）
+AUTH_USERNAME=admin
+AUTH_PASSWORD=你的密码
 ```
 
 可选：
@@ -34,7 +38,10 @@ WEREAD_API_KEY=wrk-...
 ```bash
 DEEPSEEK_MODEL=deepseek-v4-flash
 DEEPSEEK_BASE_URL=https://api.deepseek.com
+# AUTH_SECRET=可选会话签名密钥
 ```
+
+> 未设置 `AUTH_PASSWORD` 时不启用门禁（便于本地调试）。改密后需重新登录。
 
 ### 2. 启动 API
 

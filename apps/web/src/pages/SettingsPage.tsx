@@ -218,6 +218,20 @@ export function SettingsPage() {
           </button>
         </div>
       </form>
+
+      <div className="settings-session">
+        <button
+          className="ds-btn ds-btn--secondary"
+          type="button"
+          onClick={() => {
+            void api.logout().finally(() => {
+              window.location.reload()
+            })
+          }}
+        >
+          <span>退出登录</span>
+        </button>
+      </div>
     </div>
   )
 }

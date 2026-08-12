@@ -171,9 +171,31 @@ export interface LlmSettingsUpdate {
   weread_api_key?: string
 }
 
+export class ApiError extends Error {
+  status: number
+  constructor(status: number, message: string) {
+    super(message)
+    this.status = status
+  }
+}
+
+export type AuthMe = {
+  authenticated: boolean
+  auth_required: boolean
+  username?: string | null
+}
+
+let onUnauthorized: (() => void) | null = null
+
+/** 注册 401 回调（例如回到登录页）；登录/登出接口本身不触发。 */
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  onUnauthorized = handler
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
     cache: 'no-store',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
     ...init,
   })
@@ -185,7 +207,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       /* ignore */
     }
-    throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
+    const message = typeof detail === 'string' ? detail : JSON.stringify(detail)
+    if (res.status === 401 && !path.startsWith('/api/auth/')) {
+      onUnauthorized?.()
+    }
+    throw new ApiError(res.status, message)
   }
   if (res.status === 204) return undefined as T
   return res.json() as Promise<T>
@@ -224,6 +250,7 @@ async function streamCocreateRequest(
   const res = await fetch(path, {
     method: 'POST',
     cache: 'no-store',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'text/event-stream',
@@ -238,7 +265,9 @@ async function streamCocreateRequest(
     } catch {
       /* ignore */
     }
-    throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail))
+    const message = typeof detail === 'string' ? detail : JSON.stringify(detail)
+    if (res.status === 401) onUnauthorized?.()
+    throw new ApiError(res.status, message)
   }
   if (!res.body) throw new Error('浏览器不支持流式响应')
 
@@ -305,6 +334,13 @@ async function streamCocreateRequest(
 }
 
 export const api = {
+  authMe: () => request<AuthMe>('/api/auth/me'),
+  login: (username: string, password: string) =>
+    request<AuthMe>('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    }),
+  logout: () => request<AuthMe>('/api/auth/logout', { method: 'POST', body: '{}' }),
   health: () =>
     request<{ ok: boolean; deepseek_configured: boolean; weread_configured: boolean; model?: string }>(
       '/api/health',

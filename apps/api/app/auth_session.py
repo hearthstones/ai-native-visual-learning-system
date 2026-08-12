@@ -22,12 +22,13 @@ def _sign(payload: str, secret: str) -> str:
 
 def issue_session_token(username: str, settings: Settings) -> str:
     exp = int(time.time()) + SESSION_TTL_SECONDS
+    # username 可能含冒号：用 rsplit 解析，签发侧仍用 username:exp:sig
     payload = f"{username}:{exp}"
     return f"{payload}:{_sign(payload, settings.session_secret)}"
 
 
 def verify_session_token(token: str, settings: Settings) -> Optional[str]:
-    parts = token.split(":")
+    parts = token.rsplit(":", 2)
     if len(parts) != 3:
         return None
     username, exp_s, sig = parts
@@ -61,16 +62,17 @@ def read_session_user(request: Request, settings: Settings) -> Optional[str]:
     return verify_session_token(token, settings)
 
 
-def set_session_cookie(response: Response, token: str) -> None:
+def set_session_cookie(response: Response, token: str, *, secure: bool = False) -> None:
     response.set_cookie(
         key=COOKIE_NAME,
         value=token,
         max_age=SESSION_TTL_SECONDS,
         httponly=True,
         samesite="lax",
+        secure=secure,
         path="/",
     )
 
 
-def clear_session_cookie(response: Response) -> None:
-    response.delete_cookie(key=COOKIE_NAME, path="/")
+def clear_session_cookie(response: Response, *, secure: bool = False) -> None:
+    response.delete_cookie(key=COOKIE_NAME, path="/", secure=secure, samesite="lax")

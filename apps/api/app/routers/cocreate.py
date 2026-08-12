@@ -40,6 +40,37 @@ def _session_payload(row: CocreateSession) -> dict[str, Any]:
     return CocreateSessionOut.model_validate(row).model_dump()
 
 
+def _plan_adjust_hint() -> str:
+    return (
+        " 若用户本轮调整了学/练/用时长或每天分钟数，同步更新 durations、"
+        "各 phase.duration、daily_minutes，并按新节奏重排 activities。"
+        f" 学习期活动不超过 {plan_defaults.DEFAULT_LEARNING_ACTIVITY_MAX} 条，"
+        f"练习期不超过 {plan_defaults.DEFAULT_PRACTICE_ACTIVITY_MAX} 条。"
+    )
+
+
+def _live_doc_substantive(kind: CocreateKind, doc: Any) -> bool:
+    """有键无内容的残缺稿不算可用，避免盖掉上一版活文档。"""
+    if not isinstance(doc, dict) or not doc:
+        return False
+    if kind == CocreateKind.stage:
+        levels = doc.get("levels")
+        return isinstance(levels, list) and len(levels) > 0
+    if kind == CocreateKind.resources:
+        resources = doc.get("resources")
+        return isinstance(resources, list) and len(resources) > 0
+    if kind == CocreateKind.plan:
+        phases = doc.get("phases")
+        has_phases = isinstance(phases, dict) and any(
+            isinstance(phases.get(k), dict) and (phases.get(k) or {}).get("activities")
+            for k in ("learning", "practice", "application")
+        )
+        core = doc.get("core_20")
+        has_core = isinstance(core, list) and len(core) > 0
+        return has_phases or has_core or bool(str(doc.get("goal") or "").strip())
+    return True
+
+
 def _get_theme(session: Session, theme_id: str) -> Theme:
     theme = session.get(Theme, theme_id)
     if not theme:
@@ -124,9 +155,7 @@ def start_cocreate(
     ).first()
     if existing and not body.force:
         return existing
-    if existing and body.force:
-        session.delete(existing)
-        session.commit()
+    stale = existing if existing and body.force else None
 
     seed = _seed_user_message(
         theme,
@@ -164,10 +193,10 @@ def start_cocreate(
     live_doc = result.get("live_doc") or {}
     if not isinstance(live_doc, dict):
         live_doc = {}
-    if not live_doc:
+    if not _live_doc_substantive(body.kind, live_doc):
         raise HTTPException(
             502,
-            f"LLM 未返回活文档（kind={body.kind.value}）。原始键：{list((result.get('_raw') or result).keys())}",
+            f"LLM 未返回可用活文档（kind={body.kind.value}）。原始键：{list((result.get('_raw') or result).keys())}",
         )
 
     if body.kind == CocreateKind.resources:
@@ -183,6 +212,8 @@ def start_cocreate(
         {"role": "user", "content": seed},
         {"role": "assistant", "content": assistant_message},
     ]
+    if stale is not None and not stale.confirmed:
+        session.delete(stale)
     row = CocreateSession(
         theme_id=theme_id,
         kind=body.kind,
@@ -221,9 +252,10 @@ def start_cocreate_stream(
             yield _sse("done", {"ok": True, "reused": True})
 
         return EventSourceResponse(existing_gen())
-    if existing and body.force:
-        session.delete(existing)
-        session.commit()
+
+    # force：等新稿 commit 成功后再删旧草稿，避免流式失败丢稿
+    stale_id = existing.id if existing and body.force else None
+    force = bool(body.force)
 
     seed = _seed_user_message(
         theme,
@@ -264,9 +296,9 @@ def start_cocreate_stream(
             live_doc = result.get("live_doc") or {}
             if not isinstance(live_doc, dict):
                 live_doc = {}
-            if not live_doc:
+            if not _live_doc_substantive(kind, live_doc):
                 raise RuntimeError(
-                    f"LLM 未返回活文档（kind={kind.value}）。"
+                    f"LLM 未返回可用活文档（kind={kind.value}）。"
                     f"原始键：{list((result.get('_raw') or result).keys())}"
                 )
 
@@ -284,6 +316,28 @@ def start_cocreate_stream(
                 {"role": "assistant", "content": assistant_message},
             ]
             with Session(engine) as db:
+                # 并发 start：非 force 时若已有未确认稿则复用，避免双落库
+                again = db.exec(
+                    select(CocreateSession).where(
+                        CocreateSession.theme_id == theme_snapshot["id"],
+                        CocreateSession.kind == kind,
+                        CocreateSession.confirmed == False,  # noqa: E712
+                    )
+                ).first()
+                if again and not force:
+                    payload = _session_payload(again)
+                    yield _sse("live_doc", again.live_doc or {})
+                    yield _sse("session", payload)
+                    yield _sse("done", {"ok": True, "reused": True})
+                    return
+
+                if stale_id:
+                    old = db.get(CocreateSession, stale_id)
+                    if old and not old.confirmed:
+                        db.delete(old)
+                elif again and force:
+                    db.delete(again)
+
                 row = CocreateSession(
                     theme_id=theme_snapshot["id"],
                     kind=kind,
@@ -358,11 +412,7 @@ def post_message(
             "严格改成该数量，并更新 target_count；禁止继续输出固定 5 条。"
         )
     if kind == CocreateKind.plan:
-        extra += (
-            " 若用户本轮调整了学/练/用时长或每天分钟数，同步更新 durations、"
-            "各 phase.duration、daily_minutes，并按新节奏重排 activities。"
-            " 学习期活动不超过 6 条，练习期不超过 4 条。"
-        )
+        extra += _plan_adjust_hint()
     llm_messages.append({"role": "user", "content": extra})
 
     try:
@@ -376,8 +426,8 @@ def post_message(
         raise HTTPException(502, f"LLM 调用失败: {e}") from e
 
     assistant_message = str(result.get("assistant_message") or "已更新。")
-    live_doc = result.get("live_doc") or row.live_doc
-    if not isinstance(live_doc, dict) or not live_doc:
+    live_doc = result.get("live_doc")
+    if not _live_doc_substantive(kind, live_doc):
         live_doc = row.live_doc
 
     if kind == CocreateKind.resources:
@@ -444,11 +494,7 @@ def post_message_stream(
             "严格改成该数量，并更新 target_count；禁止继续输出固定 5 条。"
         )
     if kind == CocreateKind.plan:
-        extra += (
-            " 若用户本轮调整了学/练/用时长或每天分钟数，同步更新 durations、"
-            "各 phase.duration、daily_minutes，并按新节奏重排 activities。"
-            " 学习期活动不超过 6 条，练习期不超过 4 条。"
-        )
+        extra += _plan_adjust_hint()
     llm_messages.append({"role": "user", "content": extra})
     user_content = body.content
 
@@ -470,8 +516,8 @@ def post_message_stream(
                 raise RuntimeError("LLM 流式结果为空")
 
             assistant_message = str(result.get("assistant_message") or "已更新。")
-            live_doc = result.get("live_doc") or prior_live_doc
-            if not isinstance(live_doc, dict) or not live_doc:
+            live_doc = result.get("live_doc")
+            if not _live_doc_substantive(kind, live_doc):
                 live_doc = prior_live_doc
 
             if kind == CocreateKind.resources:

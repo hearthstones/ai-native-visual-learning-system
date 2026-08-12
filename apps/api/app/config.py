@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     auth_username: str = "admin"
     auth_password: str = ""
     auth_secret: str = ""
+    # None=按请求是否 HTTPS 自动；True/False 可强制
+    auth_cookie_secure: bool | None = None
 
     @property
     def cors_origin_list(self) -> list[str]:

@@ -33,6 +33,19 @@ def has_execution(doc: dict[str, Any] | None) -> bool:
     return bool(goal) or (isinstance(steps, list) and len(steps) > 0)
 
 
+def sync_activity_done_from_execution(activity: Activity) -> None:
+    """按步骤完成态重算 Activity.done（有步骤时）。"""
+    doc = activity.execution_doc if isinstance(activity.execution_doc, dict) else {}
+    steps = [
+        s
+        for s in (doc.get("steps") or [])
+        if isinstance(s, dict) and str(s.get("text") or "").strip()
+    ]
+    if not steps:
+        return
+    activity.done = all(bool(s.get("done")) for s in steps)
+
+
 def next_undone_step_text(doc: dict[str, Any] | None) -> str | None:
     if not isinstance(doc, dict):
         return None

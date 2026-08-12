@@ -222,6 +222,7 @@ export type CocreateStreamHandlers = {
   onDelta?: (text: string) => void
   onLiveDoc?: (doc: Record<string, unknown>) => void
   onSession?: (session: CocreateSession) => void
+  signal?: AbortSignal
 }
 
 function parseSseBlock(block: string): { event: string; data: string } | null {
@@ -242,6 +243,13 @@ function parseSseBlock(block: string): { event: string; data: string } | null {
   return { event, data: dataLines.join('\n') }
 }
 
+function isAbortError(e: unknown): boolean {
+  return (
+    (e instanceof DOMException && e.name === 'AbortError') ||
+    (e instanceof Error && e.name === 'AbortError')
+  )
+}
+
 async function streamCocreateRequest(
   path: string,
   body: unknown,
@@ -251,6 +259,7 @@ async function streamCocreateRequest(
     method: 'POST',
     cache: 'no-store',
     credentials: 'include',
+    signal: handlers.signal,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'text/event-stream',
@@ -313,18 +322,32 @@ async function streamCocreateRequest(
     }
   }
 
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) break
-    buffer += decoder.decode(value, { stream: true })
-    buffer = buffer.replace(/\r\n/g, '\n')
-    let sep = buffer.indexOf('\n\n')
-    while (sep >= 0) {
-      const block = buffer.slice(0, sep)
-      buffer = buffer.slice(sep + 2)
-      if (block.trim()) handleBlock(block)
-      sep = buffer.indexOf('\n\n')
+  try {
+    while (true) {
+      if (handlers.signal?.aborted) {
+        await reader.cancel()
+        throw new DOMException('Aborted', 'AbortError')
+      }
+      const { done, value } = await reader.read()
+      if (done) break
+      buffer += decoder.decode(value, { stream: true })
+      buffer = buffer.replace(/\r\n/g, '\n')
+      let sep = buffer.indexOf('\n\n')
+      while (sep >= 0) {
+        const block = buffer.slice(0, sep)
+        buffer = buffer.slice(sep + 2)
+        if (block.trim()) handleBlock(block)
+        sep = buffer.indexOf('\n\n')
+      }
     }
+  } catch (e) {
+    if (isAbortError(e)) throw e
+    try {
+      await reader.cancel()
+    } catch {
+      /* ignore */
+    }
+    throw e
   }
   if (buffer.trim()) handleBlock(buffer)
 

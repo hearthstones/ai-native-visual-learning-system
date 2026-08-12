@@ -20,6 +20,8 @@ _PUBLIC_API_PATHS = {
     "/api/auth/logout",
 }
 
+_DOCS_PATHS = {"/docs", "/redoc", "/openapi.json"}
+
 
 class NoStoreCacheMiddleware(BaseHTTPMiddleware):
     """主题列表等会随状态变更立即失效，禁止中间层/浏览器缓存 GET。"""
@@ -32,14 +34,19 @@ class NoStoreCacheMiddleware(BaseHTTPMiddleware):
 
 
 class AuthGateMiddleware(BaseHTTPMiddleware):
-    """当 .env 配置了 AUTH_PASSWORD 时，保护 /api/*（登录相关与 health 除外）。"""
+    """当 .env 配置了 AUTH_PASSWORD 时，保护 /api/*（登录相关与 health 除外）及文档面。"""
 
     async def dispatch(self, request: Request, call_next) -> Response:
         path = request.url.path
+        cfg = get_settings()
+
+        if cfg.auth_enabled and path in _DOCS_PATHS:
+            if not read_session_user(request, cfg):
+                return JSONResponse(status_code=401, content={"detail": "未登录"})
+
         if not path.startswith("/api/"):
             return await call_next(request)
 
-        cfg = get_settings()
         if not cfg.auth_enabled:
             return await call_next(request)
 

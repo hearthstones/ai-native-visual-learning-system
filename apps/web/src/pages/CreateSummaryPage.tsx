@@ -16,6 +16,7 @@ export function CreateSummaryPage() {
   const [theme, setTheme] = useState<Theme | null>(null)
   const [tasks, setTasks] = useState<DailyTask[]>([])
   const [queueCount, setQueueCount] = useState(0)
+  const [homeUnavailable, setHomeUnavailable] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [filling, setFilling] = useState(false)
@@ -25,15 +26,23 @@ export function CreateSummaryPage() {
     async function load() {
       setLoading(true)
       setError('')
+      setHomeUnavailable(false)
       try {
-        const [t, home] = await Promise.all([
-          api.getTheme(themeId),
-          api.home().catch(() => null),
-        ])
+        const t = await api.getTheme(themeId)
         if (cancelled) return
         setTheme(t)
-        setTasks((home?.today_tasks || []).filter((task) => task.theme_id === themeId))
-        setQueueCount((home?.queue || []).filter((item) => item.theme_id === themeId).length)
+        try {
+          const home = await api.home()
+          if (cancelled) return
+          setTasks(home.today_tasks.filter((task) => task.theme_id === themeId))
+          setQueueCount(home.queue.filter((item) => item.theme_id === themeId).length)
+        } catch {
+          if (!cancelled) {
+            setHomeUnavailable(true)
+            setTasks([])
+            setQueueCount(0)
+          }
+        }
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e))
       } finally {
@@ -79,6 +88,11 @@ export function CreateSummaryPage() {
   const displayTasks = tasks
   const concepts = getCoreConcepts(theme)
   const conceptLine = concepts.length ? concepts.join(' · ') : theme.goal || '计划已就绪'
+  const emptyHint = homeUnavailable
+    ? '今日看板暂时加载失败。可先进入主题看板查看计划，或稍后回到今日看板。'
+    : queueCount > 0
+      ? `计划已入可做队列（${queueCount} 条）。今日承诺需主动选择，或一键按建议填入。`
+      : '暂无今日承诺，也没有可做队列活动——可稍后在主题看板查看计划。'
 
   return (
     <div className="overview-first-page">
@@ -88,7 +102,8 @@ export function CreateSummaryPage() {
         </div>
         <h1 className="lock-notice__title">计划已锁定</h1>
         <p className="lock-notice__subtitle">
-          「{theme.title}」的学习计划已就绪。每天约 30 分钟，开始你的{phaseLabel}。
+          「{theme.title}」的学习计划已就绪。学习期按课表推进（默认约 10 节 × 2 小时）；练/用期再按每天节奏执行。开始你的
+          {phaseLabel}。
         </p>
       </section>
 
@@ -99,11 +114,7 @@ export function CreateSummaryPage() {
             {displayTasks.length === 0 ? (
               <div className="first-cta-card__task">
                 <span className="first-cta-card__task-index">—</span>
-                <span>
-                  {queueCount > 0
-                    ? `计划已入可做队列（${queueCount} 条）。今日承诺需主动选择，或一键按建议填入。`
-                    : '暂无今日承诺，也没有可做队列活动——可稍后在主题看板查看计划。'}
-                </span>
+                <span>{emptyHint}</span>
               </div>
             ) : (
               displayTasks.slice(0, 4).map((task, i) => (
@@ -132,10 +143,10 @@ export function CreateSummaryPage() {
               className="ds-btn ds-btn--brand ds-btn--lg"
               type="button"
               data-dom-id="btn-enter-execution"
-              onClick={() => nav('/')}
+              onClick={() => nav(homeUnavailable ? `/themes/${theme.id}` : '/')}
             >
               <Icon name="play" size={14} className="icon" />
-              <span>回到今日看板</span>
+              <span>{homeUnavailable ? '进入主题看板' : '回到今日看板'}</span>
             </button>
           )}
           {displayTasks.length === 0 && queueCount > 0 ? (
@@ -149,7 +160,7 @@ export function CreateSummaryPage() {
               先回今日看板
             </button>
           ) : null}
-          <span className="first-cta-card__duration">约 30 分钟</span>
+          <span className="first-cta-card__duration">按计划节奏</span>
         </div>
       </section>
 

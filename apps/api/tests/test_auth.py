@@ -65,3 +65,47 @@ def test_login_and_access(client_authed: TestClient):
     out = client_authed.post("/api/auth/logout")
     assert out.status_code == 200
     assert client_authed.get("/api/slots").status_code == 401
+
+
+def test_docs_require_login_when_auth_enabled(client_authed: TestClient):
+    assert client_authed.get("/docs").status_code == 401
+    assert client_authed.get("/openapi.json").status_code == 401
+    client_authed.post("/api/auth/login", json={"username": "admin", "password": "secret-pass"})
+    assert client_authed.get("/docs").status_code == 200
+
+
+def test_username_with_colon_roundtrip(engine, monkeypatch):
+    monkeypatch.setenv("AUTH_USERNAME", "user:name")
+    monkeypatch.setenv("AUTH_PASSWORD", "secret-pass")
+    monkeypatch.setenv("AUTH_SECRET", "test-secret")
+    get_settings.cache_clear()
+    monkeypatch.setattr("app.main.init_db", lambda: None)
+
+    def _override():
+        with Session(engine) as session:
+            yield session
+
+    app.dependency_overrides[get_session] = _override
+    try:
+        with TestClient(app) as c:
+            ok = c.post(
+                "/api/auth/login",
+                json={"username": "user:name", "password": "secret-pass"},
+            )
+            assert ok.status_code == 200
+            assert c.get("/api/slots").status_code == 200
+    finally:
+        app.dependency_overrides.clear()
+        get_settings.cache_clear()
+
+
+def test_login_rate_limit(client_authed: TestClient, monkeypatch):
+    import app.routers.auth as auth_router
+
+    auth_router._login_attempts.clear()
+    monkeypatch.setattr(auth_router, "_LOGIN_MAX_ATTEMPTS", 3)
+    for _ in range(3):
+        r = client_authed.post("/api/auth/login", json={"username": "admin", "password": "wrong"})
+        assert r.status_code == 401
+    blocked = client_authed.post("/api/auth/login", json={"username": "admin", "password": "wrong"})
+    assert blocked.status_code == 429

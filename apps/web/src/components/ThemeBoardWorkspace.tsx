@@ -272,7 +272,11 @@ export function ThemeBoardWorkspace() {
               </>
             ) : null}
             <span className="tb-sep">·</span>
-            <span>每天约 {dailyMinutes} 分钟</span>
+            <span>
+              {theme.phase === 'learning'
+                ? '学习期按课表推进'
+                : `每天约 ${dailyMinutes} 分钟`}
+            </span>
             {sliceTotal > 0 ? (
               <>
                 <span className="tb-sep">·</span>

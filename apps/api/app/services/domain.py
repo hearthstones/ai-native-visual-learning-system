@@ -407,9 +407,15 @@ def refresh_today_commitments(
             continue
         new_title = format_daily_task_title(act)
         new_desc = act.description or act.title
+        changed = False
         if t.title != new_title or t.description != new_desc:
             t.title = new_title
             t.description = new_desc
+            changed = True
+        if t.done != bool(act.done):
+            t.done = bool(act.done)
+            changed = True
+        if changed:
             session.add(t)
     return list(keep)
 

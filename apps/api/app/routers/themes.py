@@ -302,6 +302,7 @@ def expand_activity_message(
     if not expand_svc.has_execution(doc):
         raise HTTPException(502, "模型未返回可用的执行结构，已保留原拆分，请重试")
     act.execution_doc = doc
+    expand_svc.sync_activity_done_from_execution(act)
     session.add(act)
     domain_svc.refresh_today_task_for_activity(session, act)
     session.commit()
@@ -350,6 +351,7 @@ def patch_activity_execution(
         patch,
         daily_minutes=_daily_minutes_for_theme(session, theme),
     )
+    expand_svc.sync_activity_done_from_execution(act)
     session.add(act)
     domain_svc.refresh_today_task_for_activity(session, act)
     session.commit()

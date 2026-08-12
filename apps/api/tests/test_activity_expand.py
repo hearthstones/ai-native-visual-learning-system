@@ -123,6 +123,23 @@ def test_set_step_done():
     assert updated["steps"][0]["done"] is True
 
 
+def test_sync_activity_done_from_execution():
+    act = Activity(slice_id="s", theme_id="t", title="活动", done=True)
+    act.execution_doc = {
+        "goal": "g",
+        "steps": [
+            {"id": "1", "text": "A", "done": True},
+            {"id": "2", "text": "B", "done": False},
+        ],
+    }
+    expand_svc.sync_activity_done_from_execution(act)
+    assert act.done is False
+
+    act.execution_doc["steps"][1]["done"] = True
+    expand_svc.sync_activity_done_from_execution(act)
+    assert act.done is True
+
+
 def test_build_context_includes_resources():
     theme = Theme(
         title="t",

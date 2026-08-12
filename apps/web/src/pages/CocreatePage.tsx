@@ -131,6 +131,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
 
   useEffect(() => {
     let cancelled = false
+    const ac = new AbortController()
     async function boot() {
       setBusy(true)
       setError('')
@@ -145,26 +146,32 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           s = existing
           if (existing.confirmed && !cancelled) setRevisionMode(true)
         } catch {
-          s = await api.startCocreateStream(themeId, kind, {}, {
-            onDelta: (text) => {
-              if (!cancelled) setStreamingText((prev) => prev + text)
+          s = await api.startCocreateStream(
+            themeId,
+            kind,
+            {},
+            {
+              signal: ac.signal,
+              onDelta: (text) => {
+                if (!cancelled) setStreamingText((prev) => prev + text)
+              },
+              onLiveDoc: (doc) => {
+                if (cancelled) return
+                setSession((prev) =>
+                  prev
+                    ? { ...prev, live_doc: doc }
+                    : {
+                        id: 'streaming',
+                        theme_id: themeId,
+                        kind,
+                        messages: [],
+                        live_doc: doc,
+                        confirmed: false,
+                      },
+                )
+              },
             },
-            onLiveDoc: (doc) => {
-              if (cancelled) return
-              setSession((prev) =>
-                prev
-                  ? { ...prev, live_doc: doc }
-                  : {
-                      id: 'streaming',
-                      theme_id: themeId,
-                      kind,
-                      messages: [],
-                      live_doc: doc,
-                      confirmed: false,
-                    },
-              )
-            },
-          })
+          )
         }
         if (!cancelled) {
           setSession(s)
@@ -177,7 +184,11 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
           }
         }
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : String(e))
+        if (cancelled || (e instanceof DOMException && e.name === 'AbortError')) return
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : String(e))
+          setSession((prev) => (prev?.id === 'streaming' ? null : prev))
+        }
       } finally {
         if (!cancelled) {
           setBusy(false)
@@ -188,6 +199,7 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
     void boot()
     return () => {
       cancelled = true
+      ac.abort()
     }
   }, [themeId, kind])
 
@@ -237,8 +249,20 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
         setPlanPrefs((prev) => applyDurationsToPrefs(s.live_doc, prev))
       }
     } catch (err) {
+      // 断连时服务端可能已 commit：先对账，避免误回滚后重复发送
+      try {
+        const recovered = await api.getCocreate(themeId, kind)
+        setSession(recovered)
+        setStreamingText('')
+        setError('连接中断，已从服务器恢复最新会话')
+        if (kind === 'plan') {
+          setPlanPrefs((prev) => applyDurationsToPrefs(recovered.live_doc, prev))
+        }
+        return
+      } catch {
+        /* fall through to rollback */
+      }
       setError(err instanceof Error ? err.message : String(err))
-      // roll back optimistic user bubble on failure
       setSession((prev) =>
         prev
           ? {
@@ -273,15 +297,20 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
     setError('')
     setStreamingText('')
     try {
-      const s = await api.startCocreateStream(themeId, kind, { force: true }, {
-        onDelta: (chunk) => setStreamingText((prev) => prev + chunk),
-        onLiveDoc: (doc) => {
-          setSession((prev) => (prev ? { ...prev, live_doc: doc } : prev))
-          if (kind === 'plan') {
-            setPlanPrefs((prev) => applyDurationsToPrefs(doc, prev))
-          }
+      const s = await api.startCocreateStream(
+        themeId,
+        kind,
+        { force: true },
+        {
+          onDelta: (chunk) => setStreamingText((prev) => prev + chunk),
+          onLiveDoc: (doc) => {
+            setSession((prev) => (prev ? { ...prev, live_doc: doc } : prev))
+            if (kind === 'plan') {
+              setPlanPrefs((prev) => applyDurationsToPrefs(doc, prev))
+            }
+          },
         },
-      })
+      )
       setSession(s)
       setStreamingText('')
       setRevisionMode(false)
@@ -291,6 +320,13 @@ export function CocreatePage({ kind }: { kind: CocreateKind }) {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
+      // force 失败时旧草稿仍在服务端，尝试恢复
+      try {
+        const recovered = await api.getCocreate(themeId, kind)
+        setSession(recovered)
+      } catch {
+        setSession((prev) => (prev?.id === 'streaming' ? null : prev))
+      }
     } finally {
       setBusy(false)
       setStreamingText('')
